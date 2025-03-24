@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>TruthWeb: Pi Network Unleashed - Video Series</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #FFFFFF;
+      }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+      }
+      .hero {
+        height: 70vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        background: var(--primary-color);
+        animation: fadeIn 2s ease-in-out;
+      }
+      .hero::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent);
+        animation: rotateGlow 10s infinite linear;
+      }
+      @keyframes rotateGlow {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+      .glow-text {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--text-color);
+        text-shadow: 0 0 15px var(--highlight-color), 0 0 30px var(--highlight-color);
+        animation: pulseGlow 3s infinite ease-in-out;
+      }
+      @keyframes pulseGlow {
+        0%, 100% { text-shadow: 0 0 15px var(--highlight-color), 0 0 30px var(--highlight-color); }
+        50% { text-shadow: 0 0 25px var(--highlight-color), 0 0 50px var(--highlight-color); }
+      }
+      .card {
+        background: var(--secondary-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        animation: slideUp 1s ease-in-out;
+      }
+      .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+      }
+      @keyframes slideUp {
+        0% { opacity: 0; transform: translateY(30px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+      .btn {
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.75rem 2rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.05);
+      }
+      footer {
+        background: var(--primary-color);
+        color: var(--text-color);
+        text-align: center;
+        padding: 2rem;
+      }
+      .sticky-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: background 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 70px;
+        padding: 0 2rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      }
+      .sticky-header.scrolled {
+        background: rgba(0, 0, 0, 0.95);
+      }
+      .nav-item {
+        transition: transform 0.3s ease;
+      }
+      .nav-item:hover {
+        transform: scale(1.1);
+      }
+      .floating-effect {
+        transition: transform 0.3s ease;
+      }
+      .floating-effect:hover {
+        transform: translateY(-5px);
+      }
+      iframe {
+        width: 100%;
+        height: 480px;
+        border: none;
+        border-radius: 12px;
+      }
+      .suggested-videos .card {
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+      }
+      .suggested-videos iframe {
+        height: 150px;
+      }
+      .interaction-btn {
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        cursor: pointer;
+        margin-right: 1.5rem;
+        transition: color 0.3s ease;
+        font-size: 1.1rem;
+      }
+      .interaction-btn:hover, .interaction-btn.active {
+        color: var(--highlight-color);
+      }
+      .comment-section {
+        margin-top: 1.5rem;
+        max-height: 300px;
+        overflow-y: auto;
+        background: #F5F5F5;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid var(--highlight-color);
+      }
+      .comment {
+        border-bottom: 1px solid #E0E0E0;
+        padding: 0.75rem 0;
+        font-size: 1rem;
+        color: #333333;
+        line-height: 1.5;
+      }
+      .comment:last-child {
+        border-bottom: none;
+      }
+      .comment-input {
+        width: 100%;
+        padding: 1rem;
+        margin-top: 1.5rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 8px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      .comment-input:focus {
+        outline: none;
+        border-color: var(--highlight-color);
+        box-shadow: 0 0 5px rgba(204, 204, 204, 0.5);
+      }
+      .news-card {
+        background: var(--secondary-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 12px;
+        padding: 1rem;
+        transition: transform 0.3s ease;
+      }
+      .news-card:hover {
+        transform: translateY(-5px);
+      }
+      .carousel {
+        position: relative;
+        overflow: hidden;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      .carousel-inner {
+        display: flex;
+        transition: transform 0.5s ease;
+      }
+      .carousel-item {
+        min-width: 100%;
+        text-align: center;
+        padding: 2rem;
+      }
+      .carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: var(--text-color);
+        border: none;
+        padding: 1rem;
+        cursor: pointer;
+        z-index: 10;
+      }
+      .carousel-btn.prev { left: 10px; }
+      .carousel-btn.next { right: 10px; }
+      .carousel-btn:hover { background: rgba(0, 0, 0, 1); }
+      .share-btn {
+        background: none;
+        border: 1px solid var(--highlight-color);
+        color: var(--primary-color);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        margin-right: 1rem;
+        transition: all 0.3s ease;
+      }
+      .share-btn:hover {
+        background: var(--highlight-color);
+        color: var(--primary-color);
+      }
+      .ticker {
+        background: var(--primary-color);
+        color: var(--text-color);
+        padding: 0.5rem;
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+    </style>
+</head>
+<body>
+    <!-- Sticky Header -->
+    <header class="sticky-header">
+      <div class="flex items-center">
+        <a class="text-inherit mr-4 flex items-center" href="index.html">
+          <span class="text-xl font-bold">TruthWeb</span>
+        </a>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a class="icon floating-effect" href="https://www.youtube.com/@TruthWebYoutube?sub_confirmation=1" target="_blank">
+          <i class="fab fa-youtube text-2xl"></i>
+        </a>
+        <a class="icon floating-effect" href="profile.html">
+          <i class="fas fa-user text-2xl"></i>
+        </a>
+        <a class="icon floating-effect" href="wallet.html">
+          <i class="fas fa-wallet text-2xl"></i>
+        </a>
+      </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="bg-[var(--primary-color)] py-4">
+      <ul class="flex flex-wrap justify-center space-x-6">
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)]" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)]" href="marketplace.html">Marketplace</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)]" href="profile.html">Profile</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)]" href="wallet.html">Wallet</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)]" href="community.html">Community</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)]" href="developers.html">Developers</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)]" href="about.html">About</a></li>
+      </ul>
+    </nav>
+
+    <!-- Pi Network Price Ticker -->
+    <div class="ticker">
+      Pi Network Price: $1.96 (Mock Data - Last Updated: March 6, 2025)
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero flex flex-col items-center justify-center text-center">
+      <h1 class="glow-text fade-in text-4xl md:text-6xl">TruthWeb</h1>
+      <p class="text-xl mt-4 fade-in" style="animation-delay: 0.5s; color: var(--text-color); max-width: 600px;">
+        Your Trusted Source for News, Crypto & Pi Insights!
+      </p>
+      <a href="/" class="btn mt-6">Watch Now</a>
+    </div>
+
+    <!-- About TruthWeb Section -->
+    <section class="py-16 px-4 bg-[var(--background-color)]">
+      <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl font-bold mb-4">About TruthWeb</h2>
+        <p class="text-lg leading-relaxed">
+          TruthWeb is your go-to platform for cutting-edge news, cryptocurrency updates, and deep insights into the Pi Network ecosystem. 
+          We’re dedicated to empowering the Pi community with reliable, decentralized content—bridging the gap between innovation and information. 
+          From video series to real-time news, TruthWeb delivers the truth about Pi and beyond, fostering a space for pioneers to connect, learn, and grow.
+        </p>
+      </div>
+    </section>
+
+    <!-- Featured Video Carousel -->
+    <section class="py-16 px-4 bg-[var(--primary-color)] text-[var(--text-color)]">
+      <h2 class="text-3xl font-bold text-center mb-8">Featured Videos</h2>
+      <div class="carousel">
+        <button class="carousel-btn prev" onclick="moveCarousel(-1)">&#10094;</button>
+        <div class="carousel-inner" id="carousel-inner">
+          <div class="carousel-item">
+            <iframe src="https://www.youtube.com/embed/gacKcyPxbrA?si=TM_tVWd25-1I1JMK" title="Featured 1" allowfullscreen></iframe>
+            <h3 class="text-xl font-semibold mt-4">Pi's Open Network Launch</h3>
+          </div>
+          <div class="carousel-item">
+            <iframe src="https://www.youtube-nocookie.com/embed/MsOaC61cR3U?si=6MHlrerkpaiTKSG0&amp;controls=0" title="Featured 2" allowfullscreen></iframe>
+            <h3 class="text-xl font-semibold mt-4">The Story Of Pi - The First Digital Currency You Can Mine On Your Phone.</h3>
+          </div>
+          <div class="carousel-item">
+            <iframe src="" title="Featured 3" allowfullscreen></iframe>
+            <h3 class="text-xl font-semibold mt-4">Decentralized </h3>
+          </div>
+        </div>
+        <button class="carousel-btn next" onclick="moveCarousel(1)">&#10095;</button>
+      </div>
+    </section>
+
+    <!-- Video Player Section -->
+    <section id="video-player" class="py-16 px-4 bg-[var(--primary-color)] text-[var(--text-color)]">
+      <div class="max-w-5xl mx-auto">
+        <h2 id="video-title" class="text-3xl font-bold mb-4">Episode 1: Pi's Open Network Launch</h2>
+        <div class="card">
+          <iframe id="main-video" src="https://www.youtube.com/embed/gacKcyPxbrA?si=TM_tVWd25-1I1JMK" title="Episode 1" allowfullscreen></iframe>
+          <div class="p-4">
+            <p id="video-description" class="text-lg mb-4">Open Network has officially launched, marking a groundbreaking moment for all Pioneers! With external connectivity now enabled, Pioneers can engage in transactions beyond the Pi ecosystem, connect with KYB-verified businesses, and access new integrations like centralized exchanges.
+</p>
+            <div class="flex items-center mb-4">
+              <button class="interaction-btn" onclick="toggleLike(this)"><i class="far fa-thumbs-up"></i> <span id="like-count">0</span></button>
+              <button class="share-btn" onclick="shareTwitter()">Share on Twitter</button>
+              <button class="share-btn" onclick="shareTelegram()">Share on Telegram</button>
+              <a href="" id="next-episode-btn" class="btn ml-auto" onclick="nextEpisode()">Next Episode</a>
+            </div>
+            <!-- Comment Section (Always Visible) -->
+            <div id="comment-section" class="comment-section">
+              <h3 class="text-lg font-semibold mb-2" style="color: var(--primary-color);">Comments</h3>
+              <div id="comments-list">
+                <div class="comment">PioneerA: Amazing start to the series!</div>
+                <div class="comment">UserB: Can’t wait for Episode 2!</div>
+              </div>
+              <input type="text" id="comment-input" class="comment-input" placeholder="Add a comment (posts to YouTube)..." onkeypress="if(event.key === 'Enter') postComment()">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Suggested Videos Section -->
+    <section class="py-16 px-4 suggested-videos">
+      <h2 class="text-3xl font-bold text-center mb-8">More TruthWeb Episodes</h2>
+      <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="card">
+          <iframe src="https://www.youtube-nocookie.com/embed/MsOaC61cR3U?si=6MHlrerkpaiTKSG0&amp;controls=0" title="Episode 2" allowfullscreen></iframe>
+          <div class="p-2">
+            <h4 class="font-semibold">Episode 2:The Story Of Pi - </h4>
+            <p class="text-sm">The First Digital Currency You Can Mine On Your Phone.</p>
+          </div>
+        </div>
+        <div class="card">
+          <iframe src="" title="Episode 3" allowfullscreen></iframe>
+          <div class="p-2">
+            <h4 class="font-semibold">Episode 3: Decentralized </h4>
+            <p class="text-sm">The future of TruthWeb unfolds.</p>
+          </div>
+        </div>
+        <div class="card">
+          <iframe src="" title="Episode 4" allowfullscreen></iframe>
+          <div class="p-2">
+            <h4 class="font-semibold">Episode 4: Community Power</h4>
+            <p class="text-sm">Pioneers unite for a cause.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pi Network News Section -->
+    <section class="py-16 px-4 bg-[var(--background-color)]">
+      <h2 class="text-3xl font-bold text-center mb-8">Latest Pi Network News</h2>
+      <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="news-card">
+          <h3 class="text-xl font-semibold mb-2">Pi Network Surges 13% in a Day</h3>
+          <p class="text-sm mb-4">March 5, 2025 - Pi Coin jumps 13.36% to $1.96, outperforming major cryptocurrencies amid market optimism.</p>
+          <a href="truthweb-news.html?id=1" class="text-[var(--primary-color)] hover:underline">Read More</a>
+        </div>
+        <div class="news-card">
+          <h3 class="text-xl font-semibold mb-2">Pi Network Hits 4M X Followers</h3>
+          <p class="text-sm mb-4">March 5, 2025 - Community growth sparks speculation of a $100 price rally with potential Binance listing.</p>
+          <a href="truthweb-news.html?id=2" class="text-[var(--primary-color)] hover:underline">Read More</a>
+        </div>
+        <div class="news-card">
+          <h3 class="text-xl font-semibold mb-2">Binance Listing Rumors</h3>
+          <p class="text-sm mb-4">March 5, 2025 - Pi Coin up 7%, eyeing $2 as Binance teases a possible listing ahead of Pi Day (March 14).</p>
+          <a href="truthweb-news.html?id=3" class="text-[var(--primary-color)] hover:underline">Read More</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Monetization Section -->
+    <section class="py-16 px-4 bg-[var(--primary-color)] text-[var(--text-color)]">
+      <h2 class="text-3xl font-bold text-center mb-8">Support TruthWeb</h2>
+      <div class="max-w-4xl mx-auto text-center">
+        <p class="text-lg mb-6">
+          Love our decentralized content? Subscribe, donate, or join our partners to fuel the TruthWeb journey!
+        </p>
+        <div class="flex justify-center space-x-4">
+          <a href="https://www.youtube.com/@TruthWebYoutube?sub_confirmation=1" target="_blank" class="btn">Subscribe</a>
+          <a href="donate.html" target="_blank" class="btn">Donate</a>
+          <a href="https://www.okx.com/join/96663535" target="_blank" class="btn">Join OKX</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container mx-auto text-center">
+        <div class="mb-4">
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://www.facebook.com/reimaginetruthofficial/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://x.com/reimagine_truth" target="_blank"><i class="fab fa-twitter"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://t.me/TruthWebOfficial" target="_blank"><i class="fab fa-telegram"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://www.youtube.com/@TruthWebYoutube" target="_blank"><i class="fab fa-youtube"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://github.com/username/TruthWeb" target="_blank"><i class="fab fa-github"></i></a>
+        </div>
+        <p class="text-[var(--text-color)] mb-4">© 2025 TruthWeb. All rights reserved.</p>
+        <div class="text-[var(--text-color)] text-sm">
+          <a href="about.html" class="mx-2 hover:text-[var(--highlight-color)]">About Us</a> |
+          <a href="terms.html" class="mx-2 hover:text-[var(--highlight-color)]">Terms & Conditions</a> |
+          <a href="privacy.html" class="mx-2 hover:text-[var(--highlight-color)]">Privacy Policy</a> |
+          <a href="contact.html" class="mx-2 hover:text-[var(--highlight-color)]">Contact</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Episode data
+      const episodes = [
+        {
+          id: "",
+          title: "",
+          description: ""
+        },
+        {
+          id: "",
+          title: "",
+          description: ""
+        },
+        {
+          id: "",
+          title: "Episode 3: Decentralized Dreams",
+          description: "The future of TruthWeb unfolds."
+        },
+        {
+          id: "",
+          title: "Episode 4: Community Power",
+          description: "Pioneers unite for a cause."
+        }
+      ];
+      let currentEpisodeIndex = 0;
+
+      // Next Episode Function
+      function nextEpisode() {
+        currentEpisodeIndex = (currentEpisodeIndex + 1) % episodes.length;
+        const episode = episodes[currentEpisodeIndex];
+        document.getElementById("main-video").src = `https://www.youtube.com/embed/${episode.id}?si=example`;
+        document.getElementById("video-title").textContent = episode.title;
+        document.getElementById("video-description").textContent = episode.description;
+        resetInteractions();
+      }
+
+      // Reset Interactions on Episode Change
+      function resetInteractions() {
+        document.getElementById("like-count").textContent = "0";
+        document.querySelector(".interaction-btn").classList.remove("active");
+        document.getElementById("comments-list").innerHTML = "<div class='comment'>PioneerA: Amazing start to the series!</div><div class='comment'>UserB: Can’t wait for Episode 2!</div>";
+      }
+
+      // Like Button Toggle
+      function toggleLike(button) {
+        button.classList.toggle("active");
+        const likeCount = document.getElementById("like-count");
+        let count = parseInt(likeCount.textContent);
+        likeCount.textContent = button.classList.contains("active") ? count + 1 : count - 1;
+        console.log(`Liked video: ${episodes[currentEpisodeIndex].id}`);
+        // For real integration: Use YouTube API to like video with ID episodes[currentEpisodeIndex].id
+      }
+
+      // Post Comment (Simulate YouTube Redirect)
+      function postComment() {
+        const input = document.getElementById("comment-input");
+        const commentText = input.value.trim();
+        if (commentText) {
+          const commentList = document.getElementById("comments-list");
+          const newComment = document.createElement("div");
+          newComment.className = "comment";
+          newComment.textContent = `You: ${commentText}`;
+          commentList.appendChild(newComment);
+          input.value = "";
+          alert(`Comment "${commentText}" would be posted to YouTube video: ${episodes[currentEpisodeIndex].id}`);
+          console.log(`Redirect to: https://www.youtube.com/watch?v=${episodes[currentEpisodeIndex].id}`);
+          // For real integration: Use YouTube API to post comment to video ID episodes[currentEpisodeIndex].id
+        }
+      }
+
+      // Carousel Functionality
+      let carouselIndex = 0;
+      const carouselItems = document.querySelectorAll('.carousel-item');
+      function moveCarousel(direction) {
+        carouselIndex = (carouselIndex + direction + carouselItems.length) % carouselItems.length;
+        const offset = -carouselIndex * 100;
+        document.getElementById("carousel-inner").style.transform = `translateX(${offset}%)`;
+      }
+
+      // Social Sharing
+      function shareTwitter() {
+        const url = `https://www.youtube.com/watch?v=${episodes[currentEpisodeIndex].id}`;
+        const text = `Check out "${episodes[currentEpisodeIndex].title}" on TruthWeb!`;
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+      }
+      function shareTelegram() {
+        const url = `https://www.youtube.com/watch?v=${episodes[currentEpisodeIndex].id}`;
+        const text = `Check out "${episodes[currentEpisodeIndex].title}" on TruthWeb: ${url}`;
+        window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+      }
+
+      // Sticky Header Scroll Effect
+      window.addEventListener('scroll', function() {
+        const header = document.querySelector('.sticky-header');
+        if (window.scrollY > 50) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+      });
+    </script>
+</body>
+</html>

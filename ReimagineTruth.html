@@ -1,0 +1,1065 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Reimagine Truth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+      :root {
+        --primary-color: #2f0139;
+        --secondary-color: #2a0132;
+        --highlight-color: #ff00ff;
+        --text-color: #fff;
+        --button-color: #692119;
+        --hover-effect: radial-gradient(circle, #ff00ff, transparent);
+        --button-bg-color: #000;
+        --button-text-color: #fff;
+        --button-hover-bg-color: #ffd700;
+        --button-hover-text-color: #000;
+      }
+      body {
+        background: #1a0120;
+        color: var(--text-color);
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+      }
+      .hero {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid var(--highlight-color);
+        padding: 1rem;
+      }
+      .hero::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--hover-effect);
+        opacity: 0.2;
+        animation: float 6s infinite ease-in-out;
+      }
+      @keyframes float {
+        0%, 100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+      .glow-text {
+        font-size: 2rem;
+        font-weight: bold;
+        text-shadow: 0 0 10px var(--highlight-color), 0 0 20px var(--highlight-color), 0 0 30px var(--highlight-color);
+        animation: glow 2s infinite alternate;
+      }
+      @keyframes glow {
+        0% {
+          text-shadow: 0 0 10px var(--highlight-color), 0 0 20px var(--highlight-color), 0 0 30px var(--highlight-color);
+        }
+        100% {
+          text-shadow: 0 0 20px var(--highlight-color), 0 0 30px var(--highlight-color), 0 0 40px var(--highlight-color);
+        }
+      }
+      .card {
+        background: var(--primary-color);
+        border: 2px solid var(--highlight-color);
+        border-radius: 10px;
+        padding: 1rem;
+        box-shadow: 0 0 15px var(--highlight-color);
+        transition: transform 0.3s, box-shadow 0.3s;
+        animation: fadeInUp 1s ease-in-out;
+      }
+      .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 0 25px var(--highlight-color);
+      }
+      @keyframes fadeInUp {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .btn {
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.75rem 1.5rem;
+        border: 2px solid var(--highlight-color);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background 0.3s, color 0.3s;
+        animation: pulse 2s infinite;
+        display: inline-block;
+        text-align: center;
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      footer {
+        background: var(--primary-color);
+        color: var(--text-color);
+        text-align: center;
+        padding: 1rem;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      .sticky-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: var(--primary-color);
+        transition: background 0.3s, box-shadow 0.3s;
+      }
+      .sticky-header.scrolled {
+        background: var(--secondary-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+      .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        transition: font-size 0.3s;
+      }
+      .logo-text.scrolled {
+        font-size: 1.25rem;
+      }
+      .nav-item {
+        transition: transform 0.3s;
+      }
+      .nav-item:hover {
+        transform: scale(1.1);
+      }
+      .fade-in {
+        opacity: 0;
+        animation: fadeIn 1s forwards;
+      }
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+        }
+      }
+      .slide-in {
+        transform: translateX(-100%);
+        animation: slideIn 1s forwards;
+      }
+      @keyframes slideIn {
+        to {
+          transform: translateX(0);
+        }
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        border-radius: 10px;
+        animation: slideInFromTop 0.5s ease-out, fadeIn 0.5s ease-out;
+      }
+      @keyframes slideInFromTop {
+        0% {
+          transform: translateY(-100%);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeIn {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        transition: transform 0.3s;
+      }
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+        transform: rotate(90deg);
+      }
+      .floating-effect {
+        display: inline-block;
+        transition: transform 0.3s;
+      }
+      .floating-effect:hover {
+        transform: translateY(-10px);
+      }
+      .nav-item {
+        opacity: 0;
+        animation: fadeInUp 0.5s forwards;
+      }
+      .nav-item:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .nav-item:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .nav-item:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .nav-item:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      .nav-item:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+      .nav-item:nth-child(6) {
+        animation-delay: 0.6s;
+      }
+      @keyframes fadeInUp {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .card-rotate {
+        perspective: 1000px;
+        position: relative;
+      }
+      .card-rotate-inner {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        transition: transform 0.6s, box-shadow 0.6s;
+        transform-style: preserve-3d;
+        animation: rotateCard 10s infinite linear;
+      }
+      @keyframes rotateCard {
+        0% { transform: rotateY(0deg); }
+        100% { transform: rotateY(360deg); }
+      }
+      .card-rotate:hover .card-rotate-inner {
+        animation-play-state: paused;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+      .card-front, .card-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backface-visibility: hidden;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      .card-back { transform: rotateY(180deg); }
+      .card-rotate:hover .card-front { filter: brightness(0.8); }
+      .card-rotate:hover .card-back { filter: brightness(1.2); }
+      .card-front::before, .card-back::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 50%);
+        pointer-events: none;
+        mix-blend-mode: screen;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header Section -->
+    <header class="sticky-header flex justify-between items-center h-16 px-4">
+      <div class="flex items-center">
+        <a class="text-[var(--text-color)] mr-4 flex items-center" href="home.html">
+          <span class="logo-text ml-2">TruthWeb</span>
+        </a>
+      </div>
+      <div class="flex items-center">
+        <a class="text-[var(--text-color)] mr-4 icon floating-effect" href="news.html">
+          <i class="fas fa-bell text-xl sm:text-2xl"></i>
+        </a>
+        <a class="text-[var(--text-color)] mr-4 icon floating-effect" href="messages.html">
+          <i class="fas fa-comments text-xl sm:text-2xl"></i>
+        </a>
+        <a class="text-[var(--text-color)] icon floating-effect" href="profile.html">
+          <i class="fas fa-user text-xl sm:text-2xl"></i>
+        </a>
+      </div>
+    </header>
+    <!-- Navigation Section -->
+    <nav class="bg-[var(--primary-color)] py-4">
+      <ul class="flex flex-wrap justify-center space-x-4">
+        <li class="nav-item">
+          <a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="discover.html" id="openModalButton">Discover</a>
+        </li>
+        <li class="nav-item">
+          <a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="about.html">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="contact.html">Contact</a>
+        </li>
+        <li class="nav-item">
+          <a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="policy.html">Policy</a>
+        </li>
+        <li class="nav-item">
+          <a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="Q&A.html">Q&A</a>
+        </li>
+      </ul>
+    </nav>
+    <!-- Hero Section -->
+    <div class="hero flex flex-col items-center justify-center min-h-screen">
+      <h1 class="glow-text fade-in text-5xl md:text-7xl font-bold">
+        TruthWeb
+      </h1>
+      <p class="text-xl mt-4 text-center fade-in" style="animation-delay: 0.5s;">
+        Step into the realm of Reimagine Truth
+      </p>
+    </div>
+    <!-- Modal -->
+    <div class="modal" id="infoModal">
+      <div class="modal-content">
+        <span class="close" id="closeModalButton">×</span>
+        <h2>More Options</h2>
+        <ul class="space-y-4">
+          <li><a href="wiki.html" class="text-gray-700 hover:text-blue-500"><i class="fas fa-book mr-2"></i>Wiki</a></li>
+          <li><a href="whitepaper.html" class="text-gray-700 hover:text-blue-500"><i class="fas fa-file-alt mr-2"></i>Whitepaper</a></li>
+          <li><a href="airdrop.html" class="text-gray-700 hover:text-blue-500"><i class="fas fa-gift mr-2"></i>Airdrop</a></li>
+          <li><a href="listing.html" class="text-gray-700 hover:text-blue-500"><i class="fas fa-list mr-2"></i>Listing</a></li>
+          <li><a href="rto-token.html" class="text-gray-700 hover:text-blue-500"><i class="fas fa-coins mr-2"></i>RTO Token</a></li>
+          <li><a href="news.html" class="text-gray-700 hover:text-blue-500"><i class="fas fa-newspaper mr-2"></i>News</a></li>
+          <li><a href="nft-collection.html" class="text-gray-700 hover:text-blue-500 flex items-center"><i class="fas fa-images mr-2"></i>NFT Collection</a></li>
+        </ul>
+      </div>
+    </div>
+   
+        
+      </section>
+    <!-- Video Section -->
+    <section class="text-center mt-16" id="videos">
+      <h2 class="text-3xl font-bold mb-8 fade-in">Explore Our Videos</h2>
+      <!-- Vimeo Video Embed -->
+      <div class="card">
+        <div style="position:relative; padding-top:56.25%;"> <!-- 16:9 Aspect Ratio -->
+          <iframe 
+            src="https://player.vimeo.com/video/1043104144?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" 
+            frameborder="0" 
+            allow="autoplay; fullscreen; picture-in-picture; clipboard-write" 
+            style="position:absolute; top:0; left:0; width:100%; height:100%;" 
+            title="Reimagine Truth A Journey Beyond Perception">
+        </iframe>
+    </div>
+    <script src="https://player.vimeo.com/api/player.js"></script>
+     </div>
+    </div>
+  </div>
+</section>
+  
+    <!-- Card Section -->
+    <section class="text-center mt-16" id="videos">
+      <h2 class="text-3xl font-bold mb-8 fade-in">Unique Owner Card</h2>    
+  </div>
+    </div>
+  </div>
+</section>
+ 
+    <section class="text-center mt-16" id="card">
+      <h2 class="text-3xl font-bold mb-8 fade-in"></h2>
+<!-- Card Show Section -->
+<section class="flex flex-col items-center">
+  <div class="card-rotate w-64 h-96">
+    <div class="card-rotate-inner">
+      <!-- Card Front -->
+      <div class="card-front">
+        <img 
+          alt="Front side of the card with placeholder image" 
+          class="w-full h-full object-cover" 
+          src="https://i.ibb.co/cLjNSFM/Untitled-design-20.jpg" 
+          width="256" 
+          height="384" 
+        />
+      </div>
+      <!-- Card Back -->
+      <div class="card-back">
+        <img 
+          alt="Back side of the card with placeholder image" 
+          class="w-full h-full object-cover" 
+          src="https://i.ibb.co/W5F2pxN/Untitled-design-19.jpg" 
+          width="256" 
+          height="384" 
+        />
+      </div>
+    </div>
+  </div>
+</section>
+ 
+    <section class="text-center mt-16" id="videos">
+      <h2 class="text-3xl font-bold mb-8 fade-in"></h2>
+     <!-- Main Content -->
+  <main class="py-16 px-4">
+    <!-- Featured NFTs -->
+    <section class="text-center" id="explore">
+      <h2 class="text-3xl font-bold mb-8">Discover the Hidden Realms</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Cards -->
+         </div>
+  </div>
+</section>
+ 
+   
+     <!-- Main Content -->
+  <main class="py-16 px-4">
+    <!-- Featured NFTs -->
+    <section class="text-center" id="explore">
+      <h2 class="text-3xl font-bold mb-8"></h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Cards -->
+        <div class="card">
+         <img src="https://i.ibb.co/4s55ptN/Screenshot-2025-01-01-203329.png" alt="Screenshot-2025-01-01-203329" border="0">
+          <h3 class="text-xl font-semibold mb-2">Beginner Realm </h3>
+          <p class="mb-4">A grounded domain representing the simplicity of mortal existence and the boundless potential for growth and discovery.</p>
+          <a class="btn" href="beginner-realm.html">View Realm </a>
+        </div>
+        <div class="card">
+          <img src="https://i.ibb.co/dbfYnyS/Screenshot-2025-01-02-002826.png" alt="Screenshot-2025-01-02-002826" border="0">
+          <h3 class="text-xl font-semibold mb-2">Initiate Realm </h3>
+          <p class="mb-4">A realm where elemental forces awaken, symbolizing humanity’s first steps toward harmony with nature’s raw power.</p>
+          <a class="btn" href="initiate-realm.html">View Realm </a>
+        </div>
+        <div class="card">
+          <img src="https://i.ibb.co/KXmVGt5/Screenshot-2025-01-02-003609.png" alt="Screenshot-2025-01-02-003609" border="0">
+          <h3 class="text-xl font-semibold mb-2">Adept Realm </h3>
+          <p class="mb-4">A spiritual domain where energy flows freely, marking the transition into deeper self-awareness and mastery of inner strength.</p>
+           <a class="btn" href="adept-realm.html">View Realm </a>
+        </div>
+        <div class="card">
+          <img src="https://i.ibb.co/f2Gf21f/Screenshot-2025-01-02-004609.png" alt="Screenshot-2025-01-02-004609" border="0">
+          <h3 class="text-xl font-semibold mb-2">Ascension Realm </h3>
+          <p class="mb-4">A soaring realm of freedom and agility, where the skies reflect boundless ambition and a connection to higher ideals.</p>
+          <a class="btn" href="ascension-realm.html">View Realm </a>
+        </div>
+        <div class="card">
+<img src="https://i.ibb.co/r2tXfFQ/Screenshot-2025-01-02-010314.png" alt="Screenshot-2025-01-02-010314" border="0">
+          <h3 class="text-xl font-semibold mb-2">Ethereal Realm </h3>
+          <p class="mb-4">A luminous realm bridging the material and spiritual, embodying peace, intuition, and the beauty of unseen worlds.</p>
+          <a class="btn" href="ethereal-realm.html">View Realm </a>
+        </div>
+        <div class="card">
+          <img src="https://i.ibb.co/0sg8cg7/Screenshot-2025-01-02-011036.png" alt="Screenshot-2025-01-02-011036" border="0">
+          <h3 class="text-xl font-semibold mb-2">Mythic Realm </h3>
+          <p class="mb-4">A primal domain of legendary power, where the strength of mythical beasts and ancient traditions shapes its inhabitants.</p>
+           <a class="btn" href="mythic-realm.html">View Realm </a>
+        </div>
+        <div class="card">
+          <img src="https://i.ibb.co/YkjddDC/Screenshot-2025-01-02-064003.png" alt="Screenshot-2025-01-02-064003" border="0">
+          <h3 class="text-xl font-semibold mb-2">Celestial Realm </h3>
+          <p class="mb-4">A radiant realm of cosmic wonder, representing the harmony of starlight, celestial patterns, and universal wisdom.</p>
+           <a class="btn" href="celestial-realm.html">View Realm </a>
+        </div>
+        <div class="card">
+          <img src="https://i.ibb.co/kJxq1Bv/Screenshot-2025-01-02-064248.png" alt="Screenshot-2025-01-02-064248" border="0">
+          <h3 class="text-xl font-semibold mb-2">Empyrean Realm </h3>
+          <p class="mb-4">An expansive domain reflecting the infinite interconnectedness of the universe and the search for universal truths.</p>
+           <a class="btn" href="empyrean-realm.html">View Realm </a>
+        </div>
+        <div class="card">
+          <img src="https://i.ibb.co/p1gYmdV/Screenshot-2025-01-02-064715.png" alt="Screenshot-2025-01-02-064715" border="0">
+          <h3 class="text-xl font-semibold mb-2">Immortal Realm </h3>
+          <p class="mb-4">A divine realm of perfection and creation, where eternal beings govern time, life, and cosmic balance.</p>
+           <a class="btn" href="immortal-realm.html">View Realm </a>
+        </div>
+        <div class="card">
+          <img src="https://i.ibb.co/xXp6wj6/Screenshot-2025-01-02-064932.png" alt="Screenshot-2025-01-02-064932" border="0">
+          <h3 class="text-xl font-semibold mb-2">Divine Realm </h3>
+          <p class="mb-4">An awe-inspiring domain of primordial power, embodying the origin of existence and the limitless potential of creation itself.</p>
+           <a class="btn" href="divine-realm.html">View Realm </a>
+        </div>
+          </a>
+   </div>
+  </section>
+   <!-- Main Content Section -->
+  <section class="flex justify-center items-center min-h-screen">
+   <div class="card text-center max-w-md mx-auto">
+    <img alt="A wise and enigmatic guide, the Front Man leads players through the realms, offering quests and unraveling the mysteries of the Truth Web with wisdom, riddles, and subtle challenges." class="w-full h-auto" src="https://storage.googleapis.com/a1aa/image/2qpoee48nCp6i0NYFMedBgrAqXWk1NIFfjhMBRWjaeG2yAOgC.jpg" width="300">
+    <h3 class="text-xl font-semibold mb-2 text-[var(--heading-color)]">
+    
+     TruthWeb Quest
+    </h3>
+    <p class="mb-4">
+    Journey Through Interconnected Realms
+    </p>
+    <a class="btn" href="ENTRANCE.html">
+     Door Lock
+    </a>
+   </div>
+ 
+  </div>
+  </section>
+    <a href="truthwebmap.html" class="btn mt-4">
+  <button>Explore the Truth Web Map of All Realms</button>
+</a>
+
+
+          </div>
+        </div>
+   </section>
+ <!-- NFT Platforms Section -->
+    <main class="container mx-auto px-4 py-8">
+        <section class="text-center mb-12 fade-in-up">
+            <h1 class="text-4xl font-bold text-white mb-4">Discover the Best NFT Platforms</h1>
+            <p class="text-gray-300 text-lg">Explore, buy, and sell NFTs on the most popular platforms.</p>
+            <p class="text-gray-300 text-lg mt-4">You can own your Truthseeker Deck. Buy and Sell using these NFT platforms.</p>
+        </section>
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="bg-white shadow-md rounded-lg overflow-hidden card">
+                <img alt="OpenSea logo with a blue background and a white sailboat icon" class="w-full h-48 object-cover" height="400" src="https://i.ibb.co/48GVh3q/opensea-logo-png-seeklogo-424785-1.png" width="600"/>
+                <div class="p-4">
+                    <h2 class="text-2xl font-bold text-white mb-2">OpenSea</h2>
+                    <p class="text-black mb-4">OpenSea is the world's first and largest NFT marketplace. Buy, sell, and discover exclusive digital assets. Own your Truthseeker Deck and join the community of collectors and creators.</p>
+                    <a class="btn" href="https://opensea.io/reimaginetruth">Visit OpenSea</a>
+                </div>
+            </div>
+            <div class="bg-white shadow-md rounded-lg overflow-hidden card">
+                <img alt="Zora logo with a black background and white text" class="w-full h-48 object-cover" height="400" src="https://i.ibb.co/23wX2Dk/og-1.png" width="600"/>
+                <div class="p-4">
+                    <h2 class="text-2xl font-bold text-white mb-2">Zora</h2>
+                    <p class="text-black mb-4">Zora is a marketplace protocol for buying, selling, and creating NFTs. Discover unique digital assets and support creators. Own your Truthseeker Deck and be part of a revolutionary marketplace.</p>
+                    <a class="btn" href="https://zora.co/@reimaginetruth">Visit Zora</a>
+                </div>
+            </div>
+            <div class="bg-white shadow-md rounded-lg overflow-hidden card">
+                <img alt="Mintable logo with a green background and white text" class="w-full h-48 object-cover" height="400" src="https://i.ibb.co/JCwbDQ6/default-meta-image.png" width="600"/>
+                <div class="p-4">
+                    <h2 class="text-2xl font-bold text-white mb-2">Mintable</h2>
+                    <p class="text-black mb-4">Mintable is a marketplace where you can create, buy, and sell NFTs. Join the community and start minting your own digital assets. Own your Truthseeker Deck and explore endless possibilities.</p>
+                    <a class="btn" href="#">Visit Mintable</a>
+                </div>
+            </div>
+            <div class="bg-white shadow-md rounded-lg overflow-hidden card">
+                <img alt="Magic Eden logo with a purple background and white text" class="w-full h-48 object-cover" height="400" src="https://i.ibb.co/PTJLtzK/0-D36869-F670-E168996-ECFFBBE66-BC7-F2.png" width="600"/>
+                <div class="p-4">
+                    <h2 class="text-2xl font-bold text-white mb-2">Magic Eden</h2>
+                    <p class="text-black mb-4">Magic Eden is a leading NFT marketplace on the Solana blockchain. Discover, buy, and sell unique digital assets. Own your Truthseeker Deck and be part of the Solana NFT revolution.</p>
+                    <a class="btn" href="#">Visit Magic Eden</a>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
+ </section>
+  </main>
+</body>
+</html>
+<!-- RTO Token Listing Soon Section -->
+<main class="container mx-auto px-4 py-8">
+    <section class="text-center mb-12 fade-in-up">
+        <h1 class="text-4xl font-bold text-white mb-4">RTO Token Listing Soon</h1>
+        <p class="text-gray-300 text-lg">RTO Token will soon be listed on the following exchanges. Stay tuned and be ready to trade on these platforms.</p>
+    </section>
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="bg-white shadow-md rounded-lg overflow-hidden card">
+            <img alt="Logo of Binance Exchange" class="w-full h-48 object-cover" height="400" src="https://i.ibb.co/DWCBXn5/573a5f93-5a72-4739-8aa0-6af3959a2132-1.png" width="600"/>
+            <div class="p-4">
+                <h2 class="text-2xl font-bold text-white mb-2">Binance</h2>
+                <p class="text-black mb-4">Trade RTO Token on Binance, one of the world’s leading cryptocurrency exchanges. Binance offers a secure and user-friendly environment for seamless trading.</p>
+                <a class="btn" href="https://www.binance.com">Visit Binance</a>
+            </div>
+        </div>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden card">
+            <img alt="Logo of Bybit Exchange" class="w-full h-48 object-cover" height="400" src="https://i.ibb.co/gymFj7H/bybit-logo-white.jpg" width="600"/>
+            <div class="p-4">
+                <h2 class="text-2xl font-bold text-white mb-2">Bybit</h2>
+                <p class="text-black mb-4">Bybit offers RTO Token trading with low fees, high liquidity, and innovative features. Perfect for both beginners and experienced traders.</p>
+                <a class="btn" href="https://partner.bybit.com/b/58503">Visit Bybit</a>
+            </div>
+        </div>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden card">
+            <img alt="Logo of Bitget Exchange" class="w-full h-48 object-cover" height="400" src="https://i.ibb.co/JmSg2W8/bitget-partnership.webp" width="600"/>
+            <div class="p-4">
+                <h2 class="text-2xl font-bold text-white mb-2">Bitget</h2>
+                <p class="text-black mb-4">Trade RTO Token on Bitget for a top-notch experience with zero spot trading fees, great liquidity, and an intuitive interface.</p>
+                <a class="btn" href="https://share.bitget.com/u/VWVJE4AZ">Visit Bitget</a>
+            </div>
+        </div>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden card">
+            <img alt="Logo of Pi Network Exchange" class="w-full h-48 object-cover" height="400" src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/4d/d4/17/4dd417db-13b5-7fe2-d1f0-897547c4cf02/PiIcon-1x_U007emarketing-0-5-0-85-220-0.png/1200x630wa.png" width="600"/>
+            <div class="p-4">
+                <h2 class="text-2xl font-bold text-white mb-2">Pi Network</h2>
+                <p class="text-black mb-4">Pi Network provides an innovative platform for trading RTO Token in a decentralized ecosystem, making it easy to access and trade with minimal friction.</p>
+                <a class="btn" href="https://minepi.com">Visit Pi Network</a>
+            </div>
+        </div>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden card">
+            <img alt="Logo of OKX Exchange" class="w-full h-48 object-cover" height="400" src="https://i.ibb.co/PFmJTxF/Logo-OKX.png" width="600"/>
+            <div class="p-4">
+                <h2 class="text-2xl font-bold text-white mb-2">OKX</h2>
+                <p class="text-black mb-4">OKX offers a comprehensive platform for trading RTO Token with advanced charting tools, low fees, and a trusted reputation in the crypto industry.</p>
+                <a class="btn" href="https://www.okx.com/join/96663535">Visit OKX</a>
+            </div>
+        </div>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden card">
+            <img alt="Logo of CoinGecko" class="w-full h-48 object-cover" height="400" src="https://i.ibb.co/yynx9r9/Coin-Gecko-logo.jpg" width="600"/>
+            <div class="p-4">
+                <h2 class="text-2xl font-bold text-white mb-2">CoinGecko</h2>
+                <p class="text-black mb-4">Track the live prices, historical data, and detailed market information for RTO Token on CoinGecko, a leading platform for crypto data.</p>
+                <a class="btn" href="https://www.coingecko.com">Visit CoinGecko</a>
+            </div>
+        </div>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden card">
+            <img alt="Logo of CoinMarketCap" class="w-full h-48 object-cover" height="400" src="https://i.ibb.co/wBFJwHX/1200x600wa.png" width="600"/>
+            <div class="p-4">
+                <h2 class="text-2xl font-bold text-white mb-2">CoinMarketCap</h2>
+                <p class="text-black mb-4">CoinMarketCap provides real-time tracking for RTO Token and a comprehensive overview of its market performance.</p>
+                <a class="btn" href="https://www.coinmarketcap.com">Visit CoinMarketCap</a>
+            </div>
+              </div>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden card">
+            <img alt="Logo of Mexc" class="w-full h-48 object-cover" height="400" src="https://i.ibb.co/Xks8jt7/Qma-Dc-Te-Eh-YQ2u-Si458d-JRYb5-X1-Lq-BFXzbn-J2-QYBZWnhpt-S.webp" width="600"/>
+            <div class="p-4">
+                <h2 class="text-2xl font-bold text-white mb-2">Mexc</h2>
+                <p class="text-black mb-4">Trade RTO Token on Mexc, a leading global exchange known for its secure platform and user-friendly trading experience.</p>
+                <a class="btn" href="https://promote.mexc.com/r/MtqMV8Mj">Visit Mexc</a>
+            </div>
+              </div>
+        <div class="bg-white shadow-md rounded-lg overflow-hidden card">
+            <img alt="Logo of Bitmart" class="w-full h-48 object-cover" height="400" src="https://i.ibb.co/PtqF7d2/46-463430-bitmart-exchange-logo-png-transparent-png.png" width="600"/>
+            <div class="p-4">
+                <h2 class="text-2xl font-bold text-white mb-2"> BitMart</h2>
+                <p class="text-black mb-4">Explore the RTO Token on BitMart, a premier global cryptocurrency exchange. BitMart delivers a seamless trading experience with robust security and an intuitive interface.</p>
+                <a class="btn" href="https://www.bitmart.com/invite/cx45q4/en">Visit Bitmart</a>
+            </div>
+      
+  </section>
+</main>
+
+<!-- Main Content Section -->
+  <!-- Q&A Section -->
+  <section class="q-and-a py-12 bg-[var(--secondary-color)]">
+  <div class="container mx-auto px-4">
+    <h2 class="text-center text-4xl font-bold text- mb-8">Q&A: Reimagine Truth</h2>
+
+    <!-- Question 1 -->
+    <div class="question mb-6">
+      <div class="question-header flex items-center justify-between bg-[var(--primary-color)] p-4 rounded-t-lg">
+        <h3 class="text-xl font-semibold text-[var(--text-color)]">What is the Reimagine Truth project?</h3>
+        <button class="toggle-btn text-[var(--highlight-color)]">
+          <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+      <div class="answer p-4 bg-[var(--secondary-color)] rounded-b-lg hidden max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+        <p class="text-[var(--text-color)]">Reimagine Truth is an immersive, narrative-driven experience where players explore the fluid nature of truth across interconnected realms. It combines philosophical exploration, quests, and a collectible card system called the Truthseeker Deck. Players engage with NPCs, uncover mysteries, and navigate a Truth Web that challenges their perceptions and beliefs.</p>
+      </div>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="question mb-6">
+      <div class="question-header flex items-center justify-between bg-[var(--primary-color)] p-4 rounded-t-lg">
+        <h3 class="text-xl font-semibold text-[var(--text-color)]">What are the realms in the game?</h3>
+        <button class="toggle-btn text-[var(--highlight-color)]">
+          <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+      <div class="answer p-4 bg-[var(--secondary-color)] rounded-b-lg hidden max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+        <p class="text-[var(--text-color)]">There are ten realms, each representing a stage of enlightenment and transformation:
+          <ul class="list-disc pl-6">
+            <li><strong>Beginner Realm:</strong> Home to Mortals—ordinary humans discovering their journey.</li>
+            <li><strong>Initiate Realm:</strong> Element-touched Humans with minor elemental traits.</li>
+            <li><strong>Adept Realm:</strong> Energeans, glowing with runes and vibrant energy.</li>
+            <li><strong>Ascension Realm:</strong> Bird-like Avian-Hybrids who embrace higher perspectives.</li>
+            <li><strong>Ethereal Realm:</strong> Spiritfolk, semi-transparent beings of light.</li>
+            <li><strong>Mythic Realm:</strong> Beastkin with features of legendary creatures.</li>
+            <li><strong>Celestial Realm:</strong> Starborne, embodying constellations and celestial light.</li>
+            <li><strong>Empyrean Realm:</strong> Nebulites with nebula-like skin and flowing stardust.</li>
+            <li><strong>Immortal Realm:</strong> Divine Ascendants, radiant and godlike.</li>
+            <li><strong>Divine Realm:</strong> Primordials, beings of pure energy and infinite power.</li>
+          </ul>
+          Each realm has unique inhabitants, landscapes, and quests.</p>
+      </div>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="question mb-6">
+      <div class="question-header flex items-center justify-between bg-[var(--primary-color)] p-4 rounded-t-lg">
+        <h3 class="text-xl font-semibold text-[var(--text-color)]">What is the Truth Web?</h3>
+        <button class="toggle-btn text-[var(--highlight-color)]">
+          <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+      <div class="answer p-4 bg-[var(--secondary-color)] rounded-b-lg hidden max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+        <p class="text-[var(--text-color)]">The Truth Web is a dynamic map of interconnected ideas and truths. Players navigate it by completing quests, debating NPCs, and unlocking nodes that reveal hidden insights. The Web evolves based on player choices, encouraging exploration and personal interpretation of truth.</p>
+      </div>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="question mb-6">
+      <div class="question-header flex items-center justify-between bg-[var(--primary-color)] p-4 rounded-t-lg">
+        <h3 class="text-xl font-semibold text-[var(--text-color)]">How does the Truthseeker Deck work?</h3>
+        <button class="toggle-btn text-[var(--highlight-color)]">
+          <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+      <div class="answer p-4 bg-[var(--secondary-color)] rounded-b-lg hidden max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+        <p class="text-[var(--text-color)]">The Truthseeker Deck is a collectible card game that players use to solve puzzles, engage in battles, and unlock deeper aspects of the realms. Cards are categorized by types (e.g., Ritual, Effect, Fusion) and rarities (e.g., Common, Rainbow Rare). Each card reflects the traits and themes of its associated realm.</p>
+      </div>
+    </div>
+
+    <!-- Question 5 -->
+    <div class="question mb-6">
+      <div class="question-header flex items-center justify-between bg-[var(--primary-color)] p-4 rounded-t-lg">
+        <h3 class="text-xl font-semibold text-[var(--text-color)]">Who is the Front Man NPC?</h3>
+        <button class="toggle-btn text-[var(--highlight-color)]">
+          <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+      <div class="answer p-4 bg-[var(--secondary-color)] rounded-b-lg hidden max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+        <p class="text-[var(--text-color)]">The Front Man is your guide to the game’s mechanics and storyline. He introduces quests, explains the Truth Web, and provides insight into the philosophical challenges of each realm. He’s both a mentor and a mysterious figure, hinting at deeper layers of the game.</p>
+      </div>
+    </div>
+
+    <!-- Question 6 -->
+    <div class="question mb-6">
+      <div class="question-header flex items-center justify-between bg-[var(--primary-color)] p-4 rounded-t-lg">
+        <h3 class="text-xl font-semibold text-[var(--text-color)]">What kind of quests can players expect?</h3>
+        <button class="toggle-btn text-[var(--highlight-color)]">
+          <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+      <div class="answer p-4 bg-[var(--secondary-color)] rounded-b-lg hidden max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+        <p class="text-[var(--text-color)]">Quests range from philosophical challenges and debates to exploration, battles, and puzzles. Examples include:
+          <ul class="list-disc pl-6">
+            <li><strong>Discovery Quests:</strong> Uncover the history of a realm.</li>
+            <li><strong>Philosophical Debates:</strong> Engage with NPCs on moral dilemmas and questions of truth.</li>
+            <li><strong>Battle Challenges:</strong> Use the Truthseeker Deck to prove your strength.</li>
+            <li><strong>Unity Missions:</strong> Work with other players or NPCs to solve realm-wide problems.</li>
+          </ul>
+        </p>
+      </div>
+    </div>
+
+    <!-- Question 7 -->
+    <div class="question mb-6">
+      <div class="question-header flex items-center justify-between bg-[var(--primary-color)] p-4 rounded-t-lg">
+        <h3 class="text-xl font-semibold text-[var(--text-color)]">How do player choices affect the game?</h3>
+        <button class="toggle-btn text-[var(--highlight-color)]">
+          <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+      <div class="answer p-4 bg-[var(--secondary-color)] rounded-b-lg hidden max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+        <p class="text-[var(--text-color)]">Every choice impacts the Truth Web and the player's journey. Aligning with certain truths may open or close paths in the Web, change the attitudes of NPCs, or alter the narrative of a realm. The game emphasizes the fluidity of truth, so there are no definitive "right" or "wrong" answers—only consequences to explore.</p>
+      </div>
+    </div>
+
+    <!-- Question 8 -->
+    <div class="question mb-6">
+      <div class="question-header flex items-center justify-between bg-[var(--primary-color)] p-4 rounded-t-lg">
+        <h3 class="text-xl font-semibold text-[var(--text-color)]">Can players evolve through realms?</h3>
+        <button class="toggle-btn text-[var(--highlight-color)]">
+          <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+      <div class="answer p-4 bg-[var(--secondary-color)] rounded-b-lg hidden max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+        <p class="text-[var(--text-color)]">Yes! Players begin in the Beginner Realm and progress by completing quests and unlocking Truth Web nodes. As they ascend, their character evolves, gaining traits reflective of their current realm and incorporating its philosophies.</p>
+      </div>
+    </div>
+
+    <!-- Question 9 -->
+    <div class="question mb-6">
+      <div class="question-header flex items-center justify-between bg-[var(--primary-color)] p-4 rounded-t-lg">
+        <h3 class="text-xl font-semibold text-[var(--text-color)]">Are there multiplayer elements?</h3>
+        <button class="toggle-btn text-[var(--highlight-color)]">
+          <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+      <div class="answer p-4 bg-[var(--secondary-color)] rounded-b-lg hidden max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+        <p class="text-[var(--text-color)]">Yes! Players can collaborate or compete with others to complete Unity Quests, trade cards, and debate truths. The multiplayer component emphasizes building connections within the Truth Web while respecting diverse interpretations of truth.</p>
+      </div>
+    </div>
+
+    <!-- Question 10 -->
+    <div class="question mb-6">
+      <div class="question-header flex items-center justify-between bg-[var(--primary-color)] p-4 rounded-t-lg">
+        <h3 class="text-xl font-semibold text-[var(--text-color)]">What makes Reimagine Truth unique?</h3>
+        <button class="toggle-btn text-[var(--highlight-color)]">
+          <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+      <div class="answer p-4 bg-[var(--secondary-color)] rounded-b-lg hidden max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+        <p class="text-[var(--text-color)]">Reimagine Truth combines narrative, philosophy, and gameplay to create an experience where players are encouraged to think deeply about their beliefs. The evolving Truth Web, diverse realms, and the interplay of card mechanics with storytelling set it apart as a game of self-discovery and imagination.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  // Toggle functionality for showing and hiding answers with smooth animation
+  const toggleButtons = document.querySelectorAll('.toggle-btn');
+  
+  toggleButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const answer = button.closest('.question').querySelector('.answer');
+      const isHidden = answer.classList.contains('hidden');
+
+      // Toggle the visibility of the answer with smooth transition
+      if (isHidden) {
+        answer.classList.remove('hidden');
+        setTimeout(() => {
+          answer.style.maxHeight = answer.scrollHeight + 'px'; // expand
+        }, 10);
+      } else {
+        answer.style.maxHeight = 0; // collapse
+        setTimeout(() => {
+          answer.classList.add('hidden');
+        }, 300); // delay to match transition duration
+      }
+
+      // Toggle the icon direction
+      button.querySelector('i').classList.toggle('fa-chevron-down');
+      button.querySelector('i').classList.toggle('fa-chevron-up');
+    });
+  });
+</script>
+
+</body>
+</html>
+</section>
+</section>
+  </a>
+   </div>
+  
+<!-- Soundtrack Section -->
+    <section class="text-center mt-16" id="soundtrack">
+        <h2 class="text-3xl font-bold mb-8 fade-in">
+            Listen to Our Soundtrack
+        </h2>
+       
+            </p>
+        </div>
+        <div class="card fade-in" style="animation-delay: 0.4s;">
+            <h3 class="text-xl font-semibold mb-2">
+                <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1998094175&color=%239f0d85&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/reimagine-truth" title="Reimagine Truth" target="_blank" style="color: #cccccc; text-decoration: none;">Reimagine Truth</a> · <a href="https://soundcloud.com/reimagine-truth/reimagined-truth-soundtrack" title="Reimagined Truth Soundtrack - Official" target="_blank" style="color: #cccccc; text-decoration: none;">Reimagined Truth Soundtrack - Official</a></div>
+                </div>
+            </p>
+        </div>
+         <div class="card fade-in" style="animation-delay: 0.4s;">
+            <h3 class="text-xl font-semibold mb-2">
+                <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1994150683&color=%2383116e&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/reimagine-truth" title="Reimagine Truth" target="_blank" style="color: #cccccc; text-decoration: none;">Reimagine Truth</a> · <a href="https://soundcloud.com/reimagine-truth/reimagined-truth-soundtrack-official" title="Reimagined Truth Soundtrack - Official" target="_blank" style="color: #cccccc; text-decoration: none;">Reimagined Truth Soundtrack - Official</a></div>
+                </div>
+            </p>
+        </div>
+        <div class="card fade-in" style="animation-delay: 0.4s;">
+            <h3 class="text-xl font-semibold mb-2">
+                <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1998468499&color=%23a9108e&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe><div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/reimagine-truth" title="Reimagine Truth" target="_blank" style="color: #cccccc; text-decoration: none;">Reimagine Truth</a> · <a href="https://soundcloud.com/reimagine-truth/reimagined-truth-soundtracks-lyrics-official" title="Reimagined Truth Soundtracks / Lyrics - Official" target="_blank" style="color: #cccccc; text-decoration: none;">Reimagined Truth Soundtracks / Lyrics - Official</a></div>
+                </div>
+   </div>
+     </a>
+       </div>
+    </div>
+</div>
+</section>
+
+<!-- Menu Section -->
+<div class="text-center fade-in mb-12 mt-16">
+    <h1 class="text-2xl font-bold mb-2 animate__animated animate__fadeInDown">Menu</h1>
+    <div class="grid grid-cols-3 gap-4 sm:gap-6">
+        <!-- Button 1 -->
+        <div class="flex flex-col items-center animate__animated animate__zoomIn">
+            <a href="home.html" class="icon-container bg-black p-4 sm:p-4 rounded-lg border-2 border-gold text-white icon transition-all duration-300 ease-in-out transform hover:scale-110 hover:shadow-2xl active:scale-95">
+                <i class="fa fa-home text-3xl"></i>
+            </a>                       
+            <p class="mt-2 text-sm sm:text-base text-white">Home</p>
+        </div>
+        
+        <!-- Button 2 -->
+        <div class="flex flex-col items-center animate__animated animate__zoomIn animate__delay-1s">
+            <a href="wiki.html" class="icon-container bg-black p-4 sm:p-4 rounded-lg border-2 border-gold text-white icon transition-all duration-300 ease-in-out transform hover:scale-110 hover:shadow-2xl active:scale-95">
+                <i class="fas fa-book-open text-3xl sm:text-3xl"></i>
+            </a>
+            <p class="mt-2 text-sm sm:text-base text-white">Wiki</p>
+        </div>
+        
+        <!-- Button 3 -->
+        <div class="flex flex-col items-center animate__animated animate__zoomIn animate__delay-2s">
+            <a href="whitepaper.html" class="icon-container bg-black p-4 sm:p-4 rounded-lg border-2 border-gold text-white icon transition-all duration-300 ease-in-out transform hover:scale-110 hover:shadow-2xl active:scale-95">
+                <i class="fas fa-file-alt text-3xl sm:text-3xl"></i>
+            </a>
+            <p class="mt-2 text-sm sm:text-base text-white">Whitepaper</p>
+        </div>
+        
+        <!-- Button 4 -->
+        <div class="flex flex-col items-center animate__animated animate__zoomIn animate__delay-3s">
+            <a href="rto-token.html" class="icon-container bg-black p-4 sm:p-4 rounded-lg border-2 border-gold text-white icon transition-all duration-300 ease-in-out transform hover:scale-110 hover:shadow-2xl active:scale-95">
+                <i class="fas fa-coins text-3xl sm:text-3xl"></i>
+            </a>
+            <p class="mt-2 text-sm sm:text-base text-white">RTO Token</p>
+        </div>
+        
+        <!-- Button 5 -->
+        <div class="flex flex-col items-center animate__animated animate__zoomIn animate__delay-4s">
+            <a href="profile.html" class="icon-container bg-black p-4 sm:p-4 rounded-lg border-2 border-gold text-white icon transition-all duration-300 ease-in-out transform hover:scale-110 hover:shadow-2xl active:scale-95">
+                <i class="fas fa-user-circle text-3xl sm:text-3xl"></i>
+            </a>
+            <p class="mt-2 text-sm sm:text-base text-white">Profile</p>
+        </div>
+
+        <!-- Button 6 -->
+        <div class="flex flex-col items-center animate__animated animate__zoomIn animate__delay-5s">
+            <a href="listing.html" class="icon-container bg-black p-4 sm:p-4 rounded-lg border-2 border-gold text-white icon transition-all duration-300 ease-in-out transform hover:scale-110 hover:shadow-2xl active:scale-95">
+                <i class="fas fa-list-alt text-3xl sm:text-3xl"></i>
+            </a>
+            <p class="mt-2 text-sm sm:text-base text-white">Listing</p>
+        </div>
+
+        <!-- Button 7 -->
+        <div class="flex flex-col items-center animate__animated animate__zoomIn animate__delay-6s">
+            <a href="marketplace.html" class="icon-container bg-black p-4 sm:p-4 rounded-lg border-2 border-gold text-white icon transition-all duration-300 ease-in-out transform hover:scale-110 hover:shadow-2xl active:scale-95">
+                <i class="fas fa-store text-3xl sm:text-3xl"></i>
+            </a>
+            <p class="mt-2 text-sm sm:text-base text-white">Marketplace</p>
+        </div>
+
+        <!-- Button 8 -->
+        <div class="flex flex-col items-center animate__animated animate__zoomIn animate__delay-7s">
+            <a href="nft-collection.html" class="icon-container bg-black p-4 sm:p-4 rounded-lg border-2 border-gold text-white icon transition-all duration-300 ease-in-out transform hover:scale-110 hover:shadow-2xl active:scale-95">
+                <i class="fas fa-images text-3xl sm:text-3xl"></i>
+            </a>
+            <p class="mt-2 text-sm sm:text-base text-white">NFT Collection</p>
+        </div>
+
+        <!-- Button 9 -->
+        <div class="flex flex-col items-center animate__animated animate__zoomIn animate__delay-8s">
+            <a href="airdrop.html" class="icon-container bg-black p-4 sm:p-4 rounded-lg border-2 border-gold text-white icon transition-all duration-300 ease-in-out transform hover:scale-110 hover:shadow-2xl active:scale-95">
+                <i class="fas fa-gift text-3xl sm:text-3xl"></i>
+            </a>
+            <p class="mt-2 text-sm sm:text-base text-white">Airdrop</p>
+        </div>
+    </div>
+</div>
+
+
+
+</section>
+    <!-- Footer Section -->
+    <footer class="bg-[var(--primary-color)] py-8">
+      <div class="container mx-auto text-center">
+        <div class="mb-4">
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://www.facebook.com/reimaginetruthofficial/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://x.com/reimagine_truth" target="_blank"><i class="fab fa-twitter"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://t.me/TruthWebOfficial" target="_blank"><i class="fab fa-telegram"></i></a>
+            <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://www.youtube.com/@ReimagineTruth" target="_blank"><i class="fab fa-youtube"></i></a>
+        </div>
+        <p class="text-[var(--text-color)] mb-4">© 2025 TruthWeb. All rights reserved.</p>
+        
+      </div>
+  
+
+        <!-- Quick Links Section -->
+        <div class="flex justify-center space-x-8 mb-8 animate-fadeIn">
+            <a class="text-white hover:text-gray-300 transition-colors" href="about.html">About Us</a>
+            <a class="text-white hover:text-gray-300 transition-colors" href="termsofservice.html">Terms & Conditions</a>
+            <a class="text-white hover:text-gray-300 transition-colors" href="policy.html">Privacy Policy</a>
+            <a class="text-white hover:text-gray-300 transition-colors" href="contact.html">Contact</a>
+        </div>
+
+        <!-- Support Section -->
+        <div class="text-center animate-fadeIn">
+            <p class="text-lg mb-4">Support Us</p>
+            <a href="donate.html" class="inline-flex items-center text-white bg-purple-700 px-4 py-2 rounded-full hover:bg-purple-600 transition-colors transform hover:scale-110">
+                <i class="fas fa-heart mr-2"></i> Donate
+            </a>
+        </div>
+    </div>
+</footer>
+    <script>
+        document.getElementById('openModalButton').addEventListener('click', function(event) {
+            event.preventDefault();
+            document.getElementById('infoModal').style.display = 'block';
+        });
+
+        document.getElementById('closeModalButton').addEventListener('click', function() {
+            document.getElementById('infoModal').style.display = 'none';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target == document.getElementById('infoModal')) {
+                document.getElementById('infoModal').style.display = 'none';
+            }
+        });
+
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.sticky-header');
+            const logoText = document.querySelector('.logo-text');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+                logoText.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+                logoText.classList.remove('scrolled');
+            }
+        });
+    </script>
+   </section>
+  </main>
+</body>
+</html>
+   <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+<script>
+  kofiWidgetOverlay.draw('reimaginetruth', {
+    'type': 'floating-chat',
+    'floating-chat.donateButton.text': 'Support Us',
+    'floating-chat.donateButton.background-color': '#794bc4',
+    'floating-chat.donateButton.text-color': '#fff'
+  });
+</script>
+  </script>
+
+ </section>
+  </main>
+</body>
+</html> 
