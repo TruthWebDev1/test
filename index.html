@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>TruthWeb - Pi Network Hub</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #FFFFFF;
+      }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+      }
+      .hero {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid var(--highlight-color);
+        padding: 1rem;
+        background: var(--primary-color);
+        animation: fadeIn 1.5s ease-in-out;
+      }
+      .hero::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
+        opacity: 0.5;
+        animation: float 6s infinite ease-in-out, pulseGlow 3s infinite alternate;
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+      }
+      @keyframes pulseGlow {
+        0% { opacity: 0.5; }
+        100% { opacity: 0.8; }
+      }
+      @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+      .glow-text {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--text-color);
+        text-shadow: 0 0 10px var(--highlight-color), 0 0 20px var(--highlight-color);
+        animation: glow 2s infinite alternate, bounce 3s infinite ease-in-out;
+      }
+      @keyframes glow {
+        0% { text-shadow: 0 0 10px var(--highlight-color), 0 0 20px var(--highlight-color); }
+        100% { text-shadow: 0 0 20px var(--highlight-color), 0 0 30px var(--highlight-color); }
+      }
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      .card {
+        background: var(--secondary-color);
+        border: 2px solid var(--highlight-color);
+        border-radius: 10px;
+        padding: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: slideIn 1s ease-in-out;
+      }
+      .card:hover {
+        transform: translateY(-10px) rotate(2deg);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+      }
+      @keyframes slideIn {
+        0% { opacity: 0; transform: translateX(-50px); }
+        100% { opacity: 1; transform: translateX(0); }
+      }
+      .btn {
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.75rem 1.5rem;
+        border: 2px solid var(--highlight-color);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+        display: inline-block;
+        text-align: center;
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.1) rotate(3deg);
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
+      footer {
+        background: var(--primary-color);
+        color: var(--text-color);
+        text-align: center;
+        padding: 2rem;
+        animation: fadeIn 1.5s ease-in-out;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      .sticky-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: background 0.3s ease, color 0.3s ease;
+        animation: slideDown 1s ease-in-out;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 64px;
+        padding: 0 1rem;
+      }
+      .sticky-header.scrolled {
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+      .sticky-header .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        transition: font-size 0.3s ease;
+      }
+      .sticky-header.scrolled .logo-text {
+        font-size: 1.25rem;
+      }
+      .sticky-header .icon {
+        color: inherit;
+      }
+      @keyframes slideDown {
+        0% { transform: translateY(-100%); }
+        100% { transform: translateY(0); }
+      }
+      .nav-item {
+        transition: transform 0.3s ease;
+        animation: fadeInUp 0.5s ease-in-out forwards;
+      }
+      .nav-item:hover {
+        transform: scale(1.1) translateY(-5px);
+      }
+      @keyframes fadeInUp {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+      .nav-item:nth-child(1) { animation-delay: 0.1s; }
+      .nav-item:nth-child(2) { animation-delay: 0.2s; }
+      .nav-item:nth-child(3) { animation-delay: 0.3s; }
+      .nav-item:nth-child(4) { animation-delay: 0.4s; }
+      .nav-item:nth-child(5) { animation-delay: 0.5s; }
+      .nav-item:nth-child(6) { animation-delay: 0.6s; }
+      .nav-item:nth-child(7) { animation-delay: 0.7s; }
+      .floating-effect {
+        transition: transform 0.3s ease;
+      }
+      .floating-effect:hover {
+        transform: translateY(-5px) rotate(5deg);
+      }
+    </style>
+</head>
+<body>
+    <header class="sticky-header">
+      <div class="flex items-center">
+        <a class="text-inherit mr-4 flex items-center" href="index.html">
+          <span class="logo-text ml-2">TruthWeb</span>
+        </a>
+      </div>
+      <div class="flex items-center">
+        <a class="mr-4 icon floating-effect" href="marketplace.html">
+          <i class="fas fa-shopping-cart text-xl sm:text-2xl"></i>
+        </a>
+        <a class="mr-4 icon floating-effect" href="profile.html">
+          <i class="fas fa-user text-xl sm:text-2xl"></i>
+        </a>
+        <a class="icon floating-effect" href="wallet.html">
+          <i class="fas fa-wallet text-xl sm:text-2xl"></i>
+        </a>
+      </div>
+    </header>
+
+    <nav class="bg-[var(--primary-color)] py-4">
+      <ul class="flex flex-wrap justify-center space-x-4">
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="marketplace.html">Marketplace</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="profile.html">Profile</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="wallet.html">Wallet</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="community.html">Community</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="developers.html">Developers</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="about.html">About</a></li>
+      </ul>
+    </nav>
+
+    <div class="hero flex flex-col items-center justify-center min-h-screen">
+      <h1 class="glow-text fade-in text-5xl md:text-7xl font-bold">TruthWeb</h1>
+      <p class="text-xl mt-4 text-center fade-in" style="animation-delay: 0.5s; color: var(--text-color);">
+        Your Decentralized Pi Network Hub
+      </p>
+      <a href="#core-features" class="btn mt-6">Discover Features</a>
+    </div>
+
+    <!-- Hub Description Section -->
+    <section id="hub" class="py-16 px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">TruthWeb: Your Decentralized Pi Network Hub</h2>
+      <div class="max-w-4xl mx-auto text-center">
+        <p class="text-lg mb-6">
+          TruthWeb is the ultimate decentralized hub for Pi Network Pioneers. Built on trust, transparency, and community, TruthWeb connects you to a vibrant marketplace, secure wallet management, and a thriving Pi community—all powered by The First Digital Currency.
+        </p>
+        <p class="text-lg mb-6">
+          Whether you’re buying, selling, trading, or engaging with fellow Pioneers, TruthWeb provides a seamless and secure decentralized experience. Join us to shape the future of the Pi ecosystem!
+        </p>
+        <a href="about.html" class="btn">Learn More About TruthWeb</a>
+      </div>
+    </section>
+
+    <!-- Core Features Section -->
+    <section id="core-features" class="py-16 px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">Core Features</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div class="card">
+          <i class="fas fa-shopping-cart text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Pi-Powered Marketplace</h3>
+          <p class="mb-4">Buy and sell digital products, goods, and services using Pi.</p>
+          <a href="pi-powered-marketplace.html" class="btn">Explore Marketplace</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-exchange-alt text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Decentralized Transactions</h3>
+          <p class="mb-4">Secure, peer-to-peer transactions powered by Pi Network.</p>
+          <a href="decentralized-transactions.html" class="btn">Start Transacting</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-user-check text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">User Profiles & Wallet</h3>
+          <p class="mb-4">Connect and manage your Pi wallet seamlessly.</p>
+          <a href="user-profiles-wallet.html" class="btn">Set Up Profile</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-list text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Multi-Category Listings</h3>
+          <p class="mb-4">eBooks, software, courses, goods, and services.</p>
+          <a href="multi-category-listings.html" class="btn">Browse Listings</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-shield-alt text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Escrow System</h3>
+          <p class="mb-4">Prevent fraud with secure payment holds.</p>
+          <a href="escrow-system.html" class="btn">Learn More</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-clock text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Instant Transactions</h3>
+          <p class="mb-4">Track purchases and sales in real-time.</p>
+          <a href="instant-transactions.html" class="btn">View Dashboard</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Community & Social Section -->
+    <section class="py-16 px-4 bg-[var(--primary-color)] text-[var(--text-color)]">
+      <h2 class="text-3xl font-bold text-center mb-8">Community & Social</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div class="card bg-[var(--secondary-color)] text-[var(--primary-color)]">
+          <i class="fas fa-check-circle text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Pioneer Verification</h3>
+          <p class="mb-4">Ensure trusted sellers and buyers.</p>
+          <a href="profile.html#verify" class="btn">Get Verified</a>
+        </div>
+        <div class="card bg-[var(--secondary-color)] text-[var(--primary-color)]">
+          <i class="fas fa-star text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Reviews & Ratings</h3>
+          <p class="mb-4">Build trust with user feedback.</p>
+          <a href="marketplace.html#reviews" class="btn">Leave a Review</a>
+        </div>
+        <div class="card bg-[var(--secondary-color)] text-[var(--primary-color)]">
+          <i class="fas fa-comments text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Messaging & Chat</h3>
+          <p class="mb-4">Communicate directly in-app.</p>
+          <a href="messages.html" class="btn">Start Chatting</a>
+        </div>
+        <div class="card bg-[var(--secondary-color)] text-[var(--primary-color)]">
+          <i class="fas fa-user-plus text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Referral Program</h3>
+          <p class="mb-4">Earn rewards by inviting friends.</p>
+          <a href="community.html#referral" class="btn">Invite Now</a>
+        </div>
+        <div class="card bg-[var(--secondary-color)] text-[var(--primary-color)]">
+          <i class="fas fa-users text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Community Forums</h3>
+          <p class="mb-4">Engage with Pi Pioneers.</p>
+          <a href="community.html#forums" class="btn">Join Discussion</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Developer & Business Section -->
+    <section class="py-16 px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">Developer & Business</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div class="card">
+          <i class="fas fa-code text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Open-Source API</h3>
+          <p class="mb-4">Build custom Pi integrations.</p>
+          <a href="api-docs.html" class="btn">Get API Docs</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-chart-line text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Vendor Dashboard</h3>
+          <p class="mb-4">Analytics for sellers and businesses.</p>
+          <a href="dashboard.html" class="btn">View Dashboard</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-box-open text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Automated Orders</h3>
+          <p class="mb-4">Instant digital product delivery.</p>
+          <a href="marketplace.html#sell" class="btn">List a Product</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-bullhorn text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Ad & Promotion</h3>
+          <p class="mb-4">Boost listing visibility.</p>
+          <a href="marketplace.html#promote" class="btn">Promote Now</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-money-bill-wave text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Multi-Currency</h3>
+          <p class="mb-4">Convert Pi to fiat for clarity.</p>
+          <a href="wallet.html#currency" class="btn">Set Preferences</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-16 px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">What Our Users Say</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div class="card">
+          <p class="mb-4">"TruthWeb is amazing! I've been able to sell my digital art easily."</p>
+          <p>- Artist123</p>
+        </div>
+        <div class="card">
+          <p class="mb-4">"The community is very supportive. I've learned a lot about Pi and blockchain."</p>
+          <p>- Learner456</p>
+        </div>
+        <div class="card">
+          <p class="mb-4">"As a developer, the API documentation is top-notch. Highly recommend!"</p>
+          <p>- Dev789</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Security & Trust Section -->
+    <section class="py-16 px-4 bg-[var(--primary-color)] text-[var(--text-color)]">
+      <h2 class="text-3xl font-bold text-center mb-8">Security & Trust</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div class="card bg-[var(--secondary-color)] text-[var(--primary-color)]">
+          <i class="fas fa-id-badge text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">KYC Verification</h3>
+          <p class="mb-4">Secure access with Pi identity.</p>
+          <a href="profile.html#kyc" class="btn">Verify Identity</a>
+        </div>
+        <div class="card bg-[var(--secondary-color)] text-[var(--primary-color)]">
+          <i class="fas fa-lock text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">End-to-End Encryption</h3>
+          <p class="mb-4">Protect your data and transactions.</p>
+          <a href="security.html" class="btn">Learn More</a>
+        </div>
+        <div class="card bg-[var(--secondary-color)] text-[var(--primary-color)]">
+          <i class="fas fa-mobile-alt text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">2FA</h3>
+          <p class="mb-4">Extra security for logins.</p>
+          <a href="profile.html#2fa" class="btn">Enable 2FA</a>
+        </div>
+        <div class="card bg-[var(--secondary-color)] text-[var(--primary-color)]">
+          <i class="fas fa-search text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Fraud Detection</h3>
+          <p class="mb-4">AI-powered monitoring.</p>
+          <a href="security.html#fraud" class="btn">Report Issue</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- News Section -->
+    <section id="news" class="py-16 px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">TruthWeb News</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div class="card">
+          <i class="fas fa-newspaper text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">TruthWeb v1.0 Launched!</h3>
+          <p class="mb-4">Our platform is live on GitHub Pages, offering Pi-powered transactions.</p>
+          <a href="news.html#launch" class="btn">Read More</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-coins text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Pi Network Milestone</h3>
+          <p class="mb-4">Pi reaches 50M Pioneers, boosting TruthWeb adoption.</p>
+          <a href="https://minepi.com/news" target="_blank" class="btn">Read More</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-users text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Community Update</h3>
+          <p class="mb-4">New forum features added based on Pioneer feedback.</p>
+          <a href="community.html#update" class="btn">Read More</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- PiTrack Section -->
+    <section id="pitrack" class="py-16 px-4 bg-[var(--primary-color)] text-[var(--text-color)]">
+      <h2 class="text-3xl font-bold text-center mb-8">PiTrack</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div class="card bg-[var(--secondary-color)] text-[var(--primary-color)]">
+          <i class="fas fa-chart-bar text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Track Your Pi</h3>
+          <p class="mb-4">Monitor your wallet balance and transaction history.</p>
+          <a href="pitrack.html#wallet" class="btn">View Wallet</a>
+        </div>
+        <div class="card bg-[var(--secondary-color)] text-[var(--primary-color)]">
+          <i class="fas fa-history text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Transaction Insights</h3>
+          <p class="mb-4">Real-time updates on your Pi activity.</p>
+          <a href="pitrack.html#history" class="btn">Check History</a>
+        </div>
+        <div class="card bg-[var(--secondary-color)] text-[var(--primary-color)]">
+          <i class="fas fa-tachometer-alt text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Ecosystem Metrics</h3>
+          <p class="mb-4">Track TruthWeb’s Pi usage trends.</p>
+          <a href="pitrack.html#metrics" class="btn">See Stats</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pi Trade Section -->
+    <section id="pitrade" class="py-16 px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">Pi Trade</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div class="card">
+          <i class="fas fa-handshake text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">P2P Trading</h3>
+          <p class="mb-4">Trade Pi directly with other Pioneers.</p>
+          <a href="pitrade.html#p2p" class="btn">Start Trading</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-chart-line text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Market Trends</h3>
+          <p class="mb-4">View Pi value trends within TruthWeb.</p>
+          <a href="pitrade.html#trends" class="btn">Check Trends</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-exchange-alt text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Trade Dashboard</h3>
+          <p class="mb-4">Manage your trade offers and history.</p>
+          <a href="pitrade.html#dashboard" class="btn">Open Dashboard</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Coming Soon Section -->
+    <section class="py-16 px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">Coming Soon</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+        <div class="card">
+          <i class="fas fa-image text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">NFT Marketplace</h3>
+          <p class="mb-4">Trade NFTs with Pi.</p>
+          <a href="future.html#nfts" class="btn">Stay Updated</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-robot text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">AI Recommendations</h3>
+          <p class="mb-4">Personalized suggestions.</p>
+          <a href="future.html#ai" class="btn">Stay Updated</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-gavel text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Dispute Resolution</h3>
+          <p class="mb-4">Community-driven system.</p>
+          <a href="future.html#disputes" class="btn">Stay Updated</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-coins text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Pi Staking</h3>
+          <p class="mb-4">Earn rewards by staking.</p>
+          <a href="future.html#staking" class="btn">Stay Updated</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="bg-[var(--primary-color)] py-8">
+      <div class="container mx-auto text-center">
+        <div class="mb-4">
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://www.facebook.com/reimaginetruthofficial/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://x.com/reimagine_truth" target="_blank"><i class="fab fa-twitter"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://t.me/TruthWebOfficial" target="_blank"><i class="fab fa-telegram"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://www.youtube.com/@ReimagineTruth" target="_blank"><i class="fab fa-youtube"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://github.com/username/TruthWeb" target="_blank"><i class="fab fa-github"></i></a>
+        </div>
+        <p class="text-[var(--text-color)] mb-4">© 2025 TruthWeb. All rights reserved.</p>
+        <div class="text-[var(--text-color)] text-sm">
+          <a href="about.html" class="mx-2 hover:text-[var(--highlight-color)]">About Us</a> |
+          <a href="terms.html" class="mx-2 hover:text-[var(--highlight-color)]">Terms & Conditions</a> |
+          <a href="privacy.html" class="mx-2 hover:text-[var(--highlight-color)]">Privacy Policy</a> |
+          <a href="contact.html" class="mx-2 hover:text-[var(--highlight-color)]">Contact</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      window.addEventListener('scroll', function() {
+        const header = document.querySelector('.sticky-header');
+        if (window.scrollY > 50) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+      });
+    </script>
+</body>
