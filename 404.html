@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>404 - Page Not Found | TruthWeb</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+      :root {
+        --primary-color: #000000; /* Black as the primary color */
+        --secondary-color: #FFFFFF; /* White as the secondary color */
+        --highlight-color: #CCCCCC; /* Light gray for subtle highlights */
+        --text-color: #FFFFFF; /* White text for dark backgrounds */
+        --button-bg-color: #000000; /* Black buttons */
+        --button-text-color: #FFFFFF; /* White text on buttons */
+        --button-hover-bg-color: #FFFFFF; /* White on hover */
+        --button-hover-text-color: #000000; /* Black text on hover */
+        --background-color: #FFFFFF; /* White body background */
+      }
+      body {
+        background: var(--primary-color);
+        color: var(--text-color);
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+      .container {
+        text-align: center;
+        padding: 2rem;
+        max-width: 600px;
+        animation: fadeIn 1.5s ease-in-out;
+      }
+      .error-code {
+        font-size: 6rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        text-shadow: 0 0 10px var(--highlight-color), 0 0 20px var(--highlight-color);
+        animation: glow 2s infinite alternate;
+      }
+      .message {
+        font-size: 1.5rem;
+        margin: 1rem 0;
+      }
+      .btn {
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.75rem 1.5rem;
+        border: 2px solid var(--highlight-color);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+        display: inline-block;
+        text-decoration: none;
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.1) rotate(3deg);
+      }
+      @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+      @keyframes glow {
+        0% { text-shadow: 0 0 10px var(--highlight-color), 0 0 20px var(--highlight-color); }
+        100% { text-shadow: 0 0 20px var(--highlight-color), 0 0 30px var(--highlight-color); }
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="error-code">404</h1>
+        <p class="message">Oops! It seems this page is still under construction or doesn’t exist yet.</p>
+        <p class="message">TruthWeb is an evolving platform—check back soon for updates!</p>
+        <a href="index.html" class="btn">Back to Home</a>
+    </div>
+</body>
+</html>

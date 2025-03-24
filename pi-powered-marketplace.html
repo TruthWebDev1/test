@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Pi-Powered Marketplace | TruthWeb</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #FFFFFF;
+      }
+      body { background: var(--background-color); color: var(--primary-color); font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+      .hero { height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; border: 2px solid var(--highlight-color); padding: 1rem; background: var(--primary-color); animation: fadeIn 1.5s ease-in-out; }
+      .hero::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent); opacity: 0.5; animation: float 6s infinite ease-in-out, pulseGlow 3s infinite alternate; }
+      @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+      @keyframes pulseGlow { 0% { opacity: 0.5; } 100% { opacity: 0.8; } }
+      @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+      .glow-text { font-size: 2rem; font-weight: bold; color: var(--text-color); text-shadow: 0 0 10px var(--highlight-color), 0 0 20px var(--highlight-color); animation: glow 2s infinite alternate, bounce 3s infinite ease-in-out; }
+      @keyframes glow { 0% { text-shadow: 0 0 10px var(--highlight-color), 0 0 20px var(--highlight-color); } 100% { text-shadow: 0 0 20px var(--highlight-color), 0 0 30px var(--highlight-color); } }
+      @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+      .card { background: var(--secondary-color); border: 2px solid var(--highlight-color); border-radius: 10px; padding: 1rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; animation: slideIn 1s ease-in-out; }
+      .card:hover { transform: translateY(-10px) rotate(2deg); box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); }
+      @keyframes slideIn { 0% { opacity: 0; transform: translateX(-50px); } 100% { opacity: 1; transform: translateX(0); } }
+      .btn { background: var(--button-bg-color); color: var(--button-text-color); padding: 0.75rem 1.5rem; border: 2px solid var(--highlight-color); border-radius: 20px; cursor: pointer; transition: all 0.3s ease; animation: pulse 2s infinite; display: inline-block; text-align: center; text-decoration: none; }
+      .btn:hover { background: var(--button-hover-bg-color); color: var(--button-hover-text-color); transform: scale(1.1) rotate(3deg); }
+      @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+      footer { background: var(--primary-color); color: var(--text-color); text-align: center; padding: 2rem; animation: fadeIn 1.5s ease-in-out; }
+      html { scroll-behavior: smooth; }
+      .sticky-header { position: sticky; top: 0; z-index: 50; background: var(--primary-color); color: var(--text-color); transition: background 0.3s ease, color 0.3s ease; animation: slideDown 1s ease-in-out; display: flex; justify-content: space-between; align-items: center; height: 64px; padding: 0 1rem; }
+      .sticky-header.scrolled { background: var(--secondary-color); color: var(--primary-color); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); }
+      .sticky-header .logo-text { font-size: 1.5rem; font-weight: 700; transition: font-size 0.3s ease; }
+      .sticky-header.scrolled .logo-text { font-size: 1.25rem; }
+      .sticky-header .icon { color: inherit; }
+      @keyframes slideDown { 0% { transform: translateY(-100%); } 100% { transform: translateY(0); } }
+      .nav-item { transition: transform 0.3s ease; animation: fadeInUp 0.5s ease-in-out forwards; }
+      .nav-item:hover { transform: scale(1.1) translateY(-5px); }
+      @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+      .nav-item:nth-child(1) { animation-delay: 0.1s; }
+      .nav-item:nth-child(2) { animation-delay: 0.2s; }
+      .nav-item:nth-child(3) { animation-delay: 0.3s; }
+      .nav-item:nth-child(4) { animation-delay: 0.4s; }
+      .nav-item:nth-child(5) { animation-delay: 0.5s; }
+      .nav-item:nth-child(6) { animation-delay: 0.6s; }
+      .floating-effect { transition: transform 0.3s ease; }
+      .floating-effect:hover { transform: translateY(-5px) rotate(5deg); }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="sticky-header">
+      <div class="flex items-center">
+        <a class="text-inherit mr-4 flex items-center" href="index.html">
+          <span class="logo-text ml-2">TruthWeb</span>
+        </a>
+      </div>
+      <div class="flex items-center">
+        <a class="mr-4 icon floating-effect" href="marketplace.html"><i class="fas fa-shopping-cart text-xl sm:text-2xl"></i></a>
+        <a class="mr-4 icon floating-effect" href="profile.html"><i class="fas fa-user text-xl sm:text-2xl"></i></a>
+        <a class="icon floating-effect" href="wallet.html"><i class="fas fa-wallet text-xl sm:text-2xl"></i></a>
+      </div>
+    </header>
+
+    <!-- Navigation Section -->
+    <nav class="bg-[var(--primary-color)] py-4">
+      <ul class="flex flex-wrap justify-center space-x-4">
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="marketplace.html">Marketplace</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="profile.html">Profile</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="wallet.html">Wallet</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="community.html">Community</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="developers.html">Developers</a></li>
+      </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero flex flex-col items-center justify-center">
+      <h1 class="glow-text fade-in text-5xl md:text-7xl font-bold">Pi-Powered Marketplace</h1>
+      <p class="text-xl mt-4 text-center fade-in" style="animation-delay: 0.5s; color: var(--text-color);">
+        Shop with Pi, Powered by Pioneers
+      </p>
+    </div>
+
+    <!-- Pi-Powered Marketplace Section -->
+    <section id="pi-powered-marketplace" class="py-16 px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">Why Pi-Powered?</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div class="card">
+          <i class="fas fa-shopping-cart text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Buy & Sell with Pi</h3>
+          <p class="mb-4">Use Pi to purchase digital products, goods, and services from a global network of Pioneer vendors.</p>
+          <a href="marketplace.html" class="btn">Explore Marketplace</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-list text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Diverse Listings</h3>
+          <p class="mb-4">Browse eBooks, software, courses, physical goods, and more—all payable with Pi.</p>
+          <a href="diverselistings.html" class="btn">Browse Listings</a>
+        </div>
+        <div class="card">
+          <i class="fas fa-shield-alt text-4xl mb-4"></i>
+          <h3 class="text-xl font-semibold mb-2">Secure Escrow</h3>
+          <p class="mb-4">Our escrow system holds Pi payments until goods are delivered, ensuring trust and safety.</p>
+          <a href="escrow.html" class="btn">Learn More</a>
+        </div>
+      </div>
+      <div class="text-center mt-8">
+        <p class="text-lg mb-4">The TruthWeb Pi-Powered Marketplace lets you shop smarter with Pi. Join the revolution!</p>
+        <a href="marketplace.html" class="btn">Start Shopping</a>
+      </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="bg-[var(--primary-color)] py-8">
+      <div class="container mx-auto text-center">
+        <div class="mb-4">
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://www.facebook.com/reimaginetruthofficial/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://x.com/reimagine_truth" target="_blank"><i class="fab fa-twitter"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://

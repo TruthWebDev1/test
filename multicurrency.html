@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Multi-Currency - TruthWeb</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <!-- Axios for API Calls -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Chart.js for Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- TradingView Widget -->
+    <script src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async></script>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #FFFFFF;
+      }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+      }
+      .hero {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid var(--highlight-color);
+        padding: 1rem;
+        background: var(--primary-color);
+        animation: fadeIn 1.5s ease-in-out;
+      }
+      .hero::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
+        opacity: 0.5;
+        animation: float 6s infinite ease-in-out, pulseGlow 3s infinite alternate;
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+      }
+      @keyframes pulseGlow {
+        0% { opacity: 0.5; }
+        100% { opacity: 0.8; }
+      }
+      @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+      .glow-text {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--text-color);
+        text-shadow: 0 0 10px var(--highlight-color), 0 0 20px var(--highlight-color);
+        animation: glow 2s infinite alternate, bounce 3s infinite ease-in-out;
+      }
+      @keyframes glow {
+        0% { text-shadow: 0 0 10px var(--highlight-color), 0 0 20px var(--highlight-color); }
+        100% { text-shadow: 0 0 20px var(--highlight-color), 0 0 30px var(--highlight-color); }
+      }
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      .card {
+        background: var(--secondary-color);
+        border: 2px solid var(--highlight-color);
+        border-radius: 10px;
+        padding: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: slideIn 1s ease-in-out;
+      }
+      .card:hover {
+        transform: translateY(-10px) rotate(2deg);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+      }
+      @keyframes slideIn {
+        0% { opacity: 0; transform: translateX(-50px); }
+        100% { opacity: 1; transform: translateX(0); }
+      }
+      .btn {
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.75rem 1.5rem;
+        border: 2px solid var(--highlight-color);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+        display: inline-block;
+        text-align: center;
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.1) rotate(3deg);
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
+      footer {
+        background: var(--primary-color);
+        color: var(--text-color);
+        text-align: center;
+        padding: 2rem;
+        animation: fadeIn 1.5s ease-in-out;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      .sticky-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: background 0.3s ease, color 0.3s ease;
+        animation: slideDown 1s ease-in-out;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 64px;
+        padding: 0 1rem;
+      }
+      .sticky-header.scrolled {
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+      .sticky-header .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        transition: font-size 0.3s ease;
+      }
+      .sticky-header.scrolled .logo-text {
+        font-size: 1.25rem;
+      }
+      .sticky-header .icon {
+        color: inherit;
+      }
+      @keyframes slideDown {
+        0% { transform: translateY(-100%); }
+        100% { transform: translateY(0); }
+      }
+      .nav-item {
+        transition: transform 0.3s ease;
+        animation: fadeInUp 0.5s ease-in-out forwards;
+      }
+      .nav-item:hover {
+        transform: scale(1.1) translateY(-5px);
+      }
+      @keyframes fadeInUp {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+      .nav-item:nth-child(1) { animation-delay: 0.1s; }
+      .nav-item:nth-child(2) { animation-delay: 0.2s; }
+      .nav-item:nth-child(3) { animation-delay: 0.3s; }
+      .nav-item:nth-child(4) { animation-delay: 0.4s; }
+      .nav-item:nth-child(5) { animation-delay: 0.5s; }
+      .nav-item:nth-child(6) { animation-delay: 0.6s; }
+      .nav-item:nth-child(7) { animation-delay: 0.7s; }
+      .floating-effect {
+        transition: transform 0.3s ease;
+      }
+      .floating-effect:hover {
+        transform: translateY(-5px) rotate(5deg);
+      }
+      .active {
+        color: var(--highlight-color);
+        text-decoration: underline;
+      }
+      .spinner {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid var(--button-text-color);
+        border-top: 2px solid transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-left: 0.5rem;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      .chart-container canvas {
+        height: 300px !important;
+        width: 100%;
+      }
+      .trading-container #tradingview_chart {
+        height: 400px;
+        width: 100%;
+      }
+    </style>
+</head>
+<body>
+    <!-- Sticky Header -->
+    <header class="sticky-header">
+      <div class="flex items-center">
+        <a class="text-inherit mr-4 flex items-center" href="index.html">
+          <span class="logo-text ml-2">TruthWeb</span>
+        </a>
+      </div>
+      <div class="flex items-center">
+        <a class="mr-4 icon floating-effect" href="marketplace.html">
+          <i class="fas fa-shopping-cart text-xl sm:text-2xl"></i>
+        </a>
+        <a class="mr-4 icon floating-effect" href="profile.html">
+          <i class="fas fa-user text-xl sm:text-2xl"></i>
+        </a>
+        <a class="icon floating-effect" href="walletdashboard.html">
+          <i class="fas fa-wallet text-xl sm:text-2xl"></i>
+        </a>
+      </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="bg-[var(--primary-color)] py-4">
+      <ul class="flex flex-wrap justify-center space-x-4">
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="marketplace.html">Marketplace</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="profile.html">Profile</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect active" href="walletdashboard.html">Wallet</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="community.html">Community</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="developers.html">Developers</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="about.html">About</a></li>
+      </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero flex flex-col items-center justify-center min-h-screen">
+      <h1 class="glow-text fade-in text-5xl md:text-7xl font-bold">Multi-Currency</h1>
+      <p class="text-xl mt-4 text-center fade-in" style="animation-delay: 0.5s; color: var(--text-color);">
+        Convert Pi to fiat for clarity
+      </p>
+      <a href="#converter" class="btn mt-8">Start Converting</a>
+    </div>
+
+    <!-- Multi-Currency Section -->
+    <section id="converter" class="py-16 px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">Pi to Fiat Converter</h2>
+      <div class="max-w-6xl mx-auto">
+        <!-- TradingView Real-Time Chart -->
+        <div class="mb-12 trading-container">
+          <h3 class="text-2xl font-semibold mb-6">PIUSDT Real-Time Chart</h3>
+          <div class="card p-6">
+            <div class="tradingview-widget-container" id="tradingview_chart">
+              <div class="tradingview-widget-container__widget"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testnet Data -->
+        <div class="mb-12">
+          <h3 class="text-2xl font-semibold mb-6">Pi Testnet Data</h3>
+          <div class="card p-6">
+            <p id="testnet-balance" class="text-center text-gray-600 mb-4">Testnet Balance: Fetching...</p>
+            <input type="text" id="testnet-account" placeholder="Enter Testnet Account ID" class="p-2 border border-gray-300 rounded w-full text-gray-600 mb-4" value="GCOR3TJAYA4JDV6GJSREO4TRDUW32IA7BQN3IMY553HQ26NL77W7TEAM">
+            <button id="fetch-testnet-btn" class="btn w-full">Fetch Testnet Data</button>
+          </div>
+        </div>
+
+        <!-- Currency Converter -->
+        <div class="card p-6 mb-12 mx-auto max-w-md">
+          <h3 class="text-2xl font-semibold mb-6 text-center">Convert Your Pi</h3>
+          <p class="text-center text-gray-600 mb-4" id="current-rate">Fetching exchange rate...</p>
+          <div class="mb-4">
+            <label class="block text-left text-gray-700 mb-2" for="pi-amount">Pi Amount:</label>
+            <input type="number" id="pi-amount" placeholder="Enter Pi amount" min="0" step="0.01" class="p-2 border border-gray-300 rounded w-full text-gray-600" value="100">
+          </div>
+          <div class="mb-4">
+            <label class="block text-left text-gray-700 mb-2" for="fiat-currency">Fiat Currency:</label>
+            <select id="fiat-currency" class="p-2 border border-gray-300 rounded w-full text-gray-600">
+              <option value="usd">USD - United States Dollar</option>
+              <option value="eur">EUR - Euro</option>
+              <option value="gbp">GBP - British Pound</option>
+              <option value="jpy">JPY - Japanese Yen</option>
+              <option value="aud">AUD - Australian Dollar</option>
+              <option value="cad">CAD - Canadian Dollar</option>
+              <option value="chf">CHF - Swiss Franc</option>
+              <option value="cny">CNY - Chinese Yuan</option>
+              <option value="inr">INR - Indian Rupee</option>
+              <option value="krw">KRW - South Korean Won</option>
+              <option value="sgd">SGD - Singapore Dollar</option>
+              <option value="hkd">HKD - Hong Kong Dollar</option>
+              <option value="idr">IDR - Indonesian Rupiah</option>
+              <option value="myr">MYR - Malaysian Ringgit</option>
+              <option value="php">PHP - Philippine Peso</option>
+              <option value="thb">THB - Thai Baht</option>
+              <option value="vnd">VND - Vietnamese Dong</option>
+            </select>
+          </div>
+          <button id="convert-btn" class="btn w-full mb-4">Convert</button>
+          <p id="conversion-result" class="text-center text-lg font-bold text-gray-600">Result: Fetching...</p>
+        </div>
+
+        <!-- Exchange Rates Chart -->
+        <div class="mb-12 chart-container">
+          <h3 class="text-2xl font-semibold mb-6">Real-Time Exchange Rates</h3>
+          <div class="card p-6">
+            <canvas id="exchangeRateChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Historical Price Chart -->
+        <div class="mb-12 chart-container">
+          <h3 class="text-2xl font-semibold mb-6">Historical Price</h3>
+          <div class="card p-6">
+            <canvas id="historicalChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Fire Sale Chart -->
+        <div class="mb-12 chart-container">
+          <h3 class="text-2xl font-semibold mb-6">Fire Sale</h3>
+          <div class="card p-6">
+            <canvas id="piChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Rainbow Chart -->
+        <div class="mb-12 chart-container">
+          <h3 class="text-2xl font-semibold mb-6">Rainbow Chart</h3>
+          <div class="card p-6">
+            <canvas id="piRainbowChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Blocks Chart -->
+        <div class="mb-12 chart-container">
+          <h3 class="text-2xl font-semibold mb-6">Pi Blocks (Real-Time)</h3>
+          <div class="card p-6">
+            <canvas id="piBlocksChart"></canvas>
+            <p id="block-info" class="text-center text-gray-600 mt-4">Fetching block data...</p>
+          </div>
+        </div>
+
+        <!-- Transaction History with Fiat -->
+        <div class="mb-12">
+          <h3 class="text-2xl font-semibold mb-6">Transaction History</h3>
+          <div class="card p-6">
+            <div id="tx-grid" class="space-y-4">
+              <div class="card p-4 flex justify-between items-center">
+                <div>
+                  <p class="font-semibold">Sent to Marketplace (T-Shirt)</p>
+                  <p class="text-gray-600 text-sm">Mar 5, 2025, 14:30</p>
+                </div>
+                <div class="text-right" id="tx-1">
+                  <p class="text-red-500 font-bold">-50 Pi</p>
+                  <p class="text-gray-600 text-sm">Loading...</p>
+                </div>
+              </div>
+              <div class="card p-4 flex justify-between items-center">
+                <div>
+                  <p class="font-semibold">Received from PioneerB (P2P)</p>
+                  <p class="text-gray-600 text-sm">Mar 4, 2025, 09:15</p>
+                </div>
+                <div class="text-right" id="tx-2">
+                  <p class="text-green-500 font-bold">+200 Pi</p>
+                  <p class="text-gray-600 text-sm">Loading...</p>
+                </div>
+              </div>
+              <div class="card p-4 flex justify-between items-center">
+                <div>
+                  <p class="font-semibold">Sent to PioneerC (P2P)</p>
+                  <p class="text-gray-600 text-sm">Mar 3, 2025, 18:45</p>
+                </div>
+                <div class="text-right" id="tx-3">
+                  <p class="text-red-500 font-bold">-100 Pi</p>
+                  <p class="text-gray-600 text-sm">Loading...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="text-center">
+          <h3 class="text-2xl font-semibold mb-6">Explore More</h3>
+          <div class="flex justify-center space-x-4">
+            <a href="walletdashboard.html" class="btn">Wallet Dashboard</a>
+            <a href="transactioninsights.html" class="btn">Transaction Insights</a>
+            <a href="marketplace.html" class="btn">Marketplace</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[var(--primary-color)] py-8">
+      <div class="container mx-auto text-center">
+        <div class="mb-4">
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://www.facebook.com/reimaginetruthofficial/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://x.com/reimagine_truth" target="_blank"><i class="fab fa-twitter"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://t.me/TruthWebOfficial" target="_blank"><i class="fab fa-telegram"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://www.youtube.com/@ReimagineTruth" target="_blank"><i class="fab fa-youtube"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://github.com/username/TruthWeb" target="_blank"><i class="fab fa-github"></i></a>
+        </div>
+        <p class="text-[var(--text-color)] mb-4">© 2025 TruthWeb. All rights reserved.</p>
+        <div class="text-[var(--text-color)] text-sm">
+          <a href="about.html" class="mx-2 hover:text-[var(--highlight-color)]">About Us</a> |
+          <a href="terms.html" class="mx-2 hover:text-[var(--highlight-color)]">Terms & Conditions</a> |
+          <a href="privacy.html" class="mx-2 hover:text-[var(--highlight-color)]">Privacy Policy</a> |
+          <a href="contact.html" class="mx-2 hover:text-[var(--highlight-color)]">Contact</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+      // Sticky Header
+      window.addEventListener('scroll', function() {
+        const header = document.querySelector('.sticky-header');
+        if (window.scrollY > 50) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+      });
+
+      // TradingView Widget Initialization
+      (function() {
+        const script = document.createElement("script");
+        script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+        script.type = "text/javascript";
+        script.async = true;
+        script.innerHTML = JSON.stringify({
+          "autosize": true,
+          "symbol": "BITGET:PIUSDT",
+          "interval": "60",
+          "timezone": "Etc/UTC",
+          "theme": "dark",
+          "style": "1",
+          "locale": "en",
+          "allow_symbol_change": false,
+          "save_image": false,
+          "calendar": false,
+          "hide_volume": true,
+          "support_host": "https://www.tradingview.com"
+        });
+        document.getElementById("tradingview_chart").appendChild(script);
+      })();
+
+      // Constants and Variables
+      const piAmountInput = document.getElementById('pi-amount');
+      const fiatCurrencySelect = document.getElementById('fiat-currency');
+      const convertButton = document.getElementById('convert-btn');
+      const conversionResult = document.getElementById('conversion-result');
+      const currentRateText = document.getElementById('current-rate');
+      const testnetAccountInput = document.getElementById('testnet-account');
+      const fetchTestnetButton = document.getElementById('fetch-testnet-btn');
+      const testnetBalanceText = document.getElementById('testnet-balance');
+      const exchangeRateCtx = document.getElementById('exchangeRateChart').getContext('2d');
+      const historicalCtx = document.getElementById('historicalChart').getContext('2d');
+      const piCtx = document.getElementById('piChart').getContext('2d');
+      const piRainbowCtx = document.getElementById('piRainbowChart').getContext('2d');
+      const piBlocksCtx = document.getElementById('piBlocksChart').getContext('2d');
+      let exchangeRates = {};
+      let exchangeRateChart, historicalChart, piFireSaleChart, piRainbowChart, piBlocksChart;
+
+      const currencySymbols = {
+        usd: '$', eur: '€', gbp: '£', jpy: '¥', aud: 'A$', cad: 'C$', chf: 'CHF',
+        cny: '¥', inr: '₹', krw: '₩', sgd: 'S$', hkd: 'HK$', idr: 'Rp', myr: 'RM',
+        php: '₱', thb: '฿', vnd: '₫'
+      };
+
+      // Show Loading Spinner
+      const showLoading = (element, show) => {
+        if (show) {
+          element.innerHTML += '<span class="spinner"></span>';
+          element.disabled = true;
+        } else {
+          element.innerHTML = element.innerHTML.replace(/<span class="spinner"><\/span>/, '');
+          element.disabled = false;
+        }
+      };
+
+      // Fetch Real-Time Exchange Rates from CoinGecko
+      const fetchExchangeRates = async () => {
+        showLoading(currentRateText, true);
+        try {
+          const response = await axios.get("https://api.coingecko.com/api/v3/simple/price?ids=pi-network-iou&vs_currencies=usd,eur,gbp,jpy,aud,cad,chf,cny,inr,krw,sgd,hkd,idr,myr,php,thb,vnd");
+          exchangeRates = response.data["pi-network-iou"];
+          localStorage.setItem('exchangeRates', JSON.stringify(exchangeRates));
+          localStorage.setItem('lastFetch', new Date().toISOString());
+          currentRateText.textContent = `Rate: 1 Pi = $${exchangeRates.usd.toFixed(4)} USD (Updated: ${new Date().toLocaleTimeString()})`;
+          updateExchangeRateChart();
+          updateTransactionHistory();
+        } catch (error) {
+          console.error("Error fetching exchange rates:", error);
+          const cachedRates = JSON.parse(localStorage.getItem('exchangeRates'));
+          if (cachedRates) {
+            exchangeRates = cachedRates;
+            currentRateText.textContent = `Cached Rate: 1 Pi = $${exchangeRates.usd.toFixed(4)} USD (${new Date(localStorage.getItem('lastFetch')).toLocaleString()})`;
+            updateExchangeRateChart();
+            updateTransactionHistory();
+          } else {
+            currentRateText.textContent = "Rate unavailable";
+          }
+        } finally {
+          showLoading(currentRateText, false);
+        }
+      };
+
+      // Fetch Testnet Data from api.testnet.minepi.com
+      const fetchTestnetData = async () => {
+        const accountId = testnetAccountInput.value.trim();
+        if (!accountId) {
+          testnetBalanceText.textContent = "Please enter a Testnet Account ID";
+          return;
+        }
+        showLoading(fetchTestnetButton, true);
+        try {
+          const response = await axios.get(`https://api.testnet.minepi.com/accounts/${accountId}`);
+          const balance = response.data.balances.find(b => b.asset_type === "native")?.balance || "0";
+          testnetBalanceText.textContent = `Testnet Balance: ${parseFloat(balance).toFixed(2)} Test Pi (Updated: ${new Date().toLocaleTimeString()})`;
+        } catch (error) {
+          console.error("Error fetching Testnet data:", error);
+          testnetBalanceText.textContent = "Error fetching Testnet data (Authentication may be required)";
+        } finally {
+          showLoading(fetchTestnetButton, false);
+        }
+      };
+
+      // Convert Pi to Fiat
+      const convertToCurrency = () => {
+        const piValue = parseFloat(piAmountInput.value) || 0;
+        const selectedCurrency = fiatCurrencySelect.value;
+        showLoading(convertButton, true);
+        setTimeout(() => {
+          if (exchangeRates[selectedCurrency] !== undefined) {
+            const equivalentAmount = (piValue * exchangeRates[selectedCurrency]).toFixed(2);
+            const result = `${currencySymbols[selectedCurrency]}${equivalentAmount.replace(/\B(?=(\d{3})+(?!\d))/g, ",")} ${selectedCurrency.toUpperCase()}`;
+            conversionResult.textContent = `Result: ${result}`;
+          } else {
+            conversionResult.textContent = "Result: Unavailable";
+          }
+          showLoading(convertButton, false);
+        }, 500);
+      };
+
+      // Update Exchange Rate Chart
+      const updateExchangeRateChart = () => {
+        const labels = Object.keys(exchangeRates).map(currency => currency.toUpperCase());
+        const data = Object.values(exchangeRates);
+
+        if (exchangeRateChart) exchangeRateChart.destroy();
+
+        exchangeRateChart = new Chart(exchangeRateCtx, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Rate (1 Pi)',
+              data,
+              backgroundColor: 'rgba(0, 0, 0, 0.6)',
+              borderColor: 'var(--primary-color)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: { beginAtZero: true, title: { display: true, text: 'Value' } },
+              x: { title: { display: true, text: 'Currency' } }
+            },
+            plugins: { legend: { display: false } }
+          }
+        });
+      };
+
+      // Historical Price Chart
+      const historicalData = {
+        labels: ['Jan 24', 'Apr 24', 'Jul 24', 'Oct 24', 'Jan 25', 'Feb 25'],
+        datasets: [{
+          label: 'Pi Price ($)',
+          data: [0.3, 0.4, 0.45, 0.5, 0.55, 0.6],
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.3
+        }]
+      };
+
+      const updateHistoricalChart = () => {
+        if (historicalChart) historicalChart.destroy();
+        historicalChart = new Chart(historicalCtx, {
+          type: 'line',
+          data: historicalData,
+          options: {
+            responsive: true,
+            scales: {
+              y: { beginAtZero: true, title: { display: true, text: 'Price ($)' } },
+              x: { title: { display: true, text: 'Date' } }
+            },
+            plugins: { legend: { display: true } }
+          }
+        });
+      };
+
+      // Fire Sale and Rainbow Chart Data
+      const piPriceData = {
+        labels: ['2024', '2025', '2026', '2027', '2028', '2029', '2030'],
+        datasets: [{
+          label: 'Pi Price ($)',
+          data: [0.5, 2.8, 7.5, 25, 60, 150, 400],
+          borderColor: '#f59e0b',
+          backgroundColor: 'rgba(245, 158, 11, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.3,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#f59e0b'
+        }]
+      };
+
+      const fireSaleZones = [
+        { color: 'rgba(239, 68, 68, 0.3)', label: '🔥 Fire Sale (<$5)', yMax: 5 },
+        { color: 'rgba(249, 115, 22, 0.3)', label: '🟠 Cheap ($5-$20)', yMin: 5, yMax: 20 },
+        { color: 'rgba(234, 179, 8, 0.3)', label: '🟡 Accumulate ($20-$50)', yMin: 20, yMax: 50 },
+        { color: 'rgba(34, 197, 94, 0.3)', label: '🟢 HODL ($50-$100)', yMin: 50, yMax: 100 },
+        { color: 'rgba(59, 130, 246, 0.3)', label: '🔵 Moon ($100+)', yMin: 100 }
+      ];
+
+      const createPiChart = (ctx, title) => new Chart(ctx, {
+        type: 'line',
+        data: piPriceData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: true },
+            annotation: { annotations: fireSaleZones.map(zone => ({
+              type: 'box', yMin: zone.yMin || 0, yMax: zone.yMax || Infinity,
+              backgroundColor: zone.color, label: { content: zone.label, display: true, position: 'center', color: '#000' }
+            })) }
+          },
+          scales: {
+            y: { beginAtZero: true, title: { display: true, text: 'Price ($)' } },
+            x: { title: { display: true, text: 'Year' } }
+          }
+        }
+      });
+
+      // Blocks Chart Data (Real-Time from ExplorePi)
+      const piBlocksData = {
+        labels: [],
+        datasets: [{
+          label: 'Blocks (M)',
+          data: [],
+          borderColor: '#8b5cf6',
+          backgroundColor: 'rgba(139, 92, 246, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.3,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#8b5cf6'
+        }]
+      };
+
+      const fetchBlocksData = async () => {
+        try {
+          const response = await axios.get('https://explorepi.info/en/explorer');
+          // Placeholder parsing; adjust based on actual response structure
+          const blockHeight = parseInt(response.data.match(/Block Height: (\d+)/)?.[1] || 0) / 1000000; // Convert to millions
+          const now = new Date().toLocaleTimeString();
+          piBlocksData.labels.push(now);
+          piBlocksData.datasets[0].data.push(blockHeight);
+          if (piBlocksData.labels.length > 10) {
+            piBlocksData.labels.shift();
+            piBlocksData.datasets[0].data.shift();
+          }
+          document.getElementById('block-info').textContent = `Latest Block Height: ${(blockHeight * 1000000).toLocaleString()} (${now})`;
+          updateBlocksChart();
+        } catch (error) {
+          console.error("Error fetching block data:", error);
+          document.getElementById('block-info').textContent = "Block data unavailable";
+        }
+      };
+
+      const updateBlocksChart = () => {
+        if (piBlocksChart) piBlocksChart.destroy();
+        piBlocksChart = new Chart(piBlocksCtx, {
+          type: 'line',
+          data: piBlocksData,
+          options: {
+            responsive: true,
+            scales: {
+              y: { beginAtZero: true, title: { display: true, text: 'Blocks (M)' } },
+              x: { title: { display: true, text: 'Time' } }
+            },
+            plugins: { legend: { display: true } }
+          }
+        });
+      };
+
+      // Update Transaction History with Fiat
+      const updateTransactionHistory = () => {
+        const txElements = [
+          { id: 'tx-1', pi: -50 },
+          { id: 'tx-2', pi: 200 },
+          { id: 'tx-3', pi: -100 }
+        ];
+        const selectedCurrency = fiatCurrencySelect.value;
+        txElements.forEach(tx => {
+          const fiatValue = (tx.pi * exchangeRates[selectedCurrency]).toFixed(2);
+          const fiatText = `${currencySymbols[selectedCurrency]}${fiatValue} ${selectedCurrency.toUpperCase()}`;
+          document.getElementById(tx.id).querySelector('.text-gray-600').textContent = fiatText;
+        });
+      };
+
+      // Event Listeners and Initial Setup
+      convertButton.addEventListener('click', convertToCurrency);
+      fetchTestnetButton.addEventListener('click', fetchTestnetData);
+      fiatCurrencySelect.addEventListener('change', () => {
+        convertToCurrency();
+        updateTransactionHistory();
+      });
+
+      fetchExchangeRates();
+      setInterval(fetchExchangeRates, 60000); // Update rates every minute
+      fetchTestnetData();
+      setInterval(fetchTestnetData, 30000); // Update Testnet data every 30 seconds
+      convertToCurrency();
+      updateHistoricalChart();
+      piFireSaleChart = createPiChart(piCtx, 'Fire Sale');
+      piRainbowChart = createPiChart(piRainbowCtx, 'Rainbow');
+      fetchBlocksData();
+      setInterval(fetchBlocksData, 30000); // Update blocks every 30 seconds
+    </script>
+</body>
+</html>
