@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Add to Cart - TruthWeb</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #FFFFFF;
+      }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+      }
+      .cart-item {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .cart-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+      }
+      .btn {
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.75rem 1.5rem;
+        border: 2px solid var(--highlight-color);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.1) rotate(3deg);
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
+      .fade-in {
+        opacity: 0;
+        animation: fadeIn 1s ease-in-out forwards;
+      }
+      @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+      .sticky-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: background 0.3s ease;
+      }
+      .sticky-header.scrolled {
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+      .floating-effect {
+        transition: transform 0.3s ease;
+      }
+      .floating-effect:hover {
+        transform: translateY(-5px) rotate(5deg);
+      }
+      .active {
+        color: var(--highlight-color);
+        text-decoration: underline;
+      }
+      .progress-bar {
+        transition: width 3s ease-in-out;
+      }
+    </style>
+</head>
+<body>
+    <!-- Sticky Header -->
+    <header class="sticky-header p-4 flex justify-between items-center shadow-lg">
+      <div class="flex items-center">
+        <a href="index.html" class="text-2xl font-bold">TruthWeb</a>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="marketplace.html" class="icon floating-effect">
+          <i class="fas fa-shopping-cart text-xl"></i>
+        </a>
+        <a href="profile.html" class="icon floating-effect">
+          <i class="fas fa-user text-xl"></i>
+        </a>
+        <a href="wallet.html" class="icon floating-effect">
+          <i class="fas fa-wallet text-xl"></i>
+        </a>
+      </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="bg-[var(--primary-color)] py-4">
+      <ul class="flex flex-wrap justify-center space-x-4">
+        <li><a href="index.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">Home</a></li>
+        <li><a href="marketplace.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect active">Marketplace</a></li>
+        <li><a href="profile.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">Profile</a></li>
+        <li><a href="wallet.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">Wallet</a></li>
+        <li><a href="community.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">Community</a></li>
+        <li><a href="developers.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">Developers</a></li>
+        <li><a href="about.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">About</a></li>
+      </ul>
+    </nav>
+
+    <!-- Cart Section -->
+    <section id="cart" class="py-16 px-4">
+      <h2 class="text-3xl font-bold text-center mb-8 fade-in">Your Cart</h2>
+      <div class="max-w-4xl mx-auto">
+        <div id="cart-items" class="space-y-6"></div>
+        <div class="text-center mt-8">
+          <button id="proceed-btn" class="btn" onclick="proceedToProcessing()" disabled>Proceed to Checkout</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Processing Section (Hidden Initially) -->
+    <section id="processing" class="py-16 px-4 hidden">
+      <h2 class="text-3xl font-bold text-center mb-8 fade-in">Processing Your Order</h2>
+      <div class="max-w-4xl mx-auto">
+        <div class="card p-6">
+          <p id="processing-status" class="text-lg font-bold text-yellow-600 mb-4">Processing...</p>
+          <div class="w-full bg-gray-200 rounded-full h-4">
+            <div id="progress-bar" class="bg-[var(--primary-color)] h-4 rounded-full progress-bar" style="width: 0%;"></div>
+          </div>
+          <p class="text-gray-600 mt-4">Time Remaining: <span id="processing-time">3s</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Order Details Section (Hidden Initially) -->
+    <section id="order-details" class="py-16 px-4 hidden">
+      <h2 class="text-3xl font-bold text-center mb-8 fade-in">Order Confirmation</h2>
+      <div class="max-w-4xl mx-auto">
+        <div class="card p-6">
+          <p class="text-lg font-semibold mb-2">Order Successfully Placed!</p>
+          <div id="order-summary" class="mb-4"></div>
+          <p class="text-gray-600">Order Date: March 06, 2025</p>
+          <p class="text-gray-600">Status: <span class="text-green-600">Completed</span></p>
+          <a href="marketplace.html" class="btn mt-4">Back to Marketplace</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[var(--primary-color)] py-8 text-[var(--text-color)]">
+      <div class="container mx-auto text-center">
+        <div class="mb-4">
+          <a href="https://www.facebook.com/reimaginetruthofficial/" target="_blank" class="mx-2 floating-effect"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://x.com/reimagine_truth" target="_blank" class="mx-2 floating-effect"><i class="fab fa-twitter"></i></a>
+          <a href="https://t.me/TruthWebOfficial" target="_blank" class="mx-2 floating-effect"><i class="fab fa-telegram"></i></a>
+          <a href="https://www.youtube.com/@ReimagineTruth" target="_blank" class="mx-2 floating-effect"><i class="fab fa-youtube"></i></a>
+          <a href="https://github.com/username/TruthWeb" target="_blank" class="mx-2 floating-effect"><i class="fab fa-github"></i></a>
+        </div>
+        <p class="mb-4">© 2025 TruthWeb. All rights reserved.</p>
+        <div class="text-sm">
+          <a href="about.html" class="mx-2 hover:text-[var(--highlight-color)]">About Us</a> |
+          <a href="terms.html" class="mx-2 hover:text-[var(--highlight-color)]">Terms & Conditions</a> |
+          <a href="privacy.html" class="mx-2 hover:text-[var(--highlight-color)]">Privacy Policy</a> |
+          <a href="contact.html" class="mx-2 hover:text-[var(--highlight-color)]">Contact</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- JavaScript for Cart, Processing, and Order -->
+    <script>
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const cartItemsDiv = document.getElementById('cart-items');
+      const proceedBtn = document.getElementById('proceed-btn');
+
+      // Product varieties (example data)
+      const productVarieties = {
+        'Pi Smart Watch': ['Black', 'Silver', 'Gold'],
+        'Pi T-Shirt': ['Small', 'Medium', 'Large'],
+        'Pi NFT Art': ['Edition 1', 'Edition 2', 'Edition 3']
+      };
+
+      // Render Cart Items
+      function renderCart() {
+        cartItemsDiv.innerHTML = '';
+        if (cart.length === 0) {
+          cartItemsDiv.innerHTML = '<p class="text-center text-gray-600">Your cart is empty.</p>';
+          proceedBtn.disabled = true;
+        } else {
+          cart.forEach((item, index) => {
+            const varieties = productVarieties[item.name] || ['Default'];
+            const itemDiv = document.createElement('div');
+            itemDiv.classList.add('cart-item', 'bg-[var(--secondary-color)]', 'border-2', 'border-[var(--highlight-color)]', 'rounded-lg', 'p-4', 'flex', 'flex-col', 'sm:flex-row', 'items-center', 'justify-between', 'fade-in');
+            itemDiv.innerHTML = `
+              <div class="flex items-center">
+                <img src="https://placehold.co/100x100" alt="${item.name}" class="w-20 h-20 object-cover mr-4 rounded">
+                <div>
+                  <h3 class="text-xl font-semibold">${item.name}</h3>
+                  <p class="text-gray-600">Price: ${item.price} Pi</p>
+                  <p class="text-gray-600">Seller: Pioneer${String.fromCharCode(65 + index)}</p>
+                </div>
+              </div>
+              <div class="mt-4 sm:mt-0">
+                <label class="block text-gray-700 mb-1">Quantity:</label>
+                <input type="number" min="1" value="${item.quantity || 1}" class="p-1 border border-gray-300 rounded w-16" onchange="updateQuantity(${index}, this.value)">
+                <label class="block text-gray-700 mt-2 mb-1">Variety:</label>
+                <select class="p-1 border border-gray-300 rounded w-32" onchange="updateVariety(${index}, this.value)">
+                  ${varieties.map(v => `<option value="${v}" ${item.variety === v ? 'selected' : ''}>${v}</option>`).join('')}
+                </select>
+              </div>
+            `;
+            cartItemsDiv.appendChild(itemDiv);
+          });
+          proceedBtn.disabled = false;
+        }
+      }
+
+      // Update Quantity
+      function updateQuantity(index, value) {
+        cart[index].quantity = parseInt(value);
+        localStorage.setItem('cart', JSON.stringify(cart));
+      }
+
+      // Update Variety
+      function updateVariety(index, value) {
+        cart[index].variety = value;
+        localStorage.setItem('cart', JSON.stringify(cart));
+      }
+
+      // Proceed to Processing
+      function proceedToProcessing() {
+        document.getElementById('cart').classList.add('hidden');
+        document.getElementById('processing').classList.remove('hidden');
+        
+        let seconds = 3;
+        const progressBar = document.getElementById('progress-bar');
+        const processingTime = document.getElementById('processing-time');
+        const timer = setInterval(() => {
+          seconds--;
+          processingTime.textContent = `${seconds}s`;
+          progressBar.style.width = `${((3 - seconds) / 3) * 100}%`;
+          if (seconds <= 0) {
+            clearInterval(timer);
+            showOrderDetails();
+          }
+        }, 1000);
+      }
+
+      // Show Order Details
+      function showOrderDetails() {
+        document.getElementById('processing').classList.add('hidden');
+        document.getElementById('order-details').classList.remove('hidden');
+        const orderSummary = document.getElementById('order-summary');
+        orderSummary.innerHTML = cart.map(item => `
+          <p>${item.name} - ${item.quantity} x ${item.price} Pi = ${item.quantity * item.price} Pi (Variety: ${item.variety || 'Default'})</p>
+        `).join('');
+        localStorage.removeItem('cart'); // Clear cart after order
+      }
+
+      // Sticky Header Scroll Effect
+      window.addEventListener('scroll', function() {
+        const header = document.querySelector('.sticky-header');
+        if (window.scrollY > 50) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+      });
+
+      // Load Cart from Marketplace
+      document.addEventListener('DOMContentLoaded', () => {
+        renderCart();
+      });
+
+      // Function to Add Item from Marketplace (called from marketplace.html)
+      window.addToCart = function(productName, price) {
+        const existingItem = cart.find(item => item.name === productName);
+        if (existingItem) {
+          existingItem.quantity = (existingItem.quantity || 1) + 1;
+        } else {
+          cart.push({ name: productName, price: price, quantity: 1, variety: productVarieties[productName]?.[0] });
+        }
+        localStorage.setItem('cart', JSON.stringify(cart));
+        renderCart();
+      };
+    </script>
+</body>
+</html>

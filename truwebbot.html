@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>TruthWeb AI Bot - TruthWeb</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #FFFFFF;
+      }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+      }
+      .hero {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid var(--highlight-color);
+        padding: 1rem;
+        background: var(--primary-color);
+        animation: fadeIn 1.5s ease-in-out;
+      }
+      .hero::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
+        opacity: 0.5;
+        animation: float 6s infinite ease-in-out, pulseGlow 3s infinite alternate;
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+      }
+      @keyframes pulseGlow {
+        0% { opacity: 0.5; }
+        100% { opacity: 0.8; }
+      }
+      @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+      .glow-text {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--text-color);
+        text-shadow: 0 0 10px var(--highlight-color), 0 0 20px var(--highlight-color);
+        animation: glow 2s infinite alternate, bounce 3s infinite ease-in-out;
+      }
+      @keyframes glow {
+        0% { text-shadow: 0 0 10px var(--highlight-color), 0 0 20px var(--highlight-color); }
+        100% { text-shadow: 0 0 20px var(--highlight-color), 0 0 30px var(--highlight-color); }
+      }
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      .card {
+        background: var(--secondary-color);
+        border: 2px solid var(--highlight-color);
+        border-radius: 10px;
+        padding: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .card:hover {
+        transform: translateY(-10px) rotate(2deg);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+      }
+      .btn {
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.75rem 1.5rem;
+        border: 2px solid var(--highlight-color);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.1) rotate(3deg);
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
+      footer {
+        background: var(--primary-color);
+        color: var(--text-color);
+        text-align: center;
+        padding: 2rem;
+      }
+      .sticky-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: background 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 64px;
+        padding: 0 1rem;
+      }
+      .sticky-header.scrolled {
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+      .floating-effect {
+        transition: transform 0.3s ease;
+      }
+      .floating-effect:hover {
+        transform: translateY(-5px) rotate(5deg);
+      }
+      .active {
+        color: var(--highlight-color);
+        text-decoration: underline;
+      }
+      /* WALL-E-like TruthWeb Bot Styles */
+      #truthweb-bot {
+        position: absolute;
+        width: 100px;
+        height: 120px;
+        transition: transform 0.5s ease;
+        z-index: 5;
+        cursor: pointer;
+      }
+      .bot-body {
+        width: 80px;
+        height: 80px;
+        background: #999;
+        border-radius: 10px;
+        position: relative;
+        top: 20px;
+        left: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      }
+      .bot-head {
+        width: 60px;
+        height: 40px;
+        background: #777;
+        border-radius: 5px;
+        position: absolute;
+        top: -20px;
+        left: 10px;
+      }
+      .bot-eyes {
+        display: flex;
+        justify-content: space-around;
+        padding: 10px;
+        transition: all 0.3s ease;
+      }
+      .eye {
+        width: 15px;
+        height: 15px;
+        background: #fff;
+        border-radius: 50%;
+        transition: transform 0.3s ease, height 0.3s ease;
+      }
+      .happy .eye { transform: scale(1.2); }
+      .sad .eye { transform: scale(0.8) translateY(2px); height: 10px; }
+      .excited .eye { transform: scale(1.5); animation: excitedBlink 1s infinite; }
+      .curious .eye { transform: rotate(10deg); }
+      .sleepy .eye { height: 5px; animation: sleepyBlink 2s infinite; }
+      @keyframes excitedBlink {
+        0%, 80% { height: 15px; }
+        90% { height: 5px; }
+        100% { height: 15px; }
+      }
+      @keyframes sleepyBlink {
+        0%, 70% { height: 5px; }
+        80% { height: 2px; }
+        100% { height: 5px; }
+      }
+      .bot-wheels {
+        display: flex;
+        justify-content: space-between;
+        position: absolute;
+        bottom: -10px;
+        width: 100%;
+      }
+      .wheel {
+        width: 20px;
+        height: 20px;
+        background: #555;
+        border-radius: 50%;
+      }
+      .bot-arm {
+        width: 10px;
+        height: 30px;
+        background: #777;
+        position: absolute;
+        top: 20px;
+        left: -15px;
+        transform-origin: top;
+        transition: transform 0.3s ease;
+      }
+      .happy .bot-arm { animation: happyWave 1.5s infinite; }
+      .sad .bot-arm { animation: sadWave 2s infinite; }
+      .excited .bot-arm { animation: excitedWave 0.5s infinite; }
+      .curious .bot-arm { animation: curiousWave 2s infinite; }
+      .sleepy .bot-arm { animation: none; transform: rotate(-20deg); }
+      @keyframes happyWave {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(45deg); }
+      }
+      @keyframes sadWave {
+        0%, 100% { transform: rotate(-10deg); }
+        50% { transform: rotate(-20deg); }
+      }
+      @keyframes excitedWave {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(60deg); }
+        75% { transform: rotate(-60deg); }
+      }
+      @keyframes curiousWave {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(20deg); }
+      }
+      .activity-text {
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        white-space: nowrap;
+      }
+      .chat-iframe-container {
+        max-width: 100%;
+        margin: 0 auto;
+        height: 700px;
+      }
+      /* Static styles for TruthWeb Bot Assistance section */
+      #bot > h2, #bot > div:first-of-type > p {
+        animation: none; /* Remove fade-in for title and description */
+      }
+      #bot .chat-iframe-container.card {
+        transition: none; /* Remove hover effects for iframe container */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Static shadow */
+      }
+      #bot .chat-iframe-container.card:hover {
+        transform: none; /* No movement on hover */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Same as static */
+      }
+    </style>
+</head>
+<body>
+    <!-- Sticky Header -->
+    <header class="sticky-header">
+      <div class="flex items-center">
+        <a class="text-inherit mr-4 flex items-center" href="index.html">
+          <span class="text-2xl font-bold">TruthWeb</span>
+        </a>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="marketplace.html" class="icon floating-effect">
+          <i class="fas fa-shopping-cart text-xl"></i>
+        </a>
+        <a href="profile.html" class="icon floating-effect">
+          <i class="fas fa-user text-xl"></i>
+        </a>
+        <a href="wallet.html" class="icon floating-effect">
+          <i class="fas fa-wallet text-xl"></i>
+        </a>
+      </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="bg-[var(--primary-color)] py-4">
+      <ul class="flex flex-wrap justify-center space-x-4">
+        <li><a href="index.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">Home</a></li>
+        <li><a href="marketplace.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect active">Marketplace</a></li>
+        <li><a href="profile.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">Profile</a></li>
+        <li><a href="wallet.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">Wallet</a></li>
+        <li><a href="community.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">Community</a></li>
+        <li><a href="developers.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">Developers</a></li>
+        <li><a href="about.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">About</a></li>
+      </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero flex flex-col items-center justify-center min-h-screen">
+      <h1 class="glow-text fade-in text-5xl md:text-7xl font-bold">TruthWeb AI Bot</h1>
+      <p class="text-xl mt-4 text-center fade-in" style="animation-delay: 0.5s; color: var(--text-color);">
+        Get Real-Time Insights and Assistance Within TruthWeb
+      </p>
+      <a href="#bot" class="btn mt-8">Chat with TruthWeb Bot</a>
+    </div>
+
+    <!-- Bot Section (Static for Assistance) -->
+    <section id="bot" class="py-16 px-4 relative">
+      <h2 class="text-3xl font-bold text-center mb-8">TruthWeb Bot Assistance</h2>
+      <div class="max-w-4xl mx-auto mb-12">
+        <p class="text-lg text-center text-gray-600">Ask TruthWeb Bot anything about the platform—marketplace tips, trading insights, or general help—all powered by advanced AI in real-time.</p>
+      </div>
+     
+      <!-- Chat Interface (Iframe) -->
+      <div class="max-w-4xl mx-auto card chat-iframe-container">
+        <iframe
+          src="https://www.chatbase.co/chatbot-iframe/jX4XPViu5ZOImWnc-SK7n"
+          width="100%"
+          style="height: 100%; min-height: 700px"
+          frameborder="0"
+        ></iframe>
+      </div>
+
+      <!-- TruthWeb Bot Character -->
+      <div id="truthweb-bot" class="happy">
+        <div class="activity-text" id="activity-text">Waving at you...</div>
+        <div class="bot-arm"></div>
+        <div class="bot-body">
+          <div class="bot-head">
+            <div class="bot-eyes">
+              <div class="eye"></div>
+              <div class="eye"></div>
+            </div>
+          </div>
+          <div class="bot-wheels">
+            <div class="wheel"></div>
+            <div class="wheel"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- How It Works (Animated) -->
+      <div class="max-w-6xl mx-auto mt-12">
+        <h3 class="text-2xl font-semibold text-center mb-6 fade-in">How TruthWeb Bot Works</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+          <div class="card text-center">
+            <h4 class="text-lg font-semibold mb-2">Ask a Question</h4>
+            <p class="text-gray-600">Type your query about TruthWeb.</p>
+          </div>
+          <div class="card text-center">
+            <h4 class="text-lg font-semibold mb-2">Real-Time Processing</h4>
+            <p class="text-gray-600">Connected to Grok 3, ChatGPT, or DeepSeek API.</p>
+          </div>
+          <div class="card text-center">
+            <h4 class="text-lg font-semibold mb-2">Get Insights</h4>
+            <p class="text-gray-600">Receive helpful, tailored responses instantly.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <div class="max-w-4xl mx-auto mb-12">
+      <h3 class="text-2xl font-semibold text-center mb-4 fade-in">TruthWeb Bot's Life</h3>
+      <p class="text-lg text-center text-gray-600 fade-in">TruthWeb Bot is our adorable WALL-E-like companion, living its own little life on TruthWeb. Watch it roam and express its emotions!</p>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[var(--primary-color)] py-8">
+      <div class="container mx-auto text-center">
+        <div class="mb-4">
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://www.facebook.com/reimaginetruthofficial/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://x.com/reimagine_truth" target="_blank"><i class="fab fa-twitter"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://t.me/TruthWebOfficial" target="_blank"><i class="fab fa-telegram"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://www.youtube.com/@ReimagineTruth" target="_blank"><i class="fab fa-youtube"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://github.com/username/TruthWeb" target="_blank"><i class="fab fa-github"></i></a>
+        </div>
+        <p class="text-[var(--text-color)] mb-4">© 2025 TruthWeb. All rights reserved.</p>
+        <div class="text-[var(--text-color)] text-sm">
+          <a href="about.html" class="mx-2 hover:text-[var(--highlight-color)]">About Us</a> |
+          <a href="terms.html" class="mx-2 hover:text-[var(--highlight-color)]">Terms & Conditions</a> |
+          <a href="privacy.html" class="mx-2 hover:text-[var(--highlight-color)]">Privacy Policy</a> |
+          <a href="contact.html" class="mx-2 hover:text-[var(--highlight-color)]">Contact</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- JavaScript for Bot Animation -->
+    <script>
+      const bot = document.getElementById('truthweb-bot');
+      const activityText = document.getElementById('activity-text');
+      const footer = document.querySelector('footer');
+
+      // Bot Emotions and Activities
+      const emotions = {
+        happy: { text: "Feeling happy...", activity: "Waving at you..." },
+        sad: { text: "Feeling sad...", activity: "Looking down..." },
+        excited: { text: "So excited!", activity: "Bouncing around..." },
+        curious: { text: "Hmm, curious...", activity: "Exploring the page..." },
+        sleepy: { text: "Getting sleepy...", activity: "Resting a bit..." },
+      };
+
+      let botX = 100;
+      let botY = 200;
+      let stepSize = 2;
+      let movementIntervalId;
+
+      // Bot Movement and Animation
+      function updateBotPosition() {
+        const maxX = window.innerWidth - bot.offsetWidth;
+        const maxY = window.innerHeight - bot.offsetHeight - footer.offsetHeight - 20;
+        botX = Math.max(0, Math.min(botX, maxX));
+        botY = Math.max(100, Math.min(botY, maxY));
+        bot.style.transform = `translate(${botX}px, ${botY}px)`;
+      }
+
+      function randomStep() {
+        const dx = Math.random() * (stepSize * 2) - stepSize;
+        const dy = Math.random() * (stepSize * 2) - stepSize;
+        botX += dx;
+        botY += dy;
+        updateBotPosition();
+        updateActivity(bot.className || 'happy');
+      }
+
+      function setMovementBehavior(emotion) {
+        clearTimeout(movementIntervalId);
+        let movementInterval;
+        switch (emotion) {
+          case 'happy':
+            stepSize = 3;
+            movementInterval = 500;
+            break;
+          case 'sad':
+            stepSize = 1;
+            movementInterval = 1000;
+            break;
+          case 'excited':
+            stepSize = 5;
+            movementInterval = 200;
+            break;
+          case 'curious':
+            stepSize = 2;
+            movementInterval = 700;
+            break;
+          case 'sleepy':
+            stepSize = 0;
+            movementInterval = 5000;
+            break;
+          default:
+            stepSize = 2;
+            movementInterval = 500;
+        }
+        if (stepSize > 0) {
+          movementIntervalId = setTimeout(function move() {
+            randomStep();
+            movementIntervalId = setTimeout(move, movementInterval);
+          }, movementInterval);
+        }
+      }
+
+      function updateActivity(emotion) {
+        activityText.textContent = emotions[emotion].activity;
+      }
+
+      function changeEmotion(emotion) {
+        bot.className = emotion;
+        updateActivity(emotion);
+        setMovementBehavior(emotion);
+      }
+
+      function randomEmotion() {
+        const emotionsArray = Object.keys(emotions);
+        const randomIndex = Math.floor(Math.random() * emotionsArray.length);
+        const emotion = emotionsArray[randomIndex];
+        changeEmotion(emotion);
+      }
+
+      function scheduleEmotionChange() {
+        const delay = 5000 + Math.random() * 5000;
+        setTimeout(() => {
+          randomEmotion();
+          scheduleEmotionChange();
+        }, delay);
+      }
+
+      // Bot Click Response
+      bot.addEventListener('click', () => {
+        changeEmotion('excited');
+        setTimeout(() => randomEmotion(), 2000); // Revert to random after 2 seconds
+      });
+
+      // Initial setup
+      changeEmotion('happy');
+      scheduleEmotionChange();
+
+      // Sticky Header Scroll Effect
+      window.addEventListener('scroll', () => {
+        const header = document.querySelector('.sticky-header');
+        if (window.scrollY > 50) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+      });
+    </script>
+</body>
+</html>
