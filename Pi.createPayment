@@ -1,0 +1,38 @@
+Pi.createPayment(
+  {
+    amount: number, // Pi amount (e.g., 3.14)
+    memo: string, // Description (e.g., "Digital kitten #1234")
+    metadata: Object // Developer data (e.g., { kittenId: 1234 })
+  },
+  {
+    onReadyForServerApproval: function(paymentId) { /* Server approval step */ },
+    onReadyForServerCompletion: function(paymentId, txid) { /* Completion step */ },
+    onCancel: function(paymentId) { /* User cancels */ },
+    onError: function(error, payment) { /* Error handling */ }
+  }
+);
+
+{
+  identifier: string, // Payment ID
+  user_uid: string, // From auth.uid
+  amount: number,
+  memo: string,
+  metadata: Object,
+  from_address: string, // Sender’s blockchain address
+  to_address: string, // Recipient’s blockchain address
+  direction: "user_to_app", // Payment direction
+  created_at: string, // ISO 8601 timestamp
+  network: "Pi Testnet", // Or "Pi Mainnet"
+  status: {
+    developer_approved: boolean,
+    transaction_verified: boolean,
+    developer_completed: boolean,
+    cancelled: boolean,
+    user_cancelled: boolean
+  },
+  transaction: null | {
+    txid: string, // Blockchain transaction ID
+    verified: boolean,
+    _link: string // Blockchain explorer link
+  }
+}

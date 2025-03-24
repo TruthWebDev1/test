@@ -1,0 +1,12 @@
+Pi.init({ version: "2.0" });
+const scopes = ['payments', 'username'];
+Pi.authenticate(scopes, onIncompletePaymentFound).then(auth => {
+  displayAuthDetails(auth); // Shows uid, username, scopes
+  document.getElementById('payButton').disabled = false;
+});
+document.getElementById('payButton').addEventListener('click', () => {
+  Pi.createPayment({ amount: 3.14, memo: "Digital kitten #1234", metadata: { kittenId: 1234 } }, {
+    onReadyForServerApproval: paymentId => { /* Mock payment object with authData.uid */ },
+    // Other callbacks
+  });
+});

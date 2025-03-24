@@ -1,0 +1,15 @@
+const scopes = ['payments', 'username']; // Array of scopes
+function onIncompletePaymentFound(payment) { /* Handle incomplete payments */ }
+Pi.authenticate(scopes, onIncompletePaymentFound).then(auth => { /* Success */ }).catch(error => { /* Failure */ });
+
+{
+  uid: string, // App-specific user ID
+  credentials: {
+    scopes: Array<string>, // Granted scopes (e.g., ['payments', 'username'])
+    valid_until: {
+      timestamp: number, // Unix timestamp
+      iso8601: string // ISO 8601 date (e.g., "2025-03-07T21:48:00Z")
+    }
+  },
+  username?: string // Optional, requires 'username' scope
+}
