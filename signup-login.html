@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Sign Up & Log In | TruthWeb</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #FFFFFF;
+      }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+      }
+      .hero {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid var(--highlight-color);
+        padding: 1rem;
+        background: var(--primary-color);
+        animation: fadeIn 1.5s ease-in-out;
+      }
+      .hero::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
+        opacity: 0.5;
+        animation: float 6s infinite ease-in-out, pulseGlow 3s infinite alternate;
+      }
+      @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+      @keyframes pulseGlow { 0% { opacity: 0.5; } 100% { opacity: 0.8; } }
+      @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+      .glow-text {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--text-color);
+        text-shadow: 0 0 10px var(--highlight-color), 0 0 20px var(--highlight-color);
+        animation: glow 2s infinite alternate, bounce 3s infinite ease-in-out;
+      }
+      @keyframes glow { 0% { text-shadow: 0 0 10px var(--highlight-color), 0 0 20px var(--highlight-color); } 100% { text-shadow: 0 0 20px var(--highlight-color), 0 0 30px var(--highlight-color); } }
+      @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+      .card {
+        background: var(--secondary-color);
+        border: 2px solid var(--highlight-color);
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: slideIn 1s ease-in-out;
+      }
+      .card:hover {
+        transform: translateY(-10px) rotate(2deg);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+      }
+      @keyframes slideIn { 0% { opacity: 0; transform: translateX(-50px); } 100% { opacity: 1; transform: translateX(0); } }
+      .btn {
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.75rem 1.5rem;
+        border: 2px solid var(--highlight-color);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+        display: inline-block;
+        text-align: center;
+        text-decoration: none;
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.1) rotate(3deg);
+      }
+      @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+      html { scroll-behavior: smooth; }
+      .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 4px;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.3s ease;
+      }
+      .form-input:focus {
+        border-color: var(--primary-color);
+      }
+      .toggle-link {
+        color: var(--primary-color);
+        text-decoration: underline;
+        cursor: pointer;
+      }
+      .toggle-link:hover {
+        color: var(--highlight-color);
+      }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero flex flex-col items-center justify-center">
+      <h1 class="glow-text fade-in text-5xl md:text-7xl font-bold">TruthWeb</h1>
+      <p class="text-xl mt-4 text-center fade-in" style="animation-delay: 0.5s; color: var(--text-color);">
+        Sign Up or Log In to Join the Pi Network Hub
+      </p>
+
+      <!-- Sign Up & Log In Container -->
+      <div class="max-w-4xl mx-auto mt-8 flex flex-col md:flex-row gap-8 w-full px-4">
+        <!-- Sign Up Form -->
+        <div class="card w-full md:w-1/2">
+          <h2 class="text-2xl font-semibold mb-4 text-center">Sign Up</h2>
+          <form id="signup-form">
+            <input type="text" class="form-input" placeholder="Pi Network Username" required>
+            <input type="email" class="form-input" placeholder="Email Address" required>
+            <input type="password" class="form-input" placeholder="Password" required>
+            <input type="password" class="form-input" placeholder="Confirm Password" required>
+            <button type="submit" class="btn w-full">Sign Up</button>
+          </form>
+          <p class="text-center mt-4 text-sm">
+            Already have an account? <span class="toggle-link" onclick="toggleForms()">Log In</span>
+          </p>
+        </div>
+
+        <!-- Log In Form -->
+        <div class="card w-full md:w-1/2">
+          <h2 class="text-2xl font-semibold mb-4 text-center">Log In</h2>
+          <form id="login-form">
+            <input type="text" class="form-input" placeholder="Pi Network Username or Email" required>
+            <input type="password" class="form-input" placeholder="Password" required>
+            <button type="submit" class="btn w-full">Log In</button>
+          </form>
+          <p class="text-center mt-4 text-sm">
+            Don’t have an account? <span class="toggle-link" onclick="toggleForms()">Sign Up</span>
+          </p>
+          <p class="text-center mt-2 text-sm">
+            <a href="forgot-password.html" class="toggle-link">Forgot Password?</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+      function toggleForms() {
+        const signupCard = document.querySelector('#signup-form').parentElement;
+        const loginCard = document.querySelector('#login-form').parentElement;
+        signupCard.classList.toggle('hidden');
+        loginCard.classList.toggle('hidden');
+      }
+
+      // Basic form submission handling (for demo purposes)
+      document.getElementById('signup-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Sign Up submitted! (This is a demo - no real submission occurs)');
+      });
+
+      document.getElementById('login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Log In submitted! (This is a demo - no real authentication occurs)');
+      });
+    </script>
+</body>
+</html>

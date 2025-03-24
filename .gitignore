@@ -1,0 +1,85 @@
+# macOS system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+desktop.ini
+
+# Editor and IDE files
+*.sublime-*
+.vscode/
+.idea/
+*.code-workspace
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Logs
+*.log
+logs/
+log/
+
+# Node.js and npm (Frontend)
+node_modules/
+npm-debug.log
+package-lock.json
+/dist/  # For frontend build output (e.g., Webpack, Vite)
+public/build/  # Common build output directory
+
+# Python and Django (Backend)
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+*.sqlite3  # Default Django SQLite database
+db.sqlite3
+migrations/  # Exclude auto-generated migration files (optional, depends on workflow)
+*.egg-info/
+*.egg
+*.whl
+
+# Database (MongoDB/PostgreSQL)
+*.dump  # MongoDB dump files
+mongod.lock
+data/  # Local MongoDB data directory (if running locally)
+pgdata/  # Local PostgreSQL data directory (if running locally)
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build and distribution directories
+build/
+out/
+staticfiles/  # Django collected static files
+
+# Testing and coverage
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+.pytest_cache/
+
+# GitHub Pages artifacts (if still using)
+_site/
+
+# Sensitive files
+*.key
+*.pem
+*.cert
+
+# Local development files
+local/
+test/

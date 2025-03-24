@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Ad & Promotion - TruthWeb</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #FFFFFF;
+      }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+      }
+      .hero {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid var(--highlight-color);
+        padding: 1rem;
+        background: var(--primary-color);
+        animation: fadeIn 1.5s ease-in-out;
+      }
+      .hero::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
+        opacity: 0.5;
+        animation: float 6s infinite ease-in-out, pulseGlow 3s infinite alternate;
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+      }
+      @keyframes pulseGlow {
+        0% { opacity: 0.5; }
+        100% { opacity: 0.8; }
+      }
+      @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+      .glow-text {
+        font-size: 2rem;
+        font-weight: bold;
+        color: var(--text-color);
+        text-shadow: 0 0 10px var(--highlight-color), 0 0 20px var(--highlight-color);
+        animation: glow 2s infinite alternate, bounce 3s infinite ease-in-out;
+      }
+      @keyframes glow {
+        0% { text-shadow: 0 0 10px var(--highlight-color), 0 0 20px var(--highlight-color); }
+        100% { text-shadow: 0 0 20px var(--highlight-color), 0 0 30px var(--highlight-color); }
+      }
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      .card {
+        background: var(--secondary-color);
+        border: 2px solid var(--highlight-color);
+        border-radius: 10px;
+        padding: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: slideIn 1s ease-in-out;
+      }
+      .card:hover {
+        transform: translateY(-10px) rotate(2deg);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+      }
+      @keyframes slideIn {
+        0% { opacity: 0; transform: translateX(-50px); }
+        100% { opacity: 1; transform: translateX(0); }
+      }
+      .btn {
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.75rem 1.5rem;
+        border: 2px solid var(--highlight-color);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+        display: inline-block;
+        text-align: center;
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.1) rotate(3deg);
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
+      footer {
+        background: var(--primary-color);
+        color: var(--text-color);
+        text-align: center;
+        padding: 2rem;
+        animation: fadeIn 1.5s ease-in-out;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      .sticky-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: background 0.3s ease, color 0.3s ease;
+        animation: slideDown 1s ease-in-out;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 64px;
+        padding: 0 1rem;
+      }
+      .sticky-header.scrolled {
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+      .sticky-header .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        transition: font-size 0.3s ease;
+      }
+      .sticky-header.scrolled .logo-text {
+        font-size: 1.25rem;
+      }
+      .sticky-header .icon {
+        color: inherit;
+      }
+      @keyframes slideDown {
+        0% { transform: translateY(-100%); }
+        100% { transform: translateY(0); }
+      }
+      .nav-item {
+        transition: transform 0.3s ease;
+        animation: fadeInUp 0.5s ease-in-out forwards;
+      }
+      .nav-item:hover {
+        transform: scale(1.1) translateY(-5px);
+      }
+      @keyframes fadeInUp {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+      .nav-item:nth-child(1) { animation-delay: 0.1s; }
+      .nav-item:nth-child(2) { animation-delay: 0.2s; }
+      .nav-item:nth-child(3) { animation-delay: 0.3s; }
+      .nav-item:nth-child(4) { animation-delay: 0.4s; }
+      .nav-item:nth-child(5) { animation-delay: 0.5s; }
+      .nav-item:nth-child(6) { animation-delay: 0.6s; }
+      .nav-item:nth-child(7) { animation-delay: 0.7s; }
+      .floating-effect {
+        transition: transform 0.3s ease;
+      }
+      .floating-effect:hover {
+        transform: translateY(-5px) rotate(5deg);
+      }
+      .active {
+        color: var(--highlight-color);
+        text-decoration: underline;
+      }
+    </style>
+</head>
+<body>
+    <!-- Sticky Header -->
+    <header class="sticky-header">
+      <div class="flex items-center">
+        <a class="text-inherit mr-4 flex items-center" href="index.html">
+          <span class="logo-text ml-2">TruthWeb</span>
+        </a>
+      </div>
+      <div class="flex items-center">
+        <a class="mr-4 icon floating-effect" href="marketplace.html">
+          <i class="fas fa-shopping-cart text-xl sm:text-2xl"></i>
+        </a>
+        <a class="mr-4 icon floating-effect" href="profile.html">
+          <i class="fas fa-user text-xl sm:text-2xl"></i>
+        </a>
+        <a class="icon floating-effect" href="wallet.html">
+          <i class="fas fa-wallet text-xl sm:text-2xl"></i>
+        </a>
+      </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="bg-[var(--primary-color)] py-4">
+      <ul class="flex flex-wrap justify-center space-x-4">
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect active" href="marketplace.html">Marketplace</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="profile.html">Profile</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="wallet.html">Wallet</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="community.html">Community</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="developers.html">Developers</a></li>
+        <li class="nav-item"><a class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect" href="about.html">About</a></li>
+      </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero flex flex-col items-center justify-center min-h-screen">
+      <h1 class="glow-text fade-in text-5xl md:text-7xl font-bold">Ad & Promotion</h1>
+      <p class="text-xl mt-4 text-center fade-in" style="animation-delay: 0.5s; color: var(--text-color);">
+        Boost Listing Visibility
+      </p>
+      <a href="#promotion" class="btn mt-8">Promote Now</a>
+    </div>
+
+    <!-- Ad & Promotion Section -->
+    <section id="promotion" class="py-16 px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">Enhance Your Listings</h2>
+      <div class="max-w-4xl mx-auto mb-12">
+        <p class="text-lg text-center text-gray-600">Increase the visibility of your products, services, or NFTs on TruthWeb with our affordable promotion packages, payable in Pi.</p>
+      </div>
+
+      <!-- Promotion Packages -->
+      <div class="max-w-6xl mx-auto mb-12">
+        <h3 class="text-2xl font-semibold mb-6">Promotion Packages</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="card">
+            <img src="https://placehold.co/200x200" alt="Basic Boost" class="w-full h-48 object-cover mb-4">
+            <h4 class="text-xl font-semibold mb-2">Basic Boost</h4>
+            <p class="text-gray-600 mb-2">Duration: 7 days</p>
+            <p class="text-gray-600 mb-4">Features: Featured listing on category page</p>
+            <p class="text-lg font-bold mb-4">Price: 10 Pi</p>
+            <a href="#" class="btn w-full">Select Package</a>
+          </div>
+          <div class="card">
+            <img src="https://placehold.co/200x200" alt="Premium Boost" class="w-full h-48 object-cover mb-4">
+            <h4 class="text-xl font-semibold mb-2">Premium Boost</h4>
+            <p class="text-gray-600 mb-2">Duration: 14 days</p>
+            <p class="text-gray-600 mb-4">Features: Homepage banner + Featured listing</p>
+            <p class="text-lg font-bold mb-4">Price: 25 Pi</p>
+            <a href="#" class="btn w-full">Select Package</a>
+          </div>
+          <div class="card">
+            <img src="https://placehold.co/200x200" alt="Elite Boost" class="w-full h-48 object-cover mb-4">
+            <h4 class="text-xl font-semibold mb-2">Elite Boost</h4>
+            <p class="text-gray-600 mb-2">Duration: 30 days</p>
+            <p class="text-gray-600 mb-4">Features: Homepage banner, Featured listing, Social media shoutout</p>
+            <p class="text-lg font-bold mb-4">Price: 50 Pi</p>
+            <a href="#" class="btn w-full">Select Package</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Promote Your Listing Form -->
+      <div class="max-w-4xl mx-auto mb-12 text-center">
+        <h3 class="text-2xl font-semibold mb-6">Promote Your Listing</h3>
+        <div class="card p-6 mx-auto max-w-md">
+          <div class="mb-4">
+            <label class="block text-left text-gray-700 mb-2" for="listing-id">Listing ID:</label>
+            <input type="text" id="listing-id" placeholder="Enter your listing ID" class="p-2 border border-gray-300 rounded w-full text-gray-600">
+          </div>
+          <div class="mb-4">
+            <label class="block text-left text-gray-700 mb-2" for="package">Select Package:</label>
+            <select id="package" class="p-2 border border-gray-300 rounded w-full text-gray-600">
+              <option value="basic">Basic Boost (10 Pi)</option>
+              <option value="premium">Premium Boost (25 Pi)</option>
+              <option value="elite">Elite Boost (50 Pi)</option>
+            </select>
+          </div>
+          <div class="mb-4">
+            <p class="text-gray-600">Current Balance: 100 Pi</p>
+            <p class="text-gray-600">Cost will be deducted from your wallet</p>
+          </div>
+          <button class="btn w-full">Boost Listing</button>
+        </div>
+      </div>
+
+      <!-- Benefits -->
+      <div class="max-w-4xl mx-auto mb-12">
+        <h3 class="text-2xl font-semibold text-center mb-8">Why Promote with TruthWeb?</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+          <div class="card text-center">
+            <h4 class="text-lg font-semibold mb-2">Increased Visibility</h4>
+            <p class="text-gray-600">Reach more Pioneers with prominent placement.</p>
+          </div>
+          <div class="card text-center">
+            <h4 class="text-lg font-semibold mb-2">Affordable Rates</h4>
+            <p class="text-gray-600">Boost your listing starting at just 10 Pi.</p>
+          </div>
+          <div class="card text-center">
+            <h4 class="text-lg font-semibold mb-2">Targeted Exposure</h4>
+            <p class="text-gray-600">Promote to the TruthWeb community directly.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Call to Action -->
+      <div class="text-center">
+        <h3 class="text-2xl font-semibold mb-4">Get Noticed Today</h3>
+        <p class="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">Elevate your listings and attract more buyers with our promotion tools!</p>
+        <a href="marketplace.html" class="btn">Explore Marketplace</a>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[var(--primary-color)] py-8">
+      <div class="container mx-auto text-center">
+        <div class="mb-4">
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://www.facebook.com/reimaginetruthofficial/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://x.com/reimagine_truth" target="_blank"><i class="fab fa-twitter"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://t.me/TruthWebOfficial" target="_blank"><i class="fab fa-telegram"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://www.youtube.com/@ReimagineTruth" target="_blank"><i class="fab fa-youtube"></i></a>
+          <a class="text-[var(--text-color)] mx-2 floating-effect" href="https://github.com/username/TruthWeb" target="_blank"><i class="fab fa-github"></i></a>
+        </div>
+        <p class="text-[var(--text-color)] mb-4">© 2025 TruthWeb. All rights reserved.</p>
+        <div class="text-[var(--text-color)] text-sm">
+          <a href="about.html" class="mx-2 hover:text-[var(--highlight-color)]">About Us</a> |
+          <a href="terms.html" class="mx-2 hover:text-[var(--highlight-color)]">Terms & Conditions</a> |
+          <a href="privacy.html" class="mx-2 hover:text-[var(--highlight-color)]">Privacy Policy</a> |
+          <a href="contact.html" class="mx-2 hover:text-[var(--highlight-color)]">Contact</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Sticky Header Script -->
+    <script>
+      window.addEventListener('scroll', function() {
+        const header = document.querySelector('.sticky-header');
+        if (window.scrollY > 50) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+      });
+    </script>
+</body>
+</html>
