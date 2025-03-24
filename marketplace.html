@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Marketplace - TruthWeb</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #FFFFFF;
+      }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+      }
+      .search-bar {
+        transition: all 0.3s ease;
+      }
+      .search-bar:focus-within {
+        box-shadow: 0 0 10px var(--highlight-color);
+      }
+      .category-btn {
+        transition: transform 0.3s ease, background-color 0.3s ease;
+      }
+      .category-btn:hover {
+        transform: scale(1.05);
+        background-color: var(--highlight-color);
+      }
+      .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+      }
+      .btn {
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.75rem 1.5rem;
+        border: 2px solid var(--highlight-color);
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.1) rotate(3deg);
+      }
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
+      .cart-btn {
+        position: relative;
+      }
+      .cart-btn::after {
+        content: attr(data-count);
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: red;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 12px;
+      }
+      .fade-in {
+        opacity: 0;
+        animation: fadeIn 1s ease-in-out forwards;
+      }
+      @keyframes fadeIn {
+        0% { opacity: 0; }
+        100% { opacity: 1; }
+      }
+      .sticky-header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: background 0.3s ease;
+      }
+      .sticky-header.scrolled {
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+    </style>
+</head>
+<body>
+    <!-- Sticky Header -->
+    <header class="sticky-header p-4 flex justify-between items-center shadow-lg">
+      <div class="flex items-center">
+        <a href="index.html" class="text-2xl font-bold">TruthWeb</a>
+      </div>
+      <div class="flex items-center space-x-4">
+        <a href="#" class="cart-btn icon floating-effect" data-count="0">
+          <i class="fas fa-shopping-cart text-xl"></i>
+        </a>
+        <a href="profile.html" class="icon floating-effect">
+          <i class="fas fa-user text-xl"></i>
+        </a>
+        <a href="wallet.html" class="icon floating-effect">
+          <i class="fas fa-wallet text-xl"></i>
+        </a>
+      </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="bg-[var(--primary-color)] py-4">
+      <ul class="flex flex-wrap justify-center space-x-4">
+        <li><a href="index.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">Home</a></li>
+        <li><a href="marketplace.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect active">Marketplace</a></li>
+        <li><a href="profile.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">Profile</a></li>
+        <li><a href="wallet.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">Wallet</a></li>
+        <li><a href="community.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">Community</a></li>
+        <li><a href="developers.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">Developers</a></li>
+        <li><a href="about.html" class="text-[var(--text-color)] hover:text-[var(--highlight-color)] floating-effect">About</a></li>
+      </ul>
+    </nav>
+
+    <!-- Search Bar Section -->
+    <section class="py-4 px-4 bg-gray-100">
+      <div class="max-w-6xl mx-auto">
+        <div class="search-bar bg-[var(--secondary-color)] rounded-full flex items-center p-2">
+          <input type="text" placeholder="Search TruthWeb Marketplace..." class="w-full bg-transparent text-[var(--primary-color)] outline-none px-2">
+          <i class="fas fa-search text-[var(--primary-color)]"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="py-8 px-4 bg-gray-100">
+      <h2 class="text-3xl font-bold text-center mb-6 fade-in">Shop by Category</h2>
+      <div class="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        <button class="category-btn bg-[var(--secondary-color)] p-4 rounded-lg text-center">Electronics</button>
+        <button class="category-btn bg-[var(--secondary-color)] p-4 rounded-lg text-center">Clothing</button>
+        <button class="category-btn bg-[var(--secondary-color)] p-4 rounded-lg text-center">NFTs</button>
+        <button class="category-btn bg-[var(--secondary-color)] p-4 rounded-lg text-center">Services</button>
+        <button class="category-btn bg-[var(--secondary-color)] p-4 rounded-lg text-center">Home Goods</button>
+      </div>
+    </section>
+
+    <!-- Product Listings Section -->
+    <section class="py-16 px-4">
+      <h2 class="text-3xl font-bold text-center mb-8 fade-in">TruthWeb Marketplace</h2>
+      <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Product 1 -->
+        <div class="product-card bg-[var(--secondary-color)] border-2 border-[var(--highlight-color)] rounded-lg p-4 fade-in">
+          <img src="https://placehold.co/200x200" alt="Pi Smart Watch" class="w-full h-48 object-cover mb-4 rounded">
+          <h3 class="text-xl font-semibold mb-2">Pi Smart Watch</h3>
+          <p class="text-gray-600 mb-2">Seller: PioneerA</p>
+          <p class="text-lg font-bold mb-4">25 Pi</p>
+          <div class="flex space-x-2">
+            <button class="btn add-to-cart" onclick="window.location.href='addtocart.html'; window.addToCart('Pi Smart Watch', 25)">Add to Cart</button>
+            <button class="btn" onclick="buyNow('Pi Smart Watch', 25)">Buy Now</button>
+          </div>
+        </div>
+        <!-- Product 2 -->
+        <div class="product-card bg-[var(--secondary-color)] border-2 border-[var(--highlight-color)] rounded-lg p-4 fade-in">
+          <img src="https://placehold.co/200x200" alt="Pi T-Shirt" class="w-full h-48 object-cover mb-4 rounded">
+          <h3 class="text-xl font-semibold mb-2">Pi T-Shirt</h3>
+          <p class="text-gray-600 mb-2">Seller: PioneerB</p>
+          <p class="text-lg font-bold mb-4">15 Pi</p>
+          <div class="flex space-x-2">
+            <button class="btn add-to-cart" onclick="window.location.href='addtocart.html'; window.addToCart('Pi T-Shirt', 15)">Add to Cart</button>
+            <button class="btn" onclick="buyNow('Pi T-Shirt', 15)">Buy Now</button>
+          </div>
+        </div>
+        <!-- Product 3 -->
+        <div class="product-card bg-[var(--secondary-color)] border-2 border-[var(--highlight-color)] rounded-lg p-4 fade-in">
+          <img src="https://placehold.co/200x200" alt="Pi NFT Art" class="w-full h-48 object-cover mb-4 rounded">
+          <h3 class="text-xl font-semibold mb-2">Pi NFT Art</h3>
+          <p class="text-gray-600 mb-2">Seller: PioneerC</p>
+          <p class="text-lg font-bold mb-4">50 Pi</p>
+          <div class="flex space-x-2">
+            <button class="btn add-to-cart" onclick="window.location.href='addtocart.html'; window.addToCart('Pi NFT Art', 50)">Add to Cart</button>
+            <button class="btn" onclick="buyNow('Pi NFT Art', 50)">Buy Now</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[var(--primary-color)] py-8 text-[var(--text-color)]">
+      <div class="container mx-auto text-center">
+        <div class="mb-4">
+          <a href="https://www.facebook.com/reimaginetruthofficial/" target="_blank" class="mx-2 floating-effect"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://x.com/reimagine_truth" target="_blank" class="mx-2 floating-effect"><i class="fab fa-twitter"></i></a>
+          <a href="https://t.me/TruthWebOfficial" target="_blank" class="mx-2 floating-effect"><i class="fab fa-telegram"></i></a>
+          <a href="https://www.youtube.com/@ReimagineTruth" target="_blank" class="mx-2 floating-effect"><i class="fab fa-youtube"></i></a>
+          <a href="https://github.com/username/TruthWeb" target="_blank" class="mx-2 floating-effect"><i class="fab fa-github"></i></a>
+        </div>
+        <p class="mb-4">© 2025 TruthWeb. All rights reserved.</p>
+        <div class="text-sm">
+          <a href="about.html" class="mx-2 hover:text-[var(--highlight-color)]">About Us</a> |
+          <a href="terms.html" class="mx-2 hover:text-[var(--highlight-color)]">Terms & Conditions</a> |
+          <a href="privacy.html" class="mx-2 hover:text-[var(--highlight-color)]">Privacy Policy</a> |
+          <a href="contact.html" class="mx-2 hover:text-[var(--highlight-color)]">Contact</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- JavaScript for Functionality and Animations -->
+    <script>
+      let cartCount = 0;
+
+      // Add to Cart Function (Updated to work with addtocart.html)
+      function addToCart(productName, price) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const existingItem = cart.find(item => item.name === productName);
+        if (existingItem) {
+          existingItem.quantity = (existingItem.quantity || 1) + 1;
+        } else {
+          cart.push({ name: productName, price: price, quantity: 1 });
+        }
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount();
+      }
+
+      // Buy Now Function
+      function buyNow(productName, price) {
+        alert(`Proceeding to buy ${productName} for ${price} Pi!`);
+        const productCards = document.querySelectorAll('.product-card');
+        productCards.forEach(card => {
+          if (card.querySelector('h3').textContent === productName) {
+            card.classList.add('animate-pulse');
+            setTimeout(() => card.classList.remove('animate-pulse'), 1000);
+          }
+        });
+      }
+
+      // Update Cart Count
+      function updateCartCount() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cartCount = cart.reduce((total, item) => total + (item.quantity || 1), 0);
+        const cartBtn = document.querySelector('.cart-btn');
+        cartBtn.setAttribute('data-count', cartCount);
+      }
+
+      // Sticky Header Scroll Effect
+      window.addEventListener('scroll', function() {
+        const header = document.querySelector('.sticky-header');
+        if (window.scrollY > 50) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+      });
+
+      // Initialize Cart Count on Page Load
+      document.addEventListener('DOMContentLoaded', updateCartCount);
+    </script>
+</body>
+</html>
