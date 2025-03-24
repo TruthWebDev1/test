@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>TruthWeb Ads - TruthWeb</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN (v6.5.1) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #FFFFFF;
+        --accent-color: #F5F5F5; /* Light gray for better contrast */
+      }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+        padding-bottom: 60px;
+      }
+      .sticky-header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 50;
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+        height: 64px;
+        animation: slideDown 0.5s ease-in-out forwards;
+      }
+      .sticky-header.hidden { transform: translateY(-100%); }
+      .sticky-header.scrolled { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); }
+      @keyframes slideDown {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .icon { color: var(--text-color); font-size: 1.25rem; margin-left: 0.75rem; }
+      .icon:hover { transform: scale(1.1); }
+      nav {
+        background: var(--primary-color);
+        padding: 1rem;
+        margin-top: 64px;
+      }
+      nav ul {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+      }
+      nav a {
+        color: var(--text-color);
+        transition: color 0.3s ease, transform 0.3s ease;
+      }
+      nav a:hover {
+        color: var(--highlight-color);
+        transform: translateY(-2px);
+      }
+      nav .active {
+        color: var(--highlight-color);
+        text-decoration: underline;
+      }
+      .hero {
+        min-height: 60vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, var(--primary-color) 60%, #333333 100%);
+        color: var(--text-color);
+        text-align: center;
+        padding: 3rem 1rem;
+        position: relative;
+        overflow: hidden;
+        animation: fadeInHero 1s ease-out forwards;
+      }
+      @keyframes fadeInHero {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.15), transparent 70%);
+        animation: rotateGlow 15s linear infinite;
+        z-index: 0;
+      }
+      @keyframes rotateGlow {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+      }
+      .glow-text {
+        font-size: 3.5rem;
+        font-weight: 700;
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.5);
+        animation: glow 2s ease-in-out infinite alternate;
+        margin-bottom: 1rem;
+      }
+      @keyframes glow {
+        0% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.5); }
+        100% { text-shadow: 0 0 25px rgba(255, 255, 255, 1), 0 0 50px rgba(255, 255, 255, 0.7); }
+      }
+      .hero-subtitle {
+        font-size: 1.25rem;
+        font-weight: 400;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+      }
+      .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.75rem 2rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      }
+      .btn.accent {
+        background: var(--accent-color); /* Light gray */
+        color: var(--primary-color); /* Black text */
+        border: 1px solid var(--primary-color); /* Black border */
+      }
+      .btn.accent:hover {
+        background: #D9D9D9; /* Slightly darker gray on hover */
+        color: var(--primary-color);
+      }
+      section { padding: 2rem 1rem; }
+      .card {
+        background: var(--secondary-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+      .card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+      }
+      .footer-menu {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        height: 60px;
+        background: var(--primary-color);
+        color: var(--text-color);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 1000;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+        animation: slideInFooter 0.5s ease-out forwards;
+      }
+      .footer-menu.hidden { transform: translateY(100%); }
+      @keyframes slideInFooter {
+        from { transform: translateY(100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .footer-menu a {
+        color: var(--text-color);
+        font-size: 1.5rem;
+        transition: transform 0.3s ease;
+      }
+      .footer-menu a:hover { transform: scale(1.2); }
+      footer {
+        background: var(--primary-color);
+        color: var(--text-color);
+        text-align: center;
+        padding: 2rem 1rem;
+      }
+      footer a {
+        color: var(--text-color);
+        margin: 0 0.5rem;
+        transition: transform 0.3s ease;
+      }
+      footer a:hover { transform: scale(1.1); }
+      @media (max-width: 640px) {
+        .glow-text { font-size: 2rem; }
+        .hero-subtitle { font-size: 1rem; }
+        .hero { padding: 2rem 0.5rem; min-height: 50vh; }
+        .hero-buttons { flex-direction: column; gap: 0.75rem; }
+        .sticky-header .logo-text { font-size: 1.25rem; }
+      }
+    </style>
+</head>
+<body>
+    <!-- Sticky Header -->
+    <header class="sticky-header">
+      <div class="flex items-center">
+        <a href="index.html" class="text-inherit flex items-center">
+          <span class="logo-text ml-2">TruthWeb</span>
+        </a>
+      </div>
+      <div class="flex items-center">
+        <a href="marketplace.html" class="icon"><i class="fas fa-shopping-cart"></i></a>
+        <a href="profile.html" class="icon"><i class="fas fa-user"></i></a>
+        <a href="wallet.html" class="icon"><i class="fas fa-wallet"></i></a>
+      </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="marketplace.html" class="active">Marketplace</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="wallet.html">Wallet</a></li>
+        <li><a href="community.html">Community</a></li>
+        <li><a href="developers.html">Developers</a></li>
+        <li><a href="about.html">About</a></li>
+      </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1 class="glow-text">TruthWeb Ads</h1>
+        <p class="hero-subtitle">Boost your visibility with targeted promotions</p>
+        <div class="hero-buttons">
+          <a href="#promotion" class="btn accent">Promote Now</a>
+          <a href="ads.html" class="btn accent">View Ads</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ad & Promotion Section -->
+    <section id="promotion" class="py-16 px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">Enhance Your Listings</h2>
+      <div class="max-w-4xl mx-auto mb-12">
+        <p class="text-lg text-center text-gray-600">Increase the visibility of your products, services, or NFTs on TruthWeb with our affordable promotion packages, payable in Pi.</p>
+      </div>
+
+      <!-- Promotion Packages -->
+      <div class="max-w-6xl mx-auto mb-12">
+        <h3 class="text-2xl font-semibold mb-6">Promotion Packages</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="card">
+            <img src="https://placehold.co/200x200" alt="Basic Boost" class="w-full h-48 object-cover mb-4">
+            <h4 class="text-xl font-semibold mb-2">Basic Boost</h4>
+            <p class="text-gray-600 mb-2">Duration: 7 days</p>
+            <p class="text-gray-600 mb-4">Features: Featured listing on category page</p>
+            <p class="text-lg font-bold mb-4">Price: 10 Pi</p>
+            <a href="#" class="btn accent w-full">Select Package</a>
+          </div>
+          <div class="card">
+            <img src="https://placehold.co/200x200" alt="Premium Boost" class="w-full h-48 object-cover mb-4">
+            <h4 class="text-xl font-semibold mb-2">Premium Boost</h4>
+            <p class="text-gray-600 mb-2">Duration: 14 days</p>
+            <p class="text-gray-600 mb-4">Features: Homepage banner + Featured listing</p>
+            <p class="text-lg font-bold mb-4">Price: 25 Pi</p>
+            <a href="#" class="btn accent w-full">Select Package</a>
+          </div>
+          <div class="card">
+            <img src="https://placehold.co/200x200" alt="Elite Boost" class="w-full h-48 object-cover mb-4">
+            <h4 class="text-xl font-semibold mb-2">Elite Boost</h4>
+            <p class="text-gray-600 mb-2">Duration: 30 days</p>
+            <p class="text-gray-600 mb-4">Features: Homepage banner, Featured listing, Social media shoutout</p>
+            <p class="text-lg font-bold mb-4">Price: 50 Pi</p>
+            <a href="#" class="btn accent w-full">Select Package</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Promote Your Listing Form -->
+      <div class="max-w-4xl mx-auto mb-12 text-center">
+        <h3 class="text-2xl font-semibold mb-6">Promote Your Listing</h3>
+        <div class="card p-6 mx-auto max-w-md">
+          <div class="mb-4">
+            <label class="block text-left text-gray-700 mb-2" for="listing-id">Listing ID:</label>
+            <input type="text" id="listing-id" placeholder="Enter your listing ID" class="p-2 border border-gray-300 rounded w-full text-gray-600">
+          </div>
+          <div class="mb-4">
+            <label class="block text-left text-gray-700 mb-2" for="package">Select Package:</label>
+            <select id="package" class="p-2 border border-gray-300 rounded w-full text-gray-600">
+              <option value="basic">Basic Boost (10 Pi)</option>
+              <option value="premium">Premium Boost (25 Pi)</option>
+              <option value="elite">Elite Boost (50 Pi)</option>
+            </select>
+          </div>
+          <div class="mb-4">
+            <p class="text-gray-600">Current Balance: 100 Pi</p>
+            <p class="text-gray-600">Cost will be deducted from your wallet</p>
+          </div>
+          <button class="btn accent w-full">Boost Listing</button>
+        </div>
+      </div>
+
+      <!-- Benefits -->
+      <div class="max-w-4xl mx-auto mb-12">
+        <h3 class="text-2xl font-semibold text-center mb-8">Why Promote with TruthWeb?</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+          <div class="card text-center">
+            <h4 class="text-lg font-semibold mb-2">Increased Visibility</h4>
+            <p class="text-gray-600">Reach more Pioneers with prominent placement.</p>
+          </div>
+          <div class="card text-center">
+            <h4 class="text-lg font-semibold mb-2">Affordable Rates</h4>
+            <p class="text-gray-600">Boost your listing starting at just 10 Pi.</p>
+          </div>
+          <div class="card text-center">
+            <h4 class="text-lg font-semibold mb-2">Targeted Exposure</h4>
+            <p class="text-gray-600">Promote to the TruthWeb community directly.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Call to Action -->
+      <div class="text-center">
+        <h3 class="text-2xl font-semibold mb-4">Get Noticed Today</h3>
+        <p class="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">Elevate your listings and attract more buyers with our promotion tools!</p>
+        <a href="marketplace.html" class="btn accent">Explore Marketplace</a>
+      </div>
+    </section>
+
+    <!-- Footer Menu -->
+    <div class="footer-menu">
+      <a href="index.html"><i class="fas fa-home"></i></a>
+      <a href="marketplace.html"><i class="fas fa-shopping-cart"></i></a>
+      <a href="profile.html"><i class="fas fa-user"></i></a>
+      <a href="wallet.html"><i class="fas fa-wallet"></i></a>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="mb-4">
+        <a href="https://www.facebook.com/reimaginetruthofficial/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://x.com/reimagine_truth" target="_blank"><i class="fab fa-twitter"></i></a>
+        <a href="https://t.me/TruthWebOfficial" target="_blank"><i class="fab fa-telegram"></i></a>
+        <a href="https://www.youtube.com/@ReimagineTruth" target="_blank"><i class="fab fa-youtube"></i></a>
+        <a href="https://github.com/username/TruthWeb" target="_blank"><i class="fab fa-github"></i></a>
+      </div>
+      <p class="mb-4">© 2025 TruthWeb. All rights reserved.</p>
+      <div class="text-sm">
+        <a href="about.html">About Us</a> |
+        <a href="terms.html">Terms & Conditions</a> |
+        <a href="privacy.html">Privacy Policy</a> |
+        <a href="contact.html">Contact</a>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+      // Scroll-based header/footer hiding
+      let lastScroll = 0;
+      window.addEventListener('scroll', () => {
+        const header = document.querySelector('.sticky-header');
+        const footerMenu = document.querySelector('.footer-menu');
+        const currentScroll = window.scrollY;
+
+        if (currentScroll > lastScroll && currentScroll > 50) {
+          header.classList.add('hidden');
+          footerMenu.classList.add('hidden');
+        } else if (currentScroll < lastScroll) {
+          header.classList.remove('hidden');
+          footerMenu.classList.remove('hidden');
+          header.classList.toggle('scrolled', currentScroll > 50);
+        }
+        lastScroll = currentScroll;
+      });
+    </script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+const swipeSound = new Audio('./assets/sounds/swipe.wav');
+const addToCartSound = new Audio('./assets/sounds/click.wav');
+const buyNowSound = new Audio('./assets/sounds/beep.wav');
+const nextPrevSound = new Audio('./assets/sounds/blip.wav');

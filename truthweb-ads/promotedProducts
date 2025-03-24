@@ -1,0 +1,50 @@
+const promotedProducts = [
+    {
+        id: 1,
+        name: "Smartphone X Pro",
+        vendor: "TechCorp",
+        image: "https://via.placeholder.com/340x204?text=Smartphone+X+Pro",
+        price: "299.99",
+        description: "Latest model with 5G and advanced camera."
+    },
+    {
+        id: 2,
+        name: "Handcrafted Necklace",
+        vendor: "JewelArt",
+        image: "https://via.placeholder.com/340x204?text=Necklace",
+        price: "49.99",
+        description: "Unique artisan design with gemstones."
+    },
+    {
+        id: 3,
+        name: "Organic Coffee Beans",
+        vendor: "BeanBrew",
+        image: "https://via.placeholder.com/340x204?text=Coffee",
+        price: "19.99",
+        description: "Sustainably sourced from Colombia."
+    },
+    {
+        id: 4,
+        name: "Gaming Headset",
+        vendor: "GameZone",
+        image: "https://via.placeholder.com/340x204?text=Headset",
+        price: "79.99",
+        description: "Immersive sound for gamers."
+    },
+    {
+        id: 5,
+        name: "Leather Wallet",
+        vendor: "CraftWorks",
+        image: "https://via.placeholder.com/340x204?text=Wallet",
+        price: "34.99",
+        description: "Handmade with premium leather."
+    },
+    {
+        id: 6,
+        name: "Fitness Tracker",
+        vendor: "FitLife",
+        image: "https://via.placeholder.com/340x204?text=Tracker",
+        price: "59.99",
+        description: "Track your steps and heart rate."
+    }
+];

@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" name="viewport"/>
+    <title>Profile - TruthWeb</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN (v6.5.1 for latest icons) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #FFFFFF;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+      /* Header (X-Style) */
+      .sticky-header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+        height: 53px;
+        animation: slideInHeader 0.5s ease-out forwards;
+      }
+      .sticky-header.hidden {
+        transform: translateY(-100%);
+      }
+      .sticky-header.scrolled {
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+      @keyframes slideInHeader {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .sticky-header .logo-text {
+        font-size: 1.25rem;
+        font-weight: 700;
+        transition: font-size 0.3s ease;
+      }
+      .search-container {
+        position: relative;
+        flex-grow: 1;
+        max-width: 400px;
+        margin: 0 1rem;
+        transition: all 0.3s ease;
+      }
+      .search-input {
+        width: 100%;
+        padding: 0.5rem 2.5rem 0.5rem 1rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .search-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transform: scale(1.02) translateY(-2px);
+      }
+      .search-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+      }
+      .search-input:focus + .search-icon { transform: translateY(-50%) scale(1.1); }
+      .search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+        background: var(--secondary-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 60;
+        display: none;
+        animation: dropIn 0.3s ease-out forwards;
+      }
+      .search-results.active { display: block; }
+      @keyframes dropIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .search-result-item {
+        padding: 0.75rem;
+        color: var(--primary-color);
+        border-bottom: 1px solid var(--highlight-color);
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
+      .search-result-item:hover {
+        background: var(--highlight-color);
+        transform: scale(1.02);
+      }
+      .icon {
+        color: var(--text-color);
+        font-size: 1.25rem;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        margin-left: 0.75rem;
+      }
+      .icon:hover {
+        transform: scale(1.15) rotate(5deg);
+      }
+      /* Desktop Navigation */
+      .desktop-nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .desktop-nav .nav-item a {
+        color: var(--text-color);
+        font-size: 1rem;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        transition: color 0.3s ease, transform 0.3s ease;
+      }
+      .desktop-nav .nav-item a:hover {
+        color: var(--highlight-color);
+        transform: scale(1.05);
+      }
+      /* Burger Button */
+      .burger-btn {
+        display: none;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 30px;
+        height: 20px;
+        cursor: pointer;
+        margin-left: 1rem;
+      }
+      .burger-btn span {
+        width: 100%;
+        height: 3px;
+        background: var(--text-color);
+        transition: all 0.3s ease;
+      }
+      .burger-btn.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      .burger-btn.active span:nth-child(2) {
+        opacity: 0;
+      }
+      .burger-btn.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
+      }
+      /* Mobile Menu */
+      .mobile-menu {
+        position: fixed;
+        top: 53px;
+        left: -100%;
+        width: 250px;
+        height: calc(100vh - 53px);
+        background: var(--primary-color);
+        color: var(--text-color);
+        padding: 1rem;
+        z-index: 999;
+        transition: left 0.3s ease;
+      }
+      .mobile-menu.active {
+        left: 0;
+      }
+      .mobile-menu ul {
+        list-style: none;
+        padding: 0;
+      }
+      .mobile-menu .nav-item a {
+        color: var(--text-color);
+        font-size: 1.1rem;
+        padding: 0.75rem;
+        display: block;
+        transition: background 0.3s ease, transform 0.3s ease;
+      }
+      .mobile-menu .nav-item a:hover {
+        background: var(--highlight-color);
+        transform: scale(1.02);
+      }
+      /* Main Layout (X-Style) */
+      .main-container {
+        display: flex;
+        max-width: 1265px;
+        margin: 0 auto;
+        padding-top: 53px;
+      }
+      .left-sidebar {
+        width: 275px;
+        padding: 1rem;
+        position: sticky;
+        top: 53px;
+        height: calc(100vh - 53px);
+        overflow-y: auto;
+        background: var(--secondary-color);
+      }
+      .left-sidebar nav ul {
+        list-style: none;
+        padding: 0;
+      }
+      .left-sidebar nav ul li {
+        margin-bottom: 1rem;
+      }
+      .left-sidebar nav ul li a {
+        display: flex;
+        align-items: center;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        padding: 0.5rem;
+        border-radius: 9999px;
+        transition: background 0.3s ease, transform 0.3s ease;
+      }
+      .left-sidebar nav ul li a:hover {
+        background: var(--highlight-color);
+        transform: scale(1.05);
+      }
+      .left-sidebar nav ul li a i {
+        font-size: 1.5rem;
+        margin-right: 1rem;
+      }
+      .main-profile {
+        flex: 1;
+        max-width: 600px;
+        border-left: 1px solid var(--highlight-color);
+        border-right: 1px solid var(--highlight-color);
+        padding: 0;
+        background: var(--secondary-color);
+      }
+      .right-sidebar {
+        width: 350px;
+        padding: 1rem;
+        position: sticky;
+        top: 53px;
+        height: calc(100vh - 53px);
+        overflow-y: auto;
+        background: var(--secondary-color);
+      }
+      .widget {
+        background: var(--secondary-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .widget:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+      }
+      .widget h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      .widget ul {
+        list-style: none;
+        padding: 0;
+      }
+      .widget ul li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--highlight-color);
+      }
+      .widget ul li:last-child {
+        border-bottom: none;
+      }
+      .widget ul li a {
+        color: var(--primary-color);
+        transition: color 0.3s ease;
+      }
+      .widget ul li a:hover {
+        color: var(--highlight-color);
+      }
+      /* Profile Header */
+      .profile-header {
+        padding: 1rem;
+        border-bottom: 1px solid var(--highlight-color);
+      }
+      .profile-banner {
+        width: 100%;
+        height: 200px;
+        background: var(--highlight-color);
+        border-radius: 10px 10px 0 0;
+        margin-bottom: 1rem;
+      }
+      .profile-avatar {
+        font-size: 5rem;
+        color: var(--primary-color);
+        margin-top: -3rem;
+        margin-left: 1rem;
+      }
+      .profile-info {
+        margin-top: 1rem;
+      }
+      .profile-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .profile-handle {
+        font-size: 1rem;
+        color: var(--highlight-color);
+      }
+      .profile-bio {
+        margin: 0.5rem 0;
+      }
+      .profile-stats {
+        display: flex;
+        gap: 1rem;
+        margin: 0.5rem 0;
+      }
+      .profile-stats span {
+        font-weight: 600;
+      }
+      .edit-profile-btn {
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .edit-profile-btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.05);
+      }
+      /* Profile Tabs */
+      .profile-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--highlight-color);
+      }
+      .profile-tab {
+        flex: 1;
+        text-align: center;
+        padding: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+      .profile-tab:hover {
+        background: var(--highlight-color);
+      }
+      .profile-tab.active {
+        border-bottom: 2px solid var(--primary-color);
+      }
+      /* Profile Content */
+      .profile-content {
+        padding: 1rem;
+      }
+      .feed-item {
+        padding: 1rem;
+        border-bottom: 1px solid var(--highlight-color);
+        transition: background 0.2s ease, transform 0.3s ease;
+        animation: slideInFeed 0.5s ease-out forwards;
+      }
+      .feed-item:hover {
+        background: rgba(204, 204, 204, 0.1);
+        transform: scale(1.01);
+      }
+      @keyframes slideInFeed {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+      .feed-item-header {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 0.5rem;
+      }
+      .feed-avatar {
+        font-size: 2.5rem;
+        margin-right: 0.75rem;
+        color: var(--primary-color);
+        transition: transform 0.3s ease;
+      }
+      .feed-item:hover .feed-avatar { transform: scale(1.1); }
+      .feed-user-info {
+        flex: 1;
+      }
+      .feed-user {
+        font-weight: 700;
+        font-size: 1rem;
+      }
+      .feed-handle {
+        font-size: 0.9rem;
+        color: var(--highlight-color);
+        margin-left: 0.25rem;
+      }
+      .feed-time {
+        font-size: 0.85rem;
+        color: var(--highlight-color);
+        margin-left: 0.5rem;
+      }
+      .feed-content {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+      }
+      .feed-actions {
+        display: flex;
+        justify-content: space-between;
+        max-width: 400px;
+        margin-top: 0.5rem;
+      }
+      .feed-actions button {
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        font-size: 0.85rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 9999px;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .feed-actions button i {
+        font-size: 1rem;
+      }
+      .feed-actions button:hover {
+        background: var(--highlight-color);
+        color: var(--primary-color);
+        transform: scale(1.1);
+      }
+      .feed-actions button.liked i {
+        color: #1DA1F2;
+      }
+      .feed-actions button.retweeted i {
+        color: #00FF00;
+      }
+      /* Edit Profile Modal */
+      .edit-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+      }
+      .edit-modal.active {
+        display: flex;
+      }
+      .edit-modal-content {
+        background: var(--secondary-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 16px;
+        padding: 1rem;
+        width: 90%;
+        max-width: 500px;
+        max-height: 80vh;
+        overflow-y: auto;
+        animation: slideInModal 0.3s ease-out forwards;
+      }
+      @keyframes slideInModal {
+        from { opacity: 0; transform: translateY(-50px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .edit-modal-content h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      .edit-modal-content form label {
+        display: block;
+        margin: 0.5rem 0 0.25rem;
+        font-weight: 600;
+      }
+      .edit-modal-content form input, .edit-modal-content form textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 10px;
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        font-size: 1rem;
+        outline: none;
+      }
+      .edit-modal-content form textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+      .edit-modal-content form button {
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.5rem 1.5rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        margin-top: 1rem;
+      }
+      .edit-modal-content form button:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.05);
+      }
+      /* Footer Menu (Mobile-Only) */
+      .footer-menu {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background: var(--primary-color);
+        color: var(--text-color);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 1000;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+        animation: slideInFooter 0.5s ease-out forwards;
+      }
+      .footer-menu.hidden {
+        transform: translateY(100%);
+      }
+      @keyframes slideInFooter {
+        from { transform: translateY(100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .footer-menu a {
+        color: var(--text-color);
+        font-size: 1.5rem;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .footer-menu a:hover {
+        transform: scale(1.2);
+      }
+      /* Infinite Scroll Loader */
+      .scroll-loader {
+        text-align: center;
+        padding: 2rem;
+        font-size: 1rem;
+        color: var(--highlight-color);
+        display: none;
+      }
+      .scroll-loader.active {
+        display: block;
+      }
+      /* Responsive Design */
+      @media (max-width: 640px) {
+        .main-container {
+          display: block;
+        }
+        .left-sidebar, .right-sidebar {
+          display: none;
+        }
+        .main-profile {
+          border: none;
+          padding: 0;
+        }
+        .search-container { max-width: 120px; margin: 0 0.5rem; }
+        .sticky-header { padding: 0 0.5rem; }
+        .logo-text { font-size: 1.1rem; }
+        .icon { font-size: 1.1rem; margin-left: 0.5rem; }
+        .desktop-nav { display: none !important; }
+        .burger-btn { display: flex; }
+        .profile-banner { height: 150px; }
+        .profile-avatar { font-size: 4rem; margin-top: -2.5rem; }
+      }
+      @media (min-width: 641px) and (max-width: 1024px) {
+        .left-sidebar { width: 80px; }
+        .left-sidebar nav ul li a span { display: none; }
+        .left-sidebar nav ul li a i { margin-right: 0; }
+        .right-sidebar { display: none; }
+        .main-profile { max-width: 500px; }
+        .footer-menu { display: none; }
+        .burger-btn { display: none; }
+      }
+      @media (min-width: 1025px) {
+        .footer-menu { display: none; }
+        .burger-btn { display: none; }
+      }
+    </style>
+</head>
+<body>
+    <!-- Header (X-Style with Desktop Nav and Burger Menu) -->
+    <header class="sticky-header">
+        <div class="flex items-center">
+            <a href="index.html" class="text-inherit flex items-center">
+                <span class="logo-text ml-2">TruthWeb</span>
+            </a>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search TruthWeb..." aria-label="Search TruthWeb">
+            <i class="fas fa-search search-icon"></i>
+            <div class="search-results"></div>
+        </div>
+        <div class="flex items-center">
+            <nav class="desktop-nav hidden md:flex items-center">
+                <ul class="flex space-x-4">
+                    <li class="nav-item"><a href="index.html">Home</a></li>
+                    <li class="nav-item"><a href="marketplace.html">Marketplace</a></li>
+                    <li class="nav-item"><a href="profile.html">Profile</a></li>
+                    <li class="nav-item"><a href="wallet.html">Wallet</a></li>
+                    <li class="nav-item"><a href="ledger-testnet.html">Ledger Testnet</a></li>
+                    <li class="nav-item"><a href="community.html">Community</a></li>
+                    <li class="nav-item"><a href="developers.html">Developers</a></li>
+                    <li class="nav-item"><a href="about.html">About</a></li>
+                </ul>
+            </nav>
+            <a href="marketplace.html" class="icon floating-effect"><i class="fas fa-shopping-cart"></i></a>
+            <a href="profile.html" class="icon floating-effect"><i class="fas fa-user"></i></a>
+            <a href="wallet.html" class="icon floating-effect"><i class="fas fa-wallet"></i></a>
+            <div class="burger-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <nav class="mobile-menu">
+        <ul>
+            <li class="nav-item"><a href="index.html">Home</a></li>
+            <li class="nav-item"><a href="marketplace.html">Marketplace</a></li>
+            <li class="nav-item"><a href="profile.html">Profile</a></li>
+            <li class="nav-item"><a href="wallet.html">Wallet</a></li>
+            <li class="nav-item"><a href="ledger-testnet.html">Ledger Testnet</a></li>
+            <li class="nav-item"><a href="community.html">Community</a></li>
+            <li class="nav-item"><a href="developers.html">Developers</a></li>
+            <li class="nav-item"><a href="about.html">About</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content (X-Style Layout) -->
+    <div class="main-container">
+        <!-- Left Sidebar (Desktop) -->
+        <aside class="left-sidebar">
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> <span>Home</span></a></li>
+                    <li><a href="explore.html"><i class="fas fa-hashtag"></i> <span>Explore</span></a></li>
+                    <li><a href="profile.html"><i class="fas fa-user"></i> <span>Profile</span></a></li>
+                    <li><a href="walletdashboard.html"><i class="fas fa-wallet"></i> <span>Wallet</span></a></li>
+                    <li><a href="marketplace.html"><i class="fas fa-shopping-cart"></i> <span>Marketplace</span></a></li>
+                    <li><a href="community.html"><i class="fas fa-users"></i> <span>Community</span></a></li>
+                    <li><a href="developers.html"><i class="fas fa-code"></i> <span>Developers</span></a></li>
+                    <li><a href="about.html"><i class="fas fa-info-circle"></i> <span>About</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Profile Content -->
+        <main class="main-profile">
+            <div class="profile-header">
+                <div class="profile-banner"></div>
+                <i class="fas fa-user-circle profile-avatar"></i>
+                <div class="profile-info">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="profile-name">PioneerA</span>
+                            <span class="profile-handle">@pioneera</span>
+                        </div>
+                        <button class="edit-profile-btn">Edit Profile</button>
+                    </div>
+                    <p class="profile-bio">Pi enthusiast | Trader | TruthWeb Pioneer since 2024</p>
+                    <div class="profile-stats">
+                        <span>Following: 150</span>
+                        <span>Followers: 320</span>
+                        <span>Posts: 45</span>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-tabs">
+                <div class="profile-tab active" data-tab="posts">Posts</div>
+                <div class="profile-tab" data-tab="activity">Activity</div>
+            </div>
+            <div class="profile-content" id="profile-posts">
+                <!-- Sample Posts -->
+                <div class="feed-item">
+                    <div class="feed-item-header">
+                        <i class="fas fa-user-circle feed-avatar"></i>
+                        <div class="feed-user-info">
+                            <span class="feed-user">PioneerA</span>
+                            <span class="feed-handle">@pioneera</span>
+                            <span class="feed-time">Mar 5, 2025, 18:45</span>
+                        </div>
+                    </div>
+                    <p class="feed-content">Just sold 500 Pi in a P2P trade! Loving the seamless experience on TruthWeb.</p>
+                    <div class="feed-actions">
+                        <button><i class="far fa-comment"></i> 2</button>
+                        <button class="retweet-btn"><i class="fas fa-retweet"></i> 1</button>
+                        <button class="like-btn"><i class="far fa-heart"></i> <span class="like-count">3</span></button>
+                        <button><i class="fas fa-share"></i></button>
+                    </div>
+                </div>
+                <div class="feed-item">
+                    <div class="feed-item-header">
+                        <i class="fas fa-user-circle feed-avatar"></i>
+                        <div class="feed-user-info">
+                            <span class="feed-user">PioneerA</span>
+                            <span class="feed-handle">@pioneera</span>
+                            <span class="feed-time">Feb 28, 2025, 10:00</span>
+                        </div>
+                    </div>
+                    <p class="feed-content">Excited to join the TruthWeb community! Looking forward to trading Pi.</p>
+                    <div class="feed-actions">
+                        <button><i class="far fa-comment"></i> 5</button>
+                        <button class="retweet-btn"><i class="fas fa-retweet"></i> 2</button>
+                        <button class="like-btn"><i class="far fa-heart"></i> <span class="like-count">10</span></button>
+                        <button><i class="fas fa-share"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-content" id="profile-activity" style="display: none;">
+                <!-- Sample Activity -->
+                <div class="feed-item">
+                    <p class="feed-content">PioneerA liked a post by @CryptoVendor - Mar 18, 2025</p>
+                </div>
+                <div class="feed-item">
+                    <p class="feed-content">PioneerA followed @TruthWebOfficial - Mar 15, 2025</p>
+                </div>
+            </div>
+            <div class="scroll-loader">Loading more...</div>
+        </main>
+
+        <!-- Right Sidebar (Desktop) -->
+        <aside class="right-sidebar">
+            <div class="widget">
+                <h3>Who to Follow</h3>
+                <ul>
+                    <li><a href="#">@TruthWebOfficial</a></li>
+                    <li><a href="#">@PiPioneer</a></li>
+                    <li><a href="#">@CryptoVendor</a></li>
+                </ul>
+            </div>
+            <div class="widget">
+                <h3>TruthWeb Tips</h3>
+                <ul>
+                    <li><a href="#">How to Trade Pi</a></li>
+                    <li><a href="#">Profile Customization</a></li>
+                    <li><a href="#">Community Guidelines</a></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="edit-modal">
+        <div class="edit-modal-content">
+            <h3>Edit Profile</h3>
+            <form id="edit-profile-form">
+                <label for="name">Name</label>
+                <input type="text" id="name" value="PioneerA" required>
+                <label for="bio">Bio</label>
+                <textarea id="bio">Pi enthusiast | Trader | TruthWeb Pioneer since 2024</textarea>
+                <button type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer Menu (Mobile-Only) -->
+    <nav class="footer-menu" role="navigation" aria-label="Mobile Footer Navigation">
+        <a href="index.html"><i class="fas fa-home"></i></a>
+        <a href="explore.html"><i class="fas fa-hashtag"></i></a>
+        <a href="marketplace.html"><i class="fas fa-shopping-cart"></i></a>
+        <a href="profile.html"><i class="fas fa-user"></i></a>
+        <a href="walletdashboard.html"><i class="fas fa-wallet"></i></a>
+    </nav>
+
+    <!-- Scripts -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Header and Footer Scroll Hide/Show Effect
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+          const header = document.querySelector('.sticky-header');
+          const footerMenu = document.querySelector('.footer-menu');
+          const currentScroll = window.scrollY;
+
+          if (currentScroll > lastScroll && currentScroll > 50) {
+            header.classList.add('hidden');
+            footerMenu.classList.add('hidden');
+          } else if (currentScroll < lastScroll) {
+            header.classList.remove('hidden');
+            footerMenu.classList.remove('hidden');
+            header.classList.toggle('scrolled', currentScroll > 50);
+          }
+          lastScroll = currentScroll;
+        });
+
+        // Burger Menu Toggle
+        const burgerBtn = document.querySelector('.burger-btn');
+        const mobileMenu = document.querySelector('.mobile-menu');
+        burgerBtn.addEventListener('click', () => {
+          burgerBtn.classList.toggle('active');
+          mobileMenu.classList.toggle('active');
+        });
+
+        // Search Functionality
+        const searchInput = document.querySelector('.search-input');
+        const searchResults = document.querySelector('.search-results');
+        const searchableContent = [];
+        document.querySelectorAll('h1, h2, h3, p, a').forEach(element => {
+          const text = element.textContent.trim();
+          if (text) {
+            searchableContent.push({
+              text: text.toLowerCase(),
+              element,
+              href: element.tagName === 'A' ? element.getAttribute('href') : null
+            });
+          }
+        });
+
+        searchInput.addEventListener('input', (e) => {
+          const query = e.target.value.toLowerCase().trim();
+          searchResults.innerHTML = '';
+          searchResults.classList.remove('active');
+
+          if (query.length > 0) {
+            const results = searchableContent.filter(item => item.text.includes(query));
+            if (results.length > 0) {
+              results.forEach(result => {
+                const div = document.createElement('div');
+                div.classList.add('search-result-item');
+                div.textContent = result.text.slice(0, 50) + (result.text.length > 50 ? '...' : '');
+                div.addEventListener('click', () => {
+                  if (result.href) window.location.href = result.href;
+                  else result.element.scrollIntoView({ behavior: 'smooth' });
+                  searchResults.classList.remove('active');
+                  searchInput.value = '';
+                });
+                searchResults.appendChild(div);
+              });
+              searchResults.classList.add('active');
+            } else {
+              const noResult = document.createElement('div');
+              noResult.classList.add('search-result-item');
+              noResult.textContent = 'No results found';
+              searchResults.appendChild(noResult);
+              searchResults.classList.add('active');
+            }
+          }
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.classList.remove('active');
+          }
+        });
+
+        // Profile Tabs
+        const tabs = document.querySelectorAll('.profile-tab');
+        const contents = document.querySelectorAll('.profile-content');
+        tabs.forEach(tab => {
+          tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            contents.forEach(c => c.style.display = 'none');
+            document.getElementById(`profile-${tab.dataset.tab}`).style.display = 'block';
+          });
+        });
+
+        // Edit Profile Modal
+        const editBtn = document.querySelector('.edit-profile-btn');
+        const editModal = document.querySelector('.edit-modal');
+        editBtn.addEventListener('click', () => {
+          editModal.classList.add('active');
+        });
+        editModal.addEventListener('click', (e) => {
+          if (e.target === editModal) {
+            editModal.classList.remove('active');
+          }
+        });
+
+        document.getElementById('edit-profile-form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = document.getElementById('name').value.trim();
+          const bio = document.getElementById('bio').value.trim();
+          document.querySelector('.profile-name').textContent = name;
+          document.querySelector('.profile-bio').textContent = bio;
+          editModal.classList.remove('active');
+        });
+
+        // Like and Retweet Functionality
+        function toggleLike() {
+          const likeCount = this.querySelector('.like-count');
+          let count = parseInt(likeCount.textContent);
+          count++;
+          likeCount.textContent = count;
+          const icon = this.querySelector('i');
+          icon.classList.toggle('far');
+          icon.classList.toggle('fas');
+          this.classList.toggle('liked');
+        }
+
+        function toggleRetweet() {
+          const icon = this.querySelector('i');
+          icon.classList.toggle('retweeted');
+        }
+
+        document.querySelectorAll('.like-btn').forEach(button => {
+          button.addEventListener('click', toggleLike);
+        });
+
+        document.querySelectorAll('.retweet-btn').forEach(button => {
+          button.addEventListener('click', toggleRetweet);
+        });
+
+        // Infinite Scroll (Sample)
+        const profilePosts = document.getElementById('profile-posts');
+        const scrollLoader = document.querySelector('.scroll-loader');
+        let page = 1;
+
+        const samplePosts = [
+          {
+            time: 'Feb 20, 2025, 14:30',
+            content: 'Just completed my first Pi trade on TruthWeb! Feeling like a pro now.'
+          },
+          {
+            time: 'Feb 15, 2025, 09:00',
+            content: 'Loving the new marketplace features. Got some great deals today!'
+          }
+        ];
+
+        function loadMorePosts() {
+          scrollLoader.classList.add('active');
+          setTimeout(() => {
+            for (let i = 0; i < 2; i++) {
+              const randomPost = samplePosts[Math.floor(Math.random() * samplePosts.length)];
+              const newPost = document.createElement('div');
+              newPost.className = 'feed-item';
+              newPost.style.opacity = '0';
+              newPost.innerHTML = `
+                <div class="feed-item-header">
+                  <i class="fas fa-user-circle feed-avatar"></i>
+                  <div class="feed-user-info">
+                    <span class="feed-user">PioneerA</span>
+                    <span class="feed-handle">@pioneera</span>
+                    <span class="feed-time">${randomPost.time}</span>
+                  </div>
+                </div>
+                <p class="feed-content">${randomPost.content}</p>
+                <div class="feed-actions">
+                  <button><i class="far fa-comment"></i> ${Math.floor(Math.random() * 5)}</button>
+                  <button class="retweet-btn"><i class="fas fa-retweet"></i> ${Math.floor(Math.random() * 3)}</button>
+                  <button class="like-btn"><i class="far fa-heart"></i> <span class="like-count">${Math.floor(Math.random() * 10)}</span></button>
+                  <button><i class="fas fa-share"></i></button>
+                </div>
+              `;
+              profilePosts.appendChild(newPost);
+              setTimeout(() => { newPost.style.opacity = '1'; }, 10);
+              newPost.querySelector('.like-btn').addEventListener('click', toggleLike);
+              newPost.querySelector('.retweet-btn').addEventListener('click', toggleRetweet);
+            }
+            scrollLoader.classList.remove('active');
+            page++;
+          }, 1000);
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+          if (entries[0].isIntersecting) {
+            loadMorePosts();
+          }
+        }, { threshold: 0.1 });
+
+        observer.observe(scrollLoader);
+      });
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TruthWeb Payment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Welcome to TruthWeb!</h1>
+    <button id="auth-button">Authenticate with Pi</button>
+
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script>
+        // Authenticate the user and get payment permissions
+        const scopes = ['payments'];
+
+        function onIncompletePaymentFound(payment) {
+            paymentId = payment.identifier;
+            txid = payment.transaction.txid;
+
+            // Send to Flask backend to complete the payment
+            fetch('/payment/complete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ paymentId, txid })
+            })
+            .then(response => response.json())
+            .then(data => console.log(data));
+        }
+
+        Pi.authenticate(scopes, onIncompletePaymentFound)
+            .then(auth => console.log("User authenticated:", auth))
+            .catch(error => console.error("Authentication error:", error));
+    </script>
+</body>
+</html>

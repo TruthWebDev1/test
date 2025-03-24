@@ -1,0 +1,13 @@
+pi_payments_app/
+│── app.py                  # Main Flask application
+│── config.py               # Configuration (API Key, Database, etc.)
+│── payments/
+│   ├── __init__.py         # Package initialization
+│   ├── routes.py           # Payment routes (authentication, approval, completion)
+│   ├── pi_api.py           # Functions to interact with Pi API
+│── templates/
+│   ├── index.html          # Basic frontend (if needed)
+│── static/
+│   ├── script.js           # JavaScript for Pi authentication
+│── requirements.txt        # Dependencies (Flask, Requests, etc.)
+│── README.md               # Documentation

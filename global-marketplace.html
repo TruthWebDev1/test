@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" name="viewport"/>
+    <title>Global Marketplace - TruthWeb</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN (v6.5.1) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <!-- FlagCDN for country flags -->
+    <link href="https://flagcdn.com" rel="preconnect"/>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #F5F5F5;
+        --accent-color: #FFFFFF;
+      }
+      html { scroll-behavior: smooth; }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        line-height: 1.6;
+        padding-bottom: 60px;
+      }
+      .sticky-header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+        height: 64px;
+        animation: slideInHeader 0.5s ease-out forwards;
+      }
+      .sticky-header.hidden { transform: translateY(-100%); }
+      .sticky-header.scrolled { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); }
+      @keyframes slideInHeader {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .search-container {
+        flex-grow: 1;
+        max-width: 400px;
+        margin: 0 1rem;
+      }
+      .search-input {
+        width: 100%;
+        padding: 0.5rem 2.5rem 0.5rem 1rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.3s ease;
+      }
+      .search-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+      .search-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-color);
+      }
+      .icon { color: var(--text-color); font-size: 1.25rem; margin-left: 0.75rem; }
+      main { margin-top: 64px; }
+      .hero {
+        min-height: 60vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, var(--primary-color) 60%, #333333 100%);
+        color: var(--text-color);
+        text-align: center;
+        padding: 3rem 1rem;
+        position: relative;
+        overflow: hidden;
+        animation: fadeInHero 1s ease-out forwards;
+      }
+      @keyframes fadeInHero {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.15), transparent 70%);
+        animation: rotateGlow 15s linear infinite;
+        z-index: 0;
+      }
+      @keyframes rotateGlow {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+      }
+      .glow-text {
+        font-size: 3.5rem;
+        font-weight: 700;
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.5);
+        animation: glow 2s ease-in-out infinite alternate;
+        margin-bottom: 1rem;
+      }
+      @keyframes glow {
+        0% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.5); }
+        100% { text-shadow: 0 0 25px rgba(255, 255, 255, 1), 0 0 50px rgba(255, 255, 255, 0.7); }
+      }
+      .hero-subtitle {
+        font-size: 1.25rem;
+        font-weight: 400;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+      }
+      .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.75rem 2rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      }
+      .btn.accent {
+        background: var(--accent-color);
+        color: #000000;
+        border: none;
+      }
+      .btn.accent:hover {
+        background: #E0E0E0;
+      }
+      section { padding: 2rem 1rem; }
+      .vendor-signup {
+        background: var(--secondary-color);
+        border-radius: 15px;
+        padding: 1.5rem;
+        max-width: 6xl;
+        margin: 2rem auto;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        animation: slideInSection 0.5s ease-out forwards;
+      }
+      @keyframes slideInSection {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      .vendor-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+        justify-content: center;
+      }
+      .vendor-header img {
+        width: 48px;
+        height: 48px;
+        margin-right: 1rem;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .vendor-form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: var(--primary-color);
+      }
+      .vendor-form input, .vendor-form select, .vendor-form textarea {
+        width: 100%;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        background: #F9F9F9;
+      }
+      .vendor-form input:focus, .vendor-form select:focus, .vendor-form textarea:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        outline: none;
+      }
+      .vendor-form textarea { resize: vertical; min-height: 100px; }
+      .vendor-form input[type="file"] {
+        padding: 0.5rem;
+        background: none;
+      }
+      .vendor-form .error {
+        color: #FF0000;
+        font-size: 0.85rem;
+        margin-top: -0.75rem;
+        margin-bottom: 1rem;
+        display: none;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+      }
+      .country-section {
+        background: var(--secondary-color);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        animation: slideInSection 0.5s ease-out forwards;
+      }
+      .country-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+      .country-header img {
+        width: 48px;
+        height: 48px;
+        margin-right: 1rem;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .category-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+      .category-btn {
+        background: var(--accent-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        transition: transform 0.3s ease, background 0.3s ease;
+        animation: fadeInCategory 0.5s ease-out forwards;
+      }
+      .category-btn:hover {
+        transform: scale(1.05);
+        background: #E0E0E0;
+      }
+      @keyframes fadeInCategory {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+      }
+      .footer-menu {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        height: 60px;
+        background: var(--primary-color);
+        color: var(--text-color);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 1000;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+        animation: slideInFooter 0.5s ease-out forwards;
+      }
+      .footer-menu.hidden { transform: translateY(100%); }
+      @keyframes slideInFooter {
+        from { transform: translateY(100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .footer-menu a {
+        color: var(--text-color);
+        font-size: 1.5rem;
+        transition: transform 0.3s ease;
+      }
+      .footer-menu a:hover { transform: scale(1.2); }
+      footer {
+        background: var(--primary-color);
+        color: var(--text-color);
+        text-align: center;
+        padding: 2rem 1rem;
+      }
+      footer .social-icons a, footer .footer-links a {
+        color: var(--text-color);
+        margin: 0 0.5rem;
+        transition: transform 0.3s ease;
+      }
+      footer .social-icons a:hover, footer .footer-links a:hover {
+        transform: scale(1.1);
+      }
+      @media (max-width: 640px) {
+        .glow-text { font-size: 2rem; }
+        .hero-subtitle { font-size: 1rem; }
+        .search-container { max-width: 120px; }
+        .vendor-signup { padding: 1.5rem; }
+        .form-grid { grid-template-columns: 1fr; }
+        .hero { padding: 2rem 0.5rem; min-height: 50vh; }
+        .hero-buttons { flex-direction: column; gap: 0.75rem; }
+      }
+    </style>
+</head>
+<body>
+    <header class="sticky-header">
+        <div class="flex items-center">
+            <a href="index.html" class="text-inherit flex items-center">
+                <span class="logo-text ml-2">TruthWeb</span>
+            </a>
+        </div>
+        <div class="search-container relative">
+            <input type="text" class="search-input" placeholder="Search Global Marketplace...">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        <div class="flex items-center">
+            <a href="marketplace.html" class="icon"><i class="fas fa-shopping-cart"></i></a>
+            <a href="profile.html" class="icon"><i class="fas fa-user"></i></a>
+            <a href="wallet.html" class="icon"><i class="fas fa-wallet"></i></a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="glow-text">Global Marketplace</h1>
+                <p class="hero-subtitle">Discover and sell products from around the world</p>
+                <div class="hero-buttons">
+                    <a href="#countries" class="btn accent">Explore Now</a>
+                    <a href="#vendor-signup" class="btn accent">Become a Seller</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="countries" class="py-16 px-4">
+            <h2 class="text-3xl font-bold text-center mb-8">Shop by Country</h2>
+            <div class="max-w-6xl mx-auto">
+                <!-- United States -->
+                <div class="country-section">
+                    <div class="country-header">
+                        <img src="https://flagcdn.com/48x36/us.png" alt="United States Flag">
+                        <h3 class="text-2xl font-semibold">United States</h3>
+                    </div>
+                    <div class="category-grid">
+                        <button class="category-btn">Electronics</button>
+                        <button class="category-btn">Fashion Apparel</button>
+                        <button class="category-btn">Home Goods</button>
+                        <button class="category-btn">Books</button>
+                    </div>
+                </div>
+                <!-- China -->
+                <div class="country-section">
+                    <div class="country-header">
+                        <img src="https://flagcdn.com/48x36/cn.png" alt="China Flag">
+                        <h3 class="text-2xl font-semibold">China</h3>
+                    </div>
+                    <div class="category-grid">
+                        <button class="category-btn">Consumer Electronics</button>
+                        <button class="category-btn">Textiles</button>
+                        <button class="category-btn">Toys</button>
+                        <button class="category-btn">Stationery</button>
+                    </div>
+                </div>
+                <!-- Japan -->
+                <div class="country-section">
+                    <div class="country-header">
+                        <img src="https://flagcdn.com/48x36/jp.png" alt="Japan Flag">
+                        <h3 class="text-2xl font-semibold">Japan</h3>
+                    </div>
+                    <div class="category-grid">
+                        <button class="category-btn">Anime Merchandise</button>
+                        <button class="category-btn">Electronics</button>
+                        <button class="category-btn">Traditional Crafts</button>
+                        <button class="category-btn">Food & Snacks</button>
+                    </div>
+                </div>
+                <!-- Brazil -->
+                <div class="country-section">
+                    <div class="country-header">
+                        <img src="https://flagcdn.com/48x36/br.png" alt="Brazil Flag">
+                        <h3 class="text-2xl font-semibold">Brazil</h3>
+                    </div>
+                    <div class="category-grid">
+                        <button class="category-btn">Coffee</button>
+                        <button class="category-btn">Fashion Accessories</button>
+                        <button class="category-btn">Sports Gear</button>
+                        <button class="category-btn">Handmade Jewelry</button>
+                    </div>
+                </div>
+                <!-- Germany -->
+                <div class="country-section">
+                    <div class="country-header">
+                        <img src="https://flagcdn.com/48x36/de.png" alt="Germany Flag">
+                        <h3 class="text-2xl font-semibold">Germany</h3>
+                    </div>
+                    <div class="category-grid">
+                        <button class="category-btn">Automotive Parts</button>
+                        <button class="category-btn">Beer & Spirits</button>
+                        <button class="category-btn">Precision Tools</button>
+                        <button class="category-btn">Clocks & Watches</button>
+                    </div>
+                </div>
+                <!-- India -->
+                <div class="country-section">
+                    <div class="country-header">
+                        <img src="https://flagcdn.com/48x36/in.png" alt="India Flag">
+                        <h3 class="text-2xl font-semibold">India</h3>
+                    </div>
+                    <div class="category-grid">
+                        <button class="category-btn">Spices</button>
+                        <button class="category-btn">Handicrafts</button>
+                        <button class="category-btn">Textiles</button>
+                        <button class="category-btn">Jewelry</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Vendor Signup Section -->
+        <section id="vendor-signup" class="vendor-signup">
+            <div class="max-w-6xl mx-auto">
+                <div class="vendor-header">
+                    <img src="https://flagcdn.com/48x36/gl.png" alt="Global Icon">
+                    <h2 class="text-2xl font-semibold">Vendor Signup</h2>
+                </div>
+                <p class="text-center mb-6 text-gray-600">Add your product to the global marketplace. We’ll categorize it under your selected country.</p>
+                <form class="vendor-form" onsubmit="submitVendorForm(event)">
+                    <div class="form-grid">
+                        <div>
+                            <label for="vendor-name">Vendor Name</label>
+                            <input type="text" id="vendor-name" name="vendor-name" required placeholder="Your business name">
+                            <span class="error" id="vendor-name-error">Vendor name is required.</span>
+                        </div>
+                        <div>
+                            <label for="product-name">Product Name</label>
+                            <input type="text" id="product-name" name="product-name" required placeholder="e.g., Handcrafted Necklace">
+                            <span class="error" id="product-name-error">Product name is required.</span>
+                        </div>
+                        <div>
+                            <label for="category">Category</label>
+                            <input type="text" id="category" name="category" required placeholder="e.g., Jewelry, Electronics">
+                            <span class="error" id="category-error">Category is required.</span>
+                        </div>
+                        <div>
+                            <label for="country">Country</label>
+                            <select id="country" name="country" required>
+                                <option value="" disabled selected>Select your country</option>
+                                <option value="United States">United States</option>
+                                <option value="China">China</option>
+                                <option value="Japan">Japan</option>
+                                <option value="Brazil">Brazil</option>
+                                <option value="Germany">Germany</option>
+                                <option value="India">India</option>
+                                <!-- Add more countries as needed -->
+                            </select>
+                            <span class="error" id="country-error">Please select a country.</span>
+                        </div>
+                        <div>
+                            <label for="price">Price (in USD)</label>
+                            <input type="number" id="price" name="price" step="0.01" min="0.01" required placeholder="e.g., 29.99">
+                            <span class="error" id="price-error">Price must be a positive number.</span>
+                        </div>
+                        <div>
+                            <label for="product-image">Product Image</label>
+                            <input type="file" id="product-image" name="product-image" accept="image/*">
+                            <span class="error" id="image-error">Image must be a valid file (optional).</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="description">Product Description</label>
+                        <textarea id="description" name="description" rows="4" required placeholder="Describe your product"></textarea>
+                        <span class="error" id="description-error">Description is required.</span>
+                    </div>
+                    <button type="submit" class="btn accent w-full mt-4">Submit Product</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <div class="footer-menu">
+        <a href="index.html"><i class="fas fa-home"></i></a>
+        <a href="marketplace.html"><i class="fas fa-shopping-cart"></i></a>
+        <a href="profile.html"><i class="fas fa-user"></i></a>
+        <a href="wallet.html"><i class="fas fa-wallet"></i></a>
+    </div>
+
+    <footer>
+        <div class="social-icons mb-4">
+            <a href="https://facebook.com"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://twitter.com"><i class="fab fa-twitter"></i></a>
+            <a href="https://instagram.com"><i class="fab fa-instagram"></i></a>
+            <a href="https://linkedin.com"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+        <div class="footer-links">
+            <a href="privacy.html">Privacy</a>
+            <a href="terms.html">Terms</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <p class="mt-4">© 2025 TruthWeb. All rights reserved.</p>
+    </footer>
+
+    <script>
+      // Scroll-based header/footer hiding
+      let lastScroll = 0;
+      window.addEventListener('scroll', () => {
+        const header = document.querySelector('.sticky-header');
+        const footerMenu = document.querySelector('.footer-menu');
+        const currentScroll = window.scrollY;
+
+        if (currentScroll > lastScroll && currentScroll > 50) {
+          header.classList.add('hidden');
+          footerMenu.classList.add('hidden');
+        } else if (currentScroll < lastScroll) {
+          header.classList.remove('hidden');
+          footerMenu.classList.remove('hidden');
+          header.classList.toggle('scrolled', currentScroll > 50);
+        }
+        lastScroll = currentScroll;
+      });
+
+      // Category button click handler
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const category = btn.textContent;
+          const country = btn.closest('.country-section').querySelector('h3').textContent;
+          alert(`Browsing ${category} in ${country}`);
+        });
+      });
+
+      // Search functionality
+      const searchInput = document.querySelector('.search-input');
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        document.querySelectorAll('.country-section').forEach(section => {
+          const country = section.querySelector('h3').textContent.toLowerCase();
+          const categories = Array.from(section.querySelectorAll('.category-btn')).map(btn => btn.textContent.toLowerCase());
+          const matches = country.includes(query) || categories.some(cat => cat.includes(query));
+          section.style.display = matches ? 'block' : 'none';
+        });
+      });
+
+      // Vendor form submission with validation
+      function submitVendorForm(event) {
+        event.preventDefault();
+        const form = event.target;
+        let isValid = true;
+
+        // Reset error messages
+        document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
+
+        // Collect and validate form data
+        const vendorData = {
+          vendorName: form['vendor-name'].value.trim(),
+          productName: form['product-name'].value.trim(),
+          category: form['category'].value.trim(),
+          country: form['country'].value,
+          price: parseFloat(form['price'].value),
+          description: form['description'].value.trim(),
+          image: form['product-image'].files[0]
+        };
+
+        // Validation
+        if (!vendorData.vendorName) {
+          document.getElementById('vendor-name-error').style.display = 'block';
+          isValid = false;
+        }
+        if (!vendorData.productName) {
+          document.getElementById('product-name-error').style.display = 'block';
+          isValid = false;
+        }
+        if (!vendorData.category) {
+          document.getElementById('category-error').style.display = 'block';
+          isValid = false;
+        }
+        if (!vendorData.country) {
+          document.getElementById('country-error').style.display = 'block';
+          isValid = false;
+        }
+        if (!vendorData.price || vendorData.price <= 0) {
+          document.getElementById('price-error').style.display = 'block';
+          isValid = false;
+        }
+        if (!vendorData.description) {
+          document.getElementById('description-error').style.display = 'block';
+          isValid = false;
+        }
+        if (vendorData.image && !['image/jpeg', 'image/png', 'image/gif'].includes(vendorData.image.type)) {
+          document.getElementById('image-error').style.display = 'block';
+          isValid = false;
+        }
+
+        if (!isValid) return;
+
+        // Simulate submission (replace with API call in production)
+        console.log('Vendor Submission:', vendorData);
+        alert(`Thank you, ${vendorData.vendorName}! Your product "${vendorData.productName}" has been submitted for ${vendorData.country} in the "${vendorData.category}" category.`);
+
+        // Store in localStorage (for demo purposes)
+        let vendors = JSON.parse(localStorage.getItem('vendors')) || [];
+        vendors.push({ ...vendorData, image: vendorData.image ? vendorData.image.name : null });
+        localStorage.setItem('vendors', JSON.stringify(vendors));
+
+        // Reset form
+        form.reset();
+      }
+    </script>
+</body>
+</html>

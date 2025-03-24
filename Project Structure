@@ -1,0 +1,21 @@
+TruthWeb/
+├── frontend/              # Node.js & npm frontend
+│   ├── src/
+│   │   ├── index.html     # Your existing HTML files
+│   │   ├── about.html
+│   │   └── ...            # Other HTML pages
+│   ├── package.json       # Frontend dependencies (e.g., React, Tailwind)
+│   └── node_modules/
+├── backend/               # Python & Django backend
+│   ├── truthweb/          # Django project directory
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   └── wsgi.py
+│   ├── user_profiles/     # Django app for profiles
+│   ├── pi_wallet/         # Django app for wallet
+│   ├── marketplace/       # Django app for listings
+│   ├── manage.py
+│   └── requirements.txt   # Python dependencies (e.g., Django, djangorestframework)
+├── data/                  # MongoDB/PostgreSQL data (if local)
+├── .gitignore             # Updated as above
+└── README.md              # Project documentation

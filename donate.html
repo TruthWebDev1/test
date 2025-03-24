@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" name="viewport"/>
+    <title>Donate - TruthWeb</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN (v6.5.1) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <!-- jQuery for Pi SDK compatibility -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <!-- Pi Network SDK -->
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #FFFFFF;
+        --accent-color: #FFD700;
+      }
+      html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Header Styles (unchanged) */
+      .sticky-header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: all 0.3s ease-out;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+        height: 64px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        will-change: transform;
+      }
+      .sticky-header.hidden { transform: translateY(-100%); }
+      .sticky-header.scrolled {
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+      .sticky-header .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+      }
+      .sticky-header.scrolled .logo-text { color: var(--primary-color); }
+      .burger-btn {
+        display: flex;
+        cursor: pointer;
+        flex-direction: column;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        margin-left: 0.5rem;
+        transition: transform 0.3s ease;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .burger-btn:hover { transform: scale(1.1); }
+      .burger-btn span {
+        width: 100%;
+        height: 3px;
+        background: var(--text-color);
+        margin: 2px 0;
+        transition: all 0.3s ease;
+        border-radius: 2px;
+      }
+      .sticky-header.scrolled .burger-btn span { background: var(--primary-color); }
+      .burger-btn.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+      .burger-btn.open span:nth-child(2) { opacity: 0; transform: scale(0); }
+      .burger-btn.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+      .mobile-menu {
+        position: fixed;
+        top: 64px;
+        left: -100%;
+        width: 80%;
+        max-width: 300px;
+        height: calc(100vh - 64px);
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: left 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+        z-index: 999;
+        padding: 1rem;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+      }
+      .mobile-menu.open { left: 0; }
+      .mobile-menu ul { list-style: none; padding: 0; margin: 0; }
+      .mobile-menu .nav-item a {
+        display: block;
+        padding: 0.75rem 1rem;
+        color: var(--text-color);
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+      }
+      .mobile-menu .nav-item a:hover,
+      .mobile-menu .nav-item a:focus {
+        color: var(--highlight-color);
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(10px);
+      }
+      .desktop-nav {
+        display: flex;
+        align-items: center;
+      }
+      .desktop-nav ul {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .desktop-nav .nav-item a {
+        color: var(--text-color);
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        white-space: nowrap;
+      }
+      .sticky-header.scrolled .desktop-nav .nav-item a { color: var(--primary-color); }
+      .desktop-nav .nav-item a:hover,
+      .desktop-nav .nav-item a:focus {
+        color: var(--highlight-color);
+        transform: scale(1.05);
+      }
+      .search-container {
+        position: relative;
+        flex-grow: 1;
+        max-width: 400px;
+        margin: 0 1rem;
+        transition: all 0.3s ease;
+      }
+      .search-input {
+        width: 100%;
+        padding: 0.5rem 2.5rem 0.5rem 1rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        -webkit-appearance: none;
+      }
+      .search-input:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: scale(1.02);
+      }
+      .search-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        pointer-events: none;
+      }
+      .sticky-header.scrolled .search-icon { color: var(--primary-color); }
+      .search-results {
+        position: absolute;
+        top: calc(100% + 5px);
+        left: 0;
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+        background: var(--secondary-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 60;
+        display: none;
+        scrollbar-width: thin;
+      }
+      .search-results.active { display: block; }
+      .search-result-item {
+        padding: 0.75rem;
+        color: var(--primary-color);
+        border-bottom: 1px solid var(--highlight-color);
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+      .search-result-item:hover,
+      .search-result-item:focus {
+        background: var(--highlight-color);
+      }
+      .icon {
+        color: var(--text-color);
+        font-size: 1.25rem;
+        transition: transform 0.3s ease, color 0.3s ease;
+        margin-left: 0.75rem;
+      }
+      .sticky-header.scrolled .icon { color: var(--primary-color); }
+      .icon:hover,
+      .icon:focus {
+        transform: scale(1.15);
+        color: var(--accent-color);
+      }
+      .floating-effect:hover,
+      .floating-effect:focus { transform: translateY(-5px); }
+
+      /* Main Content Styles */
+      main { margin-top: 64px; }
+      .donate-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, var(--primary-color), #1a1a1a);
+        padding: 4rem 1rem 6rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .donate-container::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.05), transparent);
+        animation: pulseGlow 3s infinite alternate;
+        pointer-events: none;
+      }
+      @keyframes pulseGlow {
+        0% { opacity: 0.3; }
+        100% { opacity: 0.6; }
+      }
+      .donate-card {
+        background: var(--secondary-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 12px;
+        padding: 2rem;
+        max-width: 500px;
+        width: 100%;
+        margin: 0 auto;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        animation: slideInCard 0.5s ease-out forwards;
+      }
+      @keyframes slideInCard {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .donate-card h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+        text-shadow: 0 0 5px var(--highlight-color);
+      }
+      .donate-card p {
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+        opacity: 0.8;
+      }
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+      .form-group label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+      }
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 8px;
+        font-size: 1rem;
+        background: #f5f5f5;
+        color: var(--primary-color);
+        outline: none;
+        transition: all 0.3s ease;
+      }
+      .form-group textarea {
+        height: 100px;
+        resize: vertical;
+      }
+      .form-group input:focus,
+      .form-group textarea:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+        transform: scale(1.02);
+      }
+      .form-group input.invalid {
+        border-color: #ff4444;
+        box-shadow: 0 0 8px rgba(255, 68, 68, 0.3);
+      }
+      .amount-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+      }
+      .amount-btn {
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 80px;
+        touch-action: manipulation;
+      }
+      .amount-btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.05);
+      }
+      .amount-btn.active {
+        background: var(--accent-color);
+        color: var(--primary-color);
+        border: none;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.75rem 1.5rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: all 0.3s ease;
+        width: 100%;
+        cursor: pointer;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        touch-action: manipulation;
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+      .btn:active {
+        transform: scale(0.98);
+      }
+      .btn.accent {
+        background: var(--accent-color);
+        color: var(--primary-color);
+        border: none;
+      }
+      .btn.accent:hover {
+        background: #FFA500;
+      }
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .error-message {
+        color: #ff4444;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        text-align: center;
+        display: none;
+      }
+      .donation-history {
+        margin-top: 2rem;
+      }
+      .donation-history h2 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+      .donation-list {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid var(--highlight-color);
+        border-radius: 8px;
+        padding: 0.5rem;
+        background: #f5f5f5;
+      }
+      .donation-item {
+        padding: 0.5rem;
+        border-bottom: 1px solid var(--highlight-color);
+        font-size: 0.85rem;
+        color: var(--primary-color);
+      }
+      .donation-item:last-child {
+        border-bottom: none;
+      }
+      footer {
+        background: var(--primary-color);
+        color: var(--text-color);
+        text-align: center;
+        padding: 1rem;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        z-index: 10;
+      }
+      footer p {
+        margin: 0;
+        font-size: 0.85rem;
+      }
+      @media (max-width: 640px) {
+        .sticky-header { padding: 0 0.75rem; }
+        .logo-text { font-size: 1.25rem; }
+        .search-container { max-width: 150px; margin: 0 0.5rem; }
+        .icon { font-size: 1.1rem; margin-left: 0.5rem; }
+        .desktop-nav { display: none; }
+        .burger-btn { display: flex; }
+        .donate-card { padding: 1.5rem; max-width: 100%; }
+        .donate-card h1 { font-size: 1.75rem; }
+        .btn, .amount-btn { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+        .amount-buttons { gap: 0.5rem; }
+      }
+      @media (min-width: 641px) {
+        .burger-btn { display: none; }
+        .desktop-nav { display: flex; }
+      }
+    </style>
+</head>
+<body>
+    <header class="sticky-header">
+        <div class="flex items-center">
+            <a href="index.html" class="text-inherit flex items-center"><span class="logo-text ml-2">TruthWeb</span></a>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search TruthWeb..." aria-label="Search TruthWeb">
+            <i class="fas fa-search search-icon"></i>
+            <div class="search-results"></div>
+        </div>
+        <div class="flex items-center">
+            <nav class="desktop-nav hidden md:flex items-center">
+                <ul class="flex space-x-4">
+                    <li class="nav-item"><a href="index.html">Home</a></li>
+                    <li class="nav-item"><a href="marketplace.html">Marketplace</a></li>
+                    <li class="nav-item"><a href="profile.html">Profile</a></li>
+                    <li class="nav-item"><a href="wallet.html">Wallet</a></li>
+                    <li class="nav-item"><a href="ledger-testnet.html">Ledger Testnet</a></li>
+                    <li class="nav-item"><a href="community.html">Community</a></li>
+                    <li class="nav-item"><a href="developers.html">Developers</a></li>
+                    <li class="nav-item"><a href="about.html">About</a></li>
+                </ul>
+            </nav>
+            <a href="addtocart.html" class="icon floating-effect"><i class="fas fa-shopping-cart"></i></a>
+            <a href="profile.html" class="icon floating-effect"><i class="fas fa-user"></i></a>
+            <a href="wallet.html" class="icon floating-effect"><i class="fas fa-wallet"></i></a>
+            <div class="burger-btn"><span></span><span></span><span></span></div>
+        </div>
+    </header>
+    <nav class="mobile-menu">
+        <ul>
+            <li class="nav-item"><a href="index.html">Home</a></li>
+            <li class="nav-item"><a href="marketplace.html">Marketplace</a></li>
+            <li class="nav-item"><a href="profile.html">Profile</a></li>
+            <li class="nav-item"><a href="wallet.html">Wallet</a></li>
+            <li class="nav-item"><a href="ledger-testnet.html">Ledger Testnet</a></li>
+            <li class="nav-item"><a href="community.html">Community</a></li>
+            <li class="nav-item"><a href="developers.html">Developers</a></li>
+            <li class="nav-item"><a href="about.html">About</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section class="donate-container">
+            <div class="donate-card">
+                <h1>Support TruthWeb</h1>
+                <p>Donate any amount of Pi to help us grow the decentralized future!</p>
+                <div class="form-group">
+                    <label for="amount">Donation Amount (Pi)</label>
+                    <input type="number" id="amount" name="amount" placeholder="Enter amount" min="0.01" step="0.01" required>
+                    <div class="error-message" id="amount-error">Please enter a valid amount (minimum 0.01 Pi).</div>
+                </div>
+                <div class="amount-buttons">
+                    <button class="amount-btn" data-amount="1">1 Pi</button>
+                    <button class="amount-btn" data-amount="5">5 Pi</button>
+                    <button class="amount-btn" data-amount="10">10 Pi</button>
+                    <button class="amount-btn" data-amount="25">25 Pi</button>
+                </div>
+                <div class="form-group">
+                    <label for="message">Your Message (Optional)</label>
+                    <textarea id="message" name="message" placeholder="Leave a message with your donation..."></textarea>
+                </div>
+                <button id="donate-btn" class="btn accent">
+                    <i class="fas fa-donate mr-2"></i> Donate with Pi
+                </button>
+                <div class="donation-history">
+                    <h2>Your Donations</h2>
+                    <div class="donation-list" id="donation-list">
+                        <div class="donation-item">No donations yet.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>© 2025 TruthWeb. All rights reserved.</p>
+    </footer>
+
+    <script>
+      // Initialize Pi SDK
+      Pi.init({ version: "2.0", sandbox: true });
+      const scopes = ['username', 'payments'];
+
+      // Donation history array (simulated)
+      let donationHistory = [];
+
+      // Header functionality
+      const elements = {
+        burgerBtn: document.querySelector('.burger-btn'),
+        mobileMenu: document.querySelector('.mobile-menu'),
+        header: document.querySelector('.sticky-header'),
+        searchInput: document.querySelector('.search-input'),
+        searchResults: document.querySelector('.search-results'),
+        amountInput: document.getElementById('amount'),
+        messageInput: document.getElementById('message'),
+        donateBtn: document.getElementById('donate-btn'),
+        donationList: document.getElementById('donation-list'),
+        amountError: document.getElementById('amount-error')
+      };
+
+      elements.burgerBtn.addEventListener('click', () => {
+        elements.burgerBtn.classList.toggle('open');
+        elements.mobileMenu.classList.toggle('open');
+      });
+
+      let lastScroll = 0;
+      let ticking = false;
+
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            const scrollTop = window.scrollY;
+            elements.header.classList.toggle('scrolled', scrollTop > 50);
+            elements.header.classList.toggle('hidden', scrollTop > lastScroll && scrollTop > 100);
+            lastScroll = scrollTop;
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+
+      // Search functionality
+      const pages = [
+        { title: 'Home', url: 'index.html' },
+        { title: 'Marketplace', url: 'marketplace.html' },
+        { title: 'Profile', url: 'profile.html' },
+        { title: 'Wallet', url: 'wallet.html' },
+        { title: 'Ledger Testnet', url: 'ledger-testnet.html' },
+        { title: 'Community', url: 'community.html' },
+        { title: 'Developers', url: 'developers.html' },
+        { title: 'About', url: 'about.html' },
+        { title: 'Donate', url: 'donate.html' },
+        { title: 'Donation Tracker', url: 'donation-tracker.html' }
+      ];
+
+      elements.searchInput.addEventListener('input', debounce(() => {
+        const query = elements.searchInput.value.toLowerCase().trim();
+        elements.searchResults.innerHTML = '';
+        elements.searchResults.classList.remove('active');
+        if (query) {
+          const filteredPages = pages.filter(page => page.title.toLowerCase().includes(query));
+          filteredPages.forEach(page => {
+            const div = document.createElement('div');
+            div.className = 'search-result-item';
+            div.innerHTML = `<a href="${page.url}">${page.title}</a>`;
+            elements.searchResults.appendChild(div);
+          });
+          if (filteredPages.length > 0) {
+            elements.searchResults.classList.add('active');
+          }
+        }
+      }, 200));
+
+      elements.searchInput.addEventListener('blur', () => {
+        setTimeout(() => elements.searchResults.classList.remove('active'), 200);
+      });
+
+      function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+      }
+
+      // Predefined amount buttons
+      const amountButtons = document.querySelectorAll('.amount-btn');
+      amountButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          amountButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          elements.amountInput.value = btn.getAttribute('data-amount');
+          elements.amountError.style.display = 'none';
+          elements.amountInput.classList.remove('invalid');
+        });
+      });
+
+      // Handle incomplete payments
+      function onIncompletePaymentFound(payment) {
+        console.log('Incomplete payment found:', payment);
+        const paymentId = payment.identifier;
+        const txid = payment.transaction?.txid || null;
+        return $.post('/payment/complete', {
+          paymentId: paymentId,
+          txid: txid,
+          debug: 'cancel'
+        }).then(response => {
+          console.log('Payment completion response:', response);
+          return response;
+        }).catch(error => {
+          console.error('Payment completion failed:', error);
+          throw error;
+        });
+      }
+
+      // Donate with Pi
+      elements.donateBtn.addEventListener('click', () => {
+        const amount = parseFloat(elements.amountInput.value);
+        const message = elements.messageInput.value.trim();
+
+        // Validate amount
+        if (isNaN(amount) || amount < 0.01) {
+          elements.amountInput.classList.add('invalid');
+          elements.amountError.style.display = 'block';
+          return;
+        }
+
+        elements.donateBtn.disabled = true;
+        elements.donateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
+
+        Pi.authenticate(scopes, onIncompletePaymentFound)
+          .then(auth => {
+            console.log('Authenticated:', auth.user.username);
+
+            const paymentData = {
+              amount: amount,
+              memo: message ? `${auth.user.username}: ${message}` : `Donation from ${auth.user.username}`,
+              metadata: {
+                type: 'donation',
+                date: new Date().toISOString(),
+                username: auth.user.username,
+                message: message || null
+              }
+            };
+
+            return Pi.createPayment(paymentData, {
+              onReadyForServerApproval: (paymentId) => {
+                console.log('Payment ready for approval:', paymentId);
+                $.post('/payment/approve', { paymentId: paymentId })
+                  .then(response => console.log('Approval response:', response))
+                  .catch(error => console.error('Approval failed:', error));
+              },
+              onReadyForServerCompletion: (paymentId, txid) => {
+                console.log('Payment completed:', paymentId, txid);
+                $.post('/payment/complete', { paymentId: paymentId, txid: txid })
+                  .then(response => console.log('Completion response:', response))
+                  .catch(error => console.error('Completion failed:', error));
+              },
+              onCancel: () => {
+                console.log('Payment cancelled');
+                alert('Donation cancelled.');
+              },
+              onError: (error) => {
+                console.error('Payment error:', error);
+                alert(`Donation failed: ${error.message || 'Unknown error'}`);
+              }
+            });
+          })
+          .then(payment => {
+            console.log('Payment successful:', payment);
+            alert(`Thank you for donating ${amount} Pi!`);
+            addDonationToHistory(amount, payment.identifier, message);
+            // Redirect to donation-tracker.html with query parameters
+            window.location.href = `donation-tracker.html?username=${encodeURIComponent(payment.metadata.username)}&amount=${amount}&message=${encodeURIComponent(message || '')}&paymentId=${payment.identifier}`;
+          })
+          .catch(error => {
+            console.error('Donation process failed:', error);
+            alert(`Donation failed: ${error.message || 'Unknown error'}`);
+          })
+          .finally(() => {
+            elements.donateBtn.disabled = false;
+            elements.donateBtn.innerHTML = '<i class="fas fa-donate mr-2"></i> Donate with Pi';
+            elements.amountInput.value = '';
+            elements.messageInput.value = '';
+            amountButtons.forEach(btn => btn.classList.remove('active'));
+          });
+      });
+
+      // Add donation to history
+      function addDonationToHistory(amount, paymentId, message) {
+        const donationList = elements.donationList;
+        if (donationHistory.length === 0) donationList.innerHTML = '';
+        const donationItem = document.createElement('div');
+        const date = new Date().toLocaleString();
+        donationItem.className = 'donation-item';
+        donationItem.textContent = `${date}: ${amount} Pi${message ? ` - "${message}"` : ''} (ID: ${paymentId.slice(0, 8)}...)`;
+        donationList.appendChild(donationItem);
+        donationHistory.push({ amount, paymentId, date, message });
+        donationList.scrollTop = donationList.scrollHeight;
+      }
+    </script>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" name="viewport"/>
+    <title>View Ads - TruthWeb</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN (v6.5.1) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #F5F5F5;
+        --accent-color: #F5F5F5; /* Light gray from promote.html */
+      }
+      html { scroll-behavior: smooth; }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        line-height: 1.6;
+        padding-bottom: 60px;
+      }
+      .sticky-header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+        height: 64px;
+        animation: slideInHeader 0.5s ease-out forwards;
+      }
+      .sticky-header.hidden { transform: translateY(-100%); }
+      .sticky-header.scrolled { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); }
+      @keyframes slideInHeader {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+      .icon { color: var(--text-color); font-size: 1.25rem; margin-left: 0.75rem; }
+      .icon:hover { transform: scale(1.1); }
+      main { margin-top: 64px; }
+      .hero {
+        min-height: 60vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, var(--primary-color) 60%, #333333 100%);
+        color: var(--text-color);
+        text-align: center;
+        padding: 3rem 1rem;
+        position: relative;
+        overflow: hidden;
+        animation: fadeInHero 1s ease-out forwards;
+      }
+      @keyframes fadeInHero {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.15), transparent 70%);
+        animation: rotateGlow 15s linear infinite;
+        z-index: 0;
+      }
+      @keyframes rotateGlow {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+      }
+      .glow-text {
+        font-size: 3.5rem;
+        font-weight: 700;
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.5);
+        animation: glow 2s ease-in-out infinite alternate;
+        margin-bottom: 1rem;
+      }
+      @keyframes glow {
+        0% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.5); }
+        100% { text-shadow: 0 0 25px rgba(255, 255, 255, 1), 0 0 50px rgba(255, 255, 255, 0.7); }
+      }
+      .hero-subtitle {
+        font-size: 1.25rem;
+        font-weight: 400;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+      }
+      .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.75rem 2rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      }
+      .btn.accent {
+        background: var(--accent-color);
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+      }
+      .btn.accent:hover {
+        background: #D9D9D9;
+        color: var(--primary-color);
+      }
+      section { padding: 2rem 1rem; }
+      .ads-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        max-width: 1200px; /* Adjusted for better readability */
+        margin: 0 auto;
+      }
+      .ad-card {
+        background: var(--secondary-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeInCard 0.5s ease-out forwards;
+      }
+      .ad-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+      @keyframes fadeInCard {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+      }
+      .ad-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+      }
+      .ad-card .title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+      }
+      .ad-card .vendor {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+      }
+      .ad-card .price {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+      .ad-card .package {
+        font-size: 0.85rem;
+        color: #888;
+        margin-bottom: 1rem;
+      }
+      .footer-menu {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        height: 60px;
+        background: var(--primary-color);
+        color: var(--text-color);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 1000;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+        animation: slideInFooter 0.5s ease-out forwards;
+      }
+      .footer-menu.hidden { transform: translateY(100%); }
+      @keyframes slideInFooter {
+        from { transform: translateY(100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .footer-menu a {
+        color: var(--text-color);
+        font-size: 1.5rem;
+        transition: transform 0.3s ease;
+      }
+      .footer-menu a:hover { transform: scale(1.2); }
+      footer {
+        background: var(--primary-color);
+        color: var(--text-color);
+        text-align: center;
+        padding: 2rem 1rem;
+      }
+      footer a {
+        color: var(--text-color);
+        margin: 0 0.5rem;
+        transition: transform 0.3s ease;
+      }
+      footer a:hover { transform: scale(1.1); }
+      @media (max-width: 640px) {
+        .glow-text { font-size: 2rem; }
+        .hero-subtitle { font-size: 1rem; }
+        .hero { padding: 2rem 0.5rem; min-height: 50vh; }
+        .hero-buttons { flex-direction: column; gap: 0.75rem; }
+        .ads-grid { grid-template-columns: 1fr; }
+      }
+    </style>
+</head>
+<body>
+    <!-- Sticky Header -->
+    <header class="sticky-header">
+      <div class="flex items-center">
+        <a href="index.html" class="text-inherit flex items-center">
+          <span class="logo-text ml-2">TruthWeb</span>
+        </a>
+      </div>
+      <div class="flex items-center">
+        <a href="marketplace.html" class="icon"><i class="fas fa-shopping-cart"></i></a>
+        <a href="profile.html" class="icon"><i class="fas fa-user"></i></a>
+        <a href="wallet.html" class="icon"><i class="fas fa-wallet"></i></a>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <section class="hero">
+        <div class="hero-content">
+          <h1 class="glow-text">Featured Ads</h1>
+          <p class="hero-subtitle">Explore promoted listings on TruthWeb</p>
+          <div class="hero-buttons">
+            <a href="promote.html" class="btn accent">Promote Your Listing</a>
+            <a href="marketplace.html" class="btn accent">Back to Marketplace</a>
+          </div>
+        </div>
+      </section>
+
+      <section id="ads" class="py-16 px-4">
+        <h2 class="text-3xl font-bold text-center mb-8">Active Promotions</h2>
+        <div class="ads-grid">
+          <!-- Sample Ad 1 -->
+          <div class="ad-card">
+            <img src="https://placehold.co/300x200" alt="Handcrafted Necklace">
+            <div class="title">Handcrafted Necklace</div>
+            <div class="vendor">Vendor: ArtisanJewels</div>
+            <div class="price">10 Pi</div> <!-- $29.99 ≈ 60 Pi -->
+            <div class="package">Package: Basic Boost (7 days remaining)</div>
+            <a href="#" class="btn accent w-full">View Listing</a>
+          </div>
+          <!-- Sample Ad 2 -->
+          <div class="ad-card">
+            <img src="https://placehold.co/300x200" alt="Premium Coffee Beans">
+            <div class="title">Premium Coffee Beans</div>
+            <div class="vendor">Vendor: BrazilBrews</div>
+            <div class="price">11 Pi</div> <!-- $15.00 ≈ 30 Pi -->
+            <div class="package">Package: Premium Boost (12 days remaining)</div>
+            <a href="#" class="btn accent w-full">View Listing</a>
+          </div>
+          <!-- Sample Ad 3 -->
+          <div class="ad-card">
+            <img src="https://placehold.co/300x200" alt="Anime Collectible">
+            <div class="title">Anime Collectible Figure</div>
+            <div class="vendor">Vendor: TokyoTreasures</div>
+            <div class="price">12 Pi</div> <!-- $45.00 ≈ 90 Pi -->
+            <div class="package">Package: Elite Boost (25 days remaining)</div>
+            <a href="#" class="btn accent w-full">View Listing</a>
+          </div>
+          <!-- Sample Ad 4 -->
+          <div class="ad-card">
+            <img src="https://placehold.co/300x200" alt="Smartphone Gadget">
+            <div class="title">Smartphone Gadget</div>
+            <div class="vendor">Vendor: TechTrendz</div>
+            <div class="price">43 Pi</div> <!-- $19.99 ≈ 40 Pi -->
+            <div class="package">Package: Basic Boost (5 days remaining)</div>
+            <a href="#" class="btn accent w-full">View Listing</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer Menu -->
+    <div class="footer-menu">
+      <a href="index.html"><i class="fas fa-home"></i></a>
+      <a href="marketplace.html"><i class="fas fa-shopping-cart"></i></a>
+      <a href="profile.html"><i class="fas fa-user"></i></a>
+      <a href="wallet.html"><i class="fas fa-wallet"></i></a>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="mb-4">
+        <a href="https://www.facebook.com/reimaginetruthofficial/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://x.com/reimagine_truth" target="_blank"><i class="fab fa-twitter"></i></a>
+        <a href="https://t.me/TruthWebOfficial" target="_blank"><i class="fab fa-telegram"></i></a>
+        <a href="https://www.youtube.com/@ReimagineTruth" target="_blank"><i class="fab fa-youtube"></i></a>
+        <a href="https://github.com/username/TruthWeb" target="_blank"><i class="fab fa-github"></i></a>
+      </div>
+      <p class="mb-4">© 2025 TruthWeb. All rights reserved.</p>
+      <div class="text-sm">
+        <a href="about.html">About Us</a> |
+        <a href="terms.html">Terms & Conditions</a> |
+        <a href="privacy.html">Privacy Policy</a> |
+        <a href="contact.html">Contact</a>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+      // Scroll-based header/footer hiding
+      let lastScroll = 0;
+      window.addEventListener('scroll', () => {
+        const header = document.querySelector('.sticky-header');
+        const footerMenu = document.querySelector('.footer-menu');
+        const currentScroll = window.scrollY;
+
+        if (currentScroll > lastScroll && currentScroll > 50) {
+          header.classList.add('hidden');
+          footerMenu.classList.add('hidden');
+        } else if (currentScroll < lastScroll) {
+          header.classList.remove('hidden');
+          footerMenu.classList.remove('hidden');
+          header.classList.toggle('scrolled', currentScroll > 50);
+        }
+        lastScroll = currentScroll;
+      });
+    </script>
+</body>
+</html>

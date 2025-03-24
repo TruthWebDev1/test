@@ -1,0 +1,9 @@
+truthweb-backend/
+├── node_modules/
+├── public/
+│   ├── digitalproducts.html
+│   ├── product-view.html
+│   ├── addtocart.html
+│   └── payment.html
+├── package.json
+└── server.js

@@ -1,0 +1,8 @@
+ai-service/
+├── src/
+│   ├── main.py              # FastAPI server
+│   ├── models/             # AI model integration
+│   └── database/           # MongoDB integration for conversation history
+├── requirements.txt         # Python dependencies
+├── Dockerfile              # Docker configuration
+└── .env                    # Environment variables

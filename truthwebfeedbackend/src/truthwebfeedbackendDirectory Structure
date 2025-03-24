@@ -1,0 +1,32 @@
+truthwebfeedbackend/
+├── src/
+│   ├── config/              # Configuration files (e.g., database, environment variables)
+│   │   ├── database.js      # MongoDB connection
+│   │   └── redis.js         # Redis connection
+│   ├── controllers/         # API endpoint logic
+│   │   ├── postController.js
+│   │   ├── adController.js
+│   │   └── aiController.js
+│   ├── middleware/          # Authentication, error handling
+│   │   ├── auth.js
+│   │   └── errorHandler.js
+│   ├── models/              # Database schemas/models
+│   │   ├── user.js
+│   │   ├── post.js
+│   │   ├── ad.js
+│   │   └── aiConversation.js
+│   ├── routes/              # API routes
+│   │   ├── auth.js
+│   │   ├── post.js
+│   │   ├── ad.js
+│   │   └── ai.js
+│   ├── services/            # Business logic and external integrations
+│   │   ├── s3Service.js     # AWS S3 file storage
+│   │   ├── aiService.js     # AI service integration
+│   │   └── rabbitMQService.js # Message queue
+│   ├── sockets/             # WebSocket logic
+│   │   └── index.js
+│   └── index.js             # Main server file (updated)
+├── package.json             # Node.js dependencies and scripts
+├── Dockerfile               # Docker configuration
+└── .env                     # Environment variables

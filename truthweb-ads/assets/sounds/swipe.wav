@@ -1,0 +1,1 @@
+const swipeSound = new Audio('./assets/sounds/swipe.wav');

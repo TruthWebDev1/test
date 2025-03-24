@@ -1,0 +1,110 @@
+// Infinite Scroll
+const feedContainer = document.getElementById('feed-container');
+const scrollLoader = document.querySelector('.scroll-loader');
+let page = 1;
+
+async function loadMorePosts() {
+  scrollLoader.classList.add('active');
+  try {
+    const response = await fetch(`/api/posts?page=${page}&limit=10`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+    const data = await response.json();
+    data.posts.forEach(post => {
+      const newPost = document.createElement('div');
+      newPost.className = 'feed-item';
+      newPost.style.opacity = '0';
+      newPost.innerHTML = `
+        <div class="feed-item-header">
+          <i class="fas fa-user-circle feed-avatar"></i>
+          <div class="feed-user-info">
+            <span class="feed-user">${post.userId.username}</span>
+            <span class="feed-handle">@${post.userId.handle}</span>
+            <span class="feed-time">${new Date(post.createdAt).toLocaleString()}</span>
+          </div>
+        </div>
+        <p class="feed-content">${post.content}</p>
+        ${post.media.length ? `<div class="feed-media"><img src="${post.media[0]}" alt="Media"></div>` : ''}
+        <div class="feed-actions">
+          <button><i class="far fa-comment"></i> ${post.comments.length}</button>
+          <button class="retweet-btn"><i class="fas fa-retweet"></i> ${post.retweets.length}</button>
+          <button class="like-btn"><i class="far fa-heart"></i> <span class="like-count">${post.likes.length}</span></button>
+          <button><i class="fas fa-share"></i></button>
+        </div>
+      `;
+      feedContainer.appendChild(newPost);
+      setTimeout(() => { newPost.style.opacity = '1'; }, 10);
+      newPost.querySelector('.like-btn').addEventListener('click', toggleLike);
+      newPost.querySelector('.retweet-btn').addEventListener('click', toggleRetweet);
+    });
+
+    if (data.ad) {
+      const newAd = document.createElement('div');
+      newAd.className = 'ad-item';
+      newAd.style.opacity = '0';
+      newAd.innerHTML = `
+        <div class="feed-item-header">
+          <i class="fas fa-ad feed-avatar"></i>
+          <div class="feed-user-info">
+            <span class="feed-user">TruthWeb Ads</span>
+            <span class="feed-time">Sponsored</span>
+          </div>
+        </div>
+        <p class="feed-content">${data.ad.content}</p>
+        <div class="feed-media"><img src="${data.ad.media}" alt="Ad"></div>
+        <a href="${data.ad.ctaLink}" class="btn w-full">${data.ad.ctaText}</a>
+      `;
+      feedContainer.appendChild(newAd);
+      setTimeout(() => { newAd.style.opacity = '1'; }, 10);
+    }
+
+    page++;
+  } catch (err) {
+    console.error('Error loading posts:', err);
+  } finally {
+    scrollLoader.classList.remove('active');
+  }
+}
+
+const observer = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) {
+    loadMorePosts();
+  }
+}, { threshold: 0.1 });
+
+observer.observe(scrollLoader);
+
+// WebSocket for real-time updates
+const socket = io.connect(window.location.origin);
+socket.on('newPost', (post) => {
+  const newPost = document.createElement('div');
+  newPost.className = 'feed-item';
+  newPost.style.opacity = '0';
+  newPost.innerHTML = `
+    <div class="feed-item-header">
+      <i class="fas fa-user-circle feed-avatar"></i>
+      <div class="feed-user-info">
+        <span class="feed-user">${post.userId.username}</span>
+        <span class="feed-handle">@${post.userId.handle}</span>
+        <span class="feed-time">${new Date(post.createdAt).toLocaleString()}</span>
+      </div>
+    </div>
+    <p class="feed-content">${post.content}</p>
+    ${post.media.length ? `<div class="feed-media"><img src="${post.media[0]}" alt="Media"></div>` : ''}
+    <div class="feed-actions">
+      <button><i class="far fa-comment"></i> 0</button>
+      <button class="retweet-btn"><i class="fas fa-retweet"></i> 0</button>
+      <button class="like-btn"><i class="far fa-heart"></i> <span class="like-count">0</span></button>
+      <button><i class="fas fa-share"></i></button>
+    </div>
+  `;
+  feedContainer.insertBefore(newPost, feedContainer.firstChild);
+  setTimeout(() => { newPost.style.opacity = '1'; }, 10);
+  newPost.querySelector('.like-btn').addEventListener('click', toggleLike);
+  newPost.querySelector('.retweet-btn').addEventListener('click', toggleRetweet);
+});
+
+socket.on('postDeleted', (postId) => {
+  const postElement = document.querySelector(`.feed-item[data-id="${postId}"]`);
+  if (postElement) postElement.remove();
+});

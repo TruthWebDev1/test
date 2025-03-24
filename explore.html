@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" name="viewport"/>
+    <title>Explore - TruthWeb</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN (v6.5.1 for latest icons) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <!-- Socket.IO CDN -->
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #FFFFFF;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+      /* Header (X-Style) */
+      .sticky-header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+        height: 53px;
+        animation: slideInHeader 0.5s ease-out forwards;
+      }
+      .sticky-header.hidden {
+        transform: translateY(-100%);
+      }
+      .sticky-header.scrolled {
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+      @keyframes slideInHeader {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .sticky-header .logo-text {
+        font-size: 1.25rem;
+        font-weight: 700;
+        transition: font-size 0.3s ease;
+      }
+      .search-container {
+        position: relative;
+        flex-grow: 1;
+        max-width: 400px;
+        margin: 0 1rem;
+        transition: all 0.3s ease;
+      }
+      .search-input {
+        width: 100%;
+        padding: 0.5rem 2.5rem 0.5rem 1rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .search-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transform: scale(1.02) translateY(-2px);
+      }
+      .search-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+      }
+      .search-input:focus + .search-icon { transform: translateY(-50%) scale(1.1); }
+      .search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+        background: var(--secondary-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 60;
+        display: none;
+        animation: dropIn 0.3s ease-out forwards;
+      }
+      .search-results.active { display: block; }
+      @keyframes dropIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .search-result-item {
+        padding: 0.75rem;
+        color: var(--primary-color);
+        border-bottom: 1px solid var(--highlight-color);
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
+      .search-result-item:hover {
+        background: var(--highlight-color);
+        transform: scale(1.02);
+      }
+      .icon {
+        color: var(--text-color);
+        font-size: 1.25rem;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        margin-left: 0.75rem;
+      }
+      .icon:hover {
+        transform: scale(1.15) rotate(5deg);
+      }
+      /* Desktop Navigation */
+      .desktop-nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .desktop-nav .nav-item a {
+        color: var(--text-color);
+        font-size: 1rem;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        transition: color 0.3s ease, transform 0.3s ease;
+      }
+      .desktop-nav .nav-item a:hover {
+        color: var(--highlight-color);
+        transform: scale(1.05);
+      }
+      /* Burger Button */
+      .burger-btn {
+        display: none;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 30px;
+        height: 20px;
+        cursor: pointer;
+        margin-left: 1rem;
+      }
+      .burger-btn span {
+        width: 100%;
+        height: 3px;
+        background: var(--text-color);
+        transition: all 0.3s ease;
+      }
+      .burger-btn.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      .burger-btn.active span:nth-child(2) {
+        opacity: 0;
+      }
+      .burger-btn.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
+      }
+      /* Mobile Menu */
+      .mobile-menu {
+        position: fixed;
+        top: 53px;
+        left: -100%;
+        width: 250px;
+        height: calc(100vh - 53px);
+        background: var(--primary-color);
+        color: var(--text-color);
+        padding: 1rem;
+        z-index: 999;
+        transition: left 0.3s ease; /* Ensure smooth transition */
+      }
+      .mobile-menu.active {
+        left: 0; /* Slide in when active */
+      }
+      .mobile-menu ul {
+        list-style: none;
+        padding: 0;
+      }
+      .mobile-menu .nav-item a {
+        color: var(--text-color);
+        font-size: 1.1rem;
+        padding: 0.75rem;
+        display: block;
+        transition: background 0.3s ease, transform 0.3s ease;
+      }
+      .mobile-menu .nav-item a:hover {
+        background: var(--highlight-color);
+        transform: scale(1.02);
+      }
+      /* Main Layout (X-Style) */
+      .main-container {
+        display: flex;
+        max-width: 1265px;
+        margin: 0 auto;
+        padding-top: 53px;
+      }
+      .left-sidebar {
+        width: 275px;
+        padding: 1rem;
+        position: sticky;
+        top: 53px;
+        height: calc(100vh - 53px);
+        overflow-y: auto;
+        background: var(--secondary-color);
+      }
+      .left-sidebar nav ul {
+        list-style: none;
+        padding: 0;
+      }
+      .left-sidebar nav ul li {
+        margin-bottom: 1rem;
+      }
+      .left-sidebar nav ul li a {
+        display: flex;
+        align-items: center;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+        padding: 0.5rem;
+        border-radius: 9999px;
+        transition: background 0.3s ease, transform 0.3s ease;
+      }
+      .left-sidebar nav ul li a:hover {
+        background: var(--highlight-color);
+        transform: scale(1.05);
+      }
+      .left-sidebar nav ul li a i {
+        font-size: 1.5rem;
+        margin-right: 1rem;
+      }
+      .main-content {
+        flex: 1;
+        max-width: 600px;
+        border-left: 1px solid var(--highlight-color);
+        border-right: 1px solid var(--highlight-color);
+        padding: 1rem;
+        background: var(--secondary-color);
+      }
+      .right-sidebar {
+        width: 350px;
+        padding: 1rem;
+        position: sticky;
+        top: 53px;
+        height: calc(100vh - 53px);
+        overflow-y: auto;
+        background: var(--secondary-color);
+      }
+      .widget {
+        background: var(--secondary-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .widget:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+      }
+      .widget h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      .widget ul {
+        list-style: none;
+        padding: 0;
+      }
+      .widget ul li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--highlight-color);
+      }
+      .widget ul li:last-child {
+        border-bottom: none;
+      }
+      .widget ul li a {
+        color: var(--primary-color);
+        transition: color 0.3s ease;
+      }
+      .widget ul li a:hover {
+        color: var(--highlight-color);
+      }
+      /* Explore Sections */
+      .explore-section {
+        margin-bottom: 2rem;
+      }
+      .explore-section h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+      .trends-list, .popular-posts, .suggested-accounts {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .trend-item, .popular-post, .suggested-account {
+        padding: 1rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 10px;
+        transition: background 0.2s ease, transform 0.3s ease;
+        animation: slideInFeed 0.5s ease-out forwards;
+      }
+      .trend-item:hover, .popular-post:hover, .suggested-account:hover {
+        background: rgba(204, 204, 204, 0.1);
+        transform: scale(1.01);
+      }
+      @keyframes slideInFeed {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+      .trend-item a {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--primary-color);
+      }
+      .popular-post .post-header {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 0.5rem;
+      }
+      .post-avatar {
+        font-size: 2rem;
+        margin-right: 0.75rem;
+        color: var(--primary-color);
+      }
+      .post-user-info {
+        flex: 1;
+      }
+      .post-user {
+        font-weight: 700;
+        font-size: 1rem;
+      }
+      .post-handle {
+        font-size: 0.9rem;
+        color: var(--highlight-color);
+        margin-left: 0.25rem;
+      }
+      .post-time {
+        font-size: 0.85rem;
+        color: var(--highlight-color);
+        margin-left: 0.5rem;
+      }
+      .post-content {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+      }
+      .suggested-account {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .account-info {
+        display: flex;
+        align-items: center;
+      }
+      .account-avatar {
+        font-size: 2rem;
+        margin-right: 0.75rem;
+        color: var(--primary-color);
+      }
+      .account-details span {
+        display: block;
+      }
+      .account-user {
+        font-weight: 700;
+        font-size: 1rem;
+      }
+      .account-handle {
+        font-size: 0.9rem;
+        color: var(--highlight-color);
+      }
+      .follow-btn {
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .follow-btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.05);
+      }
+      /* Infinite Scroll Loader */
+      .scroll-loader {
+        text-align: center;
+        padding: 2rem;
+        font-size: 1rem;
+        color: var(--highlight-color);
+        display: none;
+      }
+      .scroll-loader.active {
+        display: block;
+      }
+      /* Responsive Design */
+      @media (max-width: 640px) {
+        .main-container {
+          display: block;
+        }
+        .left-sidebar, .right-sidebar {
+          display: none;
+        }
+        .main-content {
+          border: none;
+          padding: 0.5rem;
+        }
+        .search-container { max-width: 120px; margin: 0 0.5rem; }
+        .sticky-header { padding: 0 0.5rem; }
+        .logo-text { font-size: 1.1rem; }
+        .icon { font-size: 1.1rem; margin-left: 0.5rem; }
+        .desktop-nav { display: none !important; }
+        .burger-btn { display: flex; } /* Ensure burger button is visible on mobile */
+      }
+      @media (min-width: 641px) and (max-width: 1024px) {
+        .left-sidebar { width: 80px; }
+        .left-sidebar nav ul li a span { display: none; }
+        .left-sidebar nav ul li a i { margin-right: 0; }
+        .right-sidebar { display: none; }
+        .main-content { max-width: 500px; }
+        .burger-btn { display: none; }
+      }
+      @media (min-width: 1025px) {
+        .burger-btn { display: none; }
+      }
+    </style>
+</head>
+<body>
+    <!-- Header (Copied from feeduser.html) -->
+    <header class="sticky-header">
+        <div class="flex items-center">
+            <a href="index.html" class="text-inherit flex items-center">
+                <span class="logo-text ml-2">TruthWeb</span>
+            </a>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search TruthWeb..." aria-label="Search TruthWeb">
+            <i class="fas fa-search search-icon"></i>
+            <div class="search-results"></div>
+        </div>
+        <div class="flex items-center">
+            <nav class="desktop-nav hidden md:flex items-center">
+                <ul class="flex space-x-4">
+                    <li class="nav-item"><a href="index.html">Home</a></li>
+                    <li class="nav-item"><a href="marketplace.html">Marketplace</a></li>
+                    <li class="nav-item"><a href="feeduser.html">Profile</a></li>
+                    <li class="nav-item"><a href="wallet.html">Wallet</a></li>
+                    <li class="nav-item"><a href="ledger-testnet.html">Ledger Testnet</a></li>
+                    <li class="nav-item"><a href="community.html">Community</a></li>
+                    <li class="nav-item"><a href="developers.html">Developers</a></li>
+                    <li class="nav-item"><a href="about.html">About</a></li>
+                </ul>
+            </nav>
+            <a href="marketplace.html" class="icon floating-effect"><i class="fas fa-shopping-cart"></i></a>
+            <a href="feeduser.html" class="icon floating-effect"><i class="fas fa-user"></i></a>
+            <a href="wallet.html" class="icon floating-effect"><i class="fas fa-wallet"></i></a>
+            <div class="burger-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu (Copied from feeduser.html) -->
+    <nav class="mobile-menu">
+        <ul>
+            <li class="nav-item"><a href="index.html">Home</a></li>
+            <li class="nav-item"><a href="marketplace.html">Marketplace</a></li>
+            <li class="nav-item"><a href="feeduser.html">Profile</a></li>
+            <li class="nav-item"><a href="wallet.html">Wallet</a></li>
+            <li class="nav-item"><a href="ledger-testnet.html">Ledger Testnet</a></li>
+            <li class="nav-item"><a href="community.html">Community</a></li>
+            <li class="nav-item"><a href="developers.html">Developers</a></li>
+            <li class="nav-item"><a href="about.html">About</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content (X-Style Layout) -->
+    <div class="main-container">
+        <!-- Left Sidebar (Desktop) -->
+        <aside class="left-sidebar">
+            <nav>
+                <ul>
+                    <li><a href="index.html"><i class="fas fa-home"></i> <span>Home</span></a></li>
+                    <li><a href="explore.html"><i class="fas fa-hashtag"></i> <span>Explore</span></a></li>
+                    <li><a href="profile.html"><i class="fas fa-user"></i> <span>Profile</span></a></li>
+                    <li><a href="walletdashboard.html"><i class="fas fa-wallet"></i> <span>Wallet</span></a></li>
+                    <li><a href="marketplace.html"><i class="fas fa-shopping-cart"></i> <span>Marketplace</span></a></li>
+                    <li><a href="community.html"><i class="fas fa-users"></i> <span>Community</span></a></li>
+                    <li><a href="developers.html"><i class="fas fa-code"></i> <span>Developers</span></a></li>
+                    <li><a href="about.html"><i class="fas fa-info-circle"></i> <span>About</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Explore Content -->
+        <main class="main-content">
+            <div class="explore-section">
+                <h2>Trending Topics</h2>
+                <div id="trends-list" class="trends-list">
+                    <!-- Sample Trends -->
+                    <div class="trend-item">
+                        <a href="#">#PiTrading</a> <span>(150 posts)</span>
+                    </div>
+                    <div class="trend-item">
+                        <a href="#">#TruthWebMarket</a> <span>(120 posts)</span>
+                    </div>
+                    <div class="trend-item">
+                        <a href="#">#CryptoP2P</a> <span>(90 posts)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="explore-section">
+                <h2>Popular Posts</h2>
+                <div id="popular-posts" class="popular-posts">
+                    <!-- Sample Popular Posts -->
+                    <div class="popular-post">
+                        <div class="post-header">
+                            <i class="fas fa-user-circle post-avatar"></i>
+                            <div class="post-user-info">
+                                <span class="post-user">PiPioneer</span>
+                                <span class="post-handle">@PiPioneer</span>
+                                <span class="post-time">Mar 18, 2025</span>
+                            </div>
+                        </div>
+                        <p class="post-content">Just made a huge Pi trade in the TruthWeb Marketplace! #PiTrading</p>
+                    </div>
+                    <div class="popular-post">
+                        <div class="post-header">
+                            <i class="fas fa-user-circle post-avatar"></i>
+                            <div class="post-user-info">
+                                <span class="post-user">CryptoVendor</span>
+                                <span class="post-handle">@CryptoVendor</span>
+                                <span class="post-time">Mar 17, 2025</span>
+                            </div>
+                        </div>
+                        <p class="post-content">New trading course available now! Check it out in the Marketplace. #TruthWebMarket</p>
+                    </div>
+                </div>
+                <div class="scroll-loader">Loading more posts...</div>
+            </div>
+            <div class="explore-section">
+                <h2>Suggested Accounts</h2>
+                <div id="suggested-accounts" class="suggested-accounts">
+                    <!-- Sample Suggested Accounts -->
+                    <div class="suggested-account">
+                        <div class="account-info">
+                            <i class="fas fa-user-circle account-avatar"></i>
+                            <div class="account-details">
+                                <span class="account-user">TruthWebOfficial</span>
+                                <span class="account-handle">@TruthWebOfficial</span>
+                            </div>
+                        </div>
+                        <button class="follow-btn">Follow</button>
+                    </div>
+                    <div class="suggested-account">
+                        <div class="account-info">
+                            <i class="fas fa-user-circle account-avatar"></i>
+                            <div class="account-details">
+                                <span class="account-user">PiPioneer</span>
+                                <span class="account-handle">@PiPioneer</span>
+                            </div>
+                        </div>
+                        <button class="follow-btn">Follow</button>
+                    </div>
+                    <div class="suggested-account">
+                        <div class="account-info">
+                            <i class="fas fa-user-circle account-avatar"></i>
+                            <div class="account-details">
+                                <span class="account-user">CryptoVendor</span>
+                                <span class="account-handle">@CryptoVendor</span>
+                            </div>
+                        </div>
+                        <button class="follow-btn">Follow</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar (Desktop) -->
+        <aside class="right-sidebar">
+            <div class="widget">
+                <h3>Who to Follow</h3>
+                <ul id="who-to-follow">
+                    <li><a href="#">@TruthWebOfficial</a></li>
+                    <li><a href="#">@PiPioneer</a></li>
+                    <li><a href="#">@CryptoVendor</a></li>
+                </ul>
+            </div>
+            <div class="widget">
+                <h3>TruthWeb Updates</h3>
+                <ul>
+                    <li><a href="#">New Marketplace Features</a></li>
+                    <li><a href="#">Pi Trading Tips</a></li>
+                    <li><a href="#">Community Guidelines</a></li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Scripts -->
+    <script src="truthwebfeedbackend.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Initialize existing functions
+        initializeExplore();
+        initializeSearch();
+        initializeScrollEffects();
+
+        // Client-side follow button handler (placeholder)
+        document.querySelectorAll('.follow-btn').forEach(button => {
+          button.addEventListener('click', () => {
+            button.textContent = button.textContent === 'Follow' ? 'Following' : 'Follow';
+            button.classList.toggle('following');
+          });
+        });
+
+        // Header Scroll Hide/Show Effect
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+          const header = document.querySelector('.sticky-header');
+          const currentScroll = window.scrollY;
+
+          if (currentScroll > lastScroll && currentScroll > 50) {
+            header.classList.add('hidden');
+          } else if (currentScroll < lastScroll) {
+            header.classList.remove('hidden');
+            header.classList.toggle('scrolled', currentScroll > 50);
+          }
+          lastScroll = currentScroll;
+        });
+
+        // Burger Menu Toggle (Fixed)
+        const burgerBtn = document.querySelector('.burger-btn');
+        const mobileMenu = document.querySelector('.mobile-menu');
+
+        if (burgerBtn && mobileMenu) { // Ensure elements exist
+          burgerBtn.addEventListener('click', () => {
+            burgerBtn.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            console.log('Burger clicked, active:', mobileMenu.classList.contains('active')); // Debugging
+          });
+        } else {
+          console.error('Burger button or mobile menu not found');
+        }
+
+        // Search Functionality
+        const searchInput = document.querySelector('.search-input');
+        const searchResults = document.querySelector('.search-results');
+        const searchableContent = [];
+        document.querySelectorAll('h1, h2, h3, p, a').forEach(element => {
+          const text = element.textContent.trim();
+          if (text) {
+            searchableContent.push({
+              text: text.toLowerCase(),
+              element,
+              href: element.tagName === 'A' ? element.getAttribute('href') : null
+            });
+          }
+        });
+
+        searchInput.addEventListener('input', (e) => {
+          const query = e.target.value.toLowerCase().trim();
+          searchResults.innerHTML = '';
+          searchResults.classList.remove('active');
+
+          if (query.length > 0) {
+            const results = searchableContent.filter(item => item.text.includes(query));
+            if (results.length > 0) {
+              results.forEach(result => {
+                const div = document.createElement('div');
+                div.classList.add('search-result-item');
+                div.textContent = result.text.slice(0, 50) + (result.text.length > 50 ? '...' : '');
+                div.addEventListener('click', () => {
+                  if (result.href) window.location.href = result.href;
+                  else result.element.scrollIntoView({ behavior: 'smooth' });
+                  searchResults.classList.remove('active');
+                  searchInput.value = '';
+                });
+                searchResults.appendChild(div);
+              });
+              searchResults.classList.add('active');
+            } else {
+              const noResult = document.createElement('div');
+              noResult.classList.add('search-result-item');
+              noResult.textContent = 'No results found';
+              searchResults.appendChild(noResult);
+              searchResults.classList.add('active');
+            }
+          }
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.classList.remove('active');
+          }
+        });
+      });
+    </script>
+</body>
+</html>

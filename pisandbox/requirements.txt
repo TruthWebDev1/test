@@ -1,0 +1,13 @@
+truthweb/
+│
+├── app.py                         # Main entry point for the Flask app
+├── config.py                      # Configuration file (handles API keys and settings)
+├── requirements.txt               # List of required Python packages
+├── .env                           # Environment file to store API keys securely
+├── templates/                     # Folder for HTML templates (for frontend)
+│   └── index.html                 # Example template
+├── static/                        # Static files (CSS, JS)
+│   └── style.css                  # Example CSS file
+├── routes/                        # Folder for route blueprints
+│   └── payments.py                # Handles Pi payment routes
+└── validation-key.txt             # File required to verify domain (Pi Network setup)

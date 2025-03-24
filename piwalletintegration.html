@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Pi Network SDK -->
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" name="viewport"/>
+    <title>TruthWeb | Reimagine Truth with Pi</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+      /* Same CSS as the wallet page */
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #F5F5F5;
+        --accent-color: #FFD700;
+      }
+      html { scroll-behavior: smooth; }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        line-height: 1.6;
+      }
+      .progress-bar { position: fixed; top: 0; left: 0; width: 0; height: 4px; background: var(--accent-color); z-index: 1001; transition: width 0.3s ease; box-shadow: 0 0 8px rgba(255, 215, 0, 0.6); }
+      
+      /* Header Styles */
+      .sticky-header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+        height: 64px;
+        animation: slideInHeader 0.5s ease-out forwards;
+      }
+      .sticky-header.hidden { transform: translateY(-100%); }
+      .sticky-header.scrolled {
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+      @keyframes slideInHeader {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .sticky-header .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+      }
+      .sticky-header.scrolled .logo-text { color: var(--primary-color); }
+      .mobile-menu {
+        position: fixed;
+        top: 64px;
+        left: -100%;
+        width: 80%;
+        max-width: 300px;
+        height: calc(100vh - 64px);
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: left 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+        z-index: 999;
+        padding: 1rem;
+      }
+      .mobile-menu.open { left: 0; }
+      .mobile-menu ul { list-style: none; padding: 0; }
+      .mobile-menu .nav-item a {
+        display: block;
+        padding: 0.75rem;
+        color: var(--text-color);
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+      }
+      .mobile-menu .nav-item a:hover {
+        color: var(--highlight-color);
+        transform: translateX(10px) scale(1.05);
+      }
+      .mobile-menu .nav-item a.active { font-weight: 700; color: var(--accent-color); }
+      .desktop-nav { display: flex; }
+      .desktop-nav .nav-item a {
+        color: var(--text-color);
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+      }
+      .sticky-header.scrolled .desktop-nav .nav-item a { color: var(--primary-color); }
+      .desktop-nav .nav-item a:hover {
+        color: var(--highlight-color);
+        transform: scale(1.1);
+      }
+      .desktop-nav .nav-item a.active {
+        font-weight: 700;
+        border-bottom: 2px solid var(--accent-color);
+        color: var(--accent-color);
+      }
+      .search-container {
+        position: relative;
+        flex-grow: 1;
+        max-width: 400px;
+        margin: 0 1rem;
+        transition: all 0.3s ease;
+      }
+      .search-input {
+        width: 100%;
+        padding: 0.5rem 2.5rem 0.5rem 1rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .search-input:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transform: scale(1.02) translateY(-2px);
+      }
+      .search-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+      }
+      .sticky-header.scrolled .search-icon { color: var(--primary-color); }
+      .search-input:focus + .search-icon { transform: translateY(-50%) scale(1.1); }
+      .search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+        background: var(--secondary-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 60;
+        display: none;
+        animation: dropIn 0.3s ease-out forwards;
+      }
+      .search-results.active { display: block; }
+      @keyframes dropIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .search-result-item {
+        padding: 0.75rem;
+        color: var(--primary-color);
+        border-bottom: 1px solid var(--highlight-color);
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
+      .search-result-item:hover {
+        background: var(--highlight-color);
+        transform: scale(1.02);
+      }
+      .icon {
+        color: var(--text-color);
+        font-size: 1.25rem;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        margin-left: 0.75rem;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      }
+      .sticky-header.scrolled .icon { color: var(--primary-color); }
+      .icon:hover { transform: scale(1.15) rotate(5deg); }
+      .icon-container {
+        position: relative;
+        display: inline-block;
+      }
+      .icon-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 0.6em;
+        font-weight: bold;
+        color: var(--text-color);
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        pointer-events: none;
+      }
+      
+      /* Main Content Styles */
+      main { margin-top: 64px; }
+      .hero {
+        min-height: 50vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, var(--primary-color) 60%, #333333 100%);
+        color: var(--text-color);
+        text-align: center;
+        padding: 3rem 1rem;
+        position: relative;
+        overflow: hidden;
+        animation: fadeInHero 1s ease-out forwards;
+      }
+      @keyframes fadeInHero { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+      .hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.15), transparent 70%);
+        animation: rotateGlow 15s linear infinite;
+        z-index: 0;
+      }
+      @keyframes rotateGlow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      .hero-content { position: relative; z-index: 1; max-width: 800px; }
+      .glow-text {
+        font-size: 3.5rem;
+        font-weight: 700;
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.5);
+        animation: glow 2s ease-in-out infinite alternate;
+      }
+      @keyframes glow { 0% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.5); } 100% { text-shadow: 0 0 25px rgba(255, 255, 255, 1), 0 0 50px rgba(255, 255, 255, 0.7); } }
+      .hero-subtitle { font-size: 1.25rem; font-weight: 400; margin-top: 1rem; opacity: 0.9; }
+      section { padding: 2rem 1rem; }
+      .card {
+        background: var(--secondary-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: slideIn 0.5s ease-out forwards;
+      }
+      .card:hover { transform: translateY(-5px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2); }
+      @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+      .btn {
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.75rem 1.5rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+      }
+      .btn.accent { background: var(--accent-color); color: var(--primary-color); border: 1px solid var(--primary-color); }
+      .btn.accent:hover { background: #FFC107; color: var(--primary-color); }
+      footer { background: var(--primary-color); color: var(--text-color); text-align: center; padding: 2rem; animation: fadeIn 1s ease-out forwards; }
+      .footer-link {
+        color: var(--text-color);
+        margin: 0 0.5rem;
+        transition: transform 0.3s ease;
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      }
+      .footer-link:hover { color: var(--accent-color); transform: scale(1.2); }
+      .outlined-icon {
+        color: var(--accent-color);
+        text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1001;
+        justify-content: center;
+        align-items: center;
+        animation: fadeInModal 0.3s ease-out forwards;
+      }
+      .modal-content {
+        background: var(--secondary-color);
+        padding: 2rem;
+        border-radius: 10px;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        position: relative;
+      }
+      .modal.active { display: flex; }
+      @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+      .close-modal { position: absolute; top: 10px; right: 10px; font-size: 1.5rem; cursor: pointer; color: var(--primary-color); }
+      .input-field {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 5px;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        transition: border-color 0.3s ease;
+      }
+      .input-field:focus { border-color: var(--accent-color); outline: none; }
+      @media (max-width: 640px) {
+        .glow-text { font-size: 2rem; }
+        .hero-subtitle { font-size: 1rem; }
+        .hero { padding: 2rem 0.5rem; min-height: 40vh; }
+        .btn { padding: 0.5rem 1rem; font-size: 0.9rem; }
+        .sticky-header { padding: 0 0.5rem; }
+        .logo-text { font-size: 1.25rem; }
+        .icon { font-size: 1.1rem; margin-left: 0.5rem; }
+        .desktop-nav { display: none; }
+        .search-container { max-width: 120px; margin: 0 0.5rem; }
+      }
+      @media (min-width: 641px) and (max-width: 1024px) {
+        .glow-text { font-size: 3rem; }
+        .desktop-nav { display: flex; }
+        .search-container { max-width: 300px; }
+      }
+      @media (min-width: 1025px) {
+        .desktop-nav { display: flex; }
+        .search-container { max-width: 400px; }
+      }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+
+    <!-- Header -->
+    <header class="sticky-header">
+        <div class="flex items-center">
+            <a href="index.html" class="text-inherit flex items-center">
+                <span class="logo-text ml-2">TruthWeb</span>
+            </a>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search TruthWeb..." aria-label="Search TruthWeb">
+            <i class="fas fa-search search-icon"></i>
+            <div class="search-results"></div>
+        </div>
+        <div class="flex items-center">
+            <nav class="desktop-nav hidden md:flex items-center">
+                <ul class="flex space-x-4">
+                    <li class="nav-item"><a href="index.html" class="active">Home</a></li>
+                    <li class="nav-item"><a href="marketplace.html">Marketplace</a></li>
+                    <li class="nav-item"><a href="profile.html">Profile</a></li>
+                    <li class="nav-item"><a href="wallet.html">Wallet</a></li>
+                    <li class="nav-item"><a href="community.html">Community</a></li>
+                    <li class="nav-item"><a href="developers.html">Developers</a></li>
+                    <li class="nav-item"><a href="about.html">About</a></li>
+                </ul>
+            </nav>
+            <a href="marketplace.html" class="icon"><i class="fas fa-shopping-cart"></i></a>
+            <a href="profile.html" class="icon"><i class="fas fa-user"></i></a>
+            <a href="wallet.html" class="icon icon-container">
+              <i class="fas fa-wallet"></i>
+              <span class="icon-text">Pi</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <nav class="mobile-menu">
+        <ul>
+            <li class="nav-item"><a href="index.html" class="active">Home</a></li>
+            <li class="nav-item"><a href="marketplace.html">Marketplace</a></li>
+            <li class="nav-item"><a href="profile.html">Profile</a></li>
+            <li class="nav-item"><a href="wallet.html">Wallet</a></li>
+            <li class="nav-item"><a href="community.html">Community</a></li>
+            <li class="nav-item"><a href="developers.html">Developers</a></ Rhiz
+
+            <li class="nav-item"><a href="about.html">About</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="glow-text">Pi Wallet Integration</h1>
+                <p class="hero-subtitle">Manage Your Pi Funds Seamlessly with Pi Network Integration</p>
+                <a href="#" id="connect-wallet-btn" class="btn accent mt-4">Get Started with Pi</a>
+            </div>
+        </section>
+
+        <!-- Introduction Section -->
+        <section id="introduction" class="py-16 px-4">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-3xl font-bold text-center mb-8">Discover TruthWeb</h2>
+
+                <!-- Overview -->
+                <div class="mb-12 text-center">
+                    <p class="text-lg mb-6">
+                        TruthWeb is a decentralized platform designed to empower users with a transparent, community-driven ecosystem. Integrated with Pi Network, TruthWeb allows you to explore a marketplace, manage your Pi wallet, connect with a global community, and more—all in one place.
+                    </p>
+                </div>
+
+                <!-- Features -->
+                <div class="mb-12">
+                    <h3 class="text-2xl font-semibold mb-6 text-center">What We Offer</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+                        <div class="card text-center">
+                            <i class="fas fa-shopping-cart text-4xl mb-4 outlined-icon"></i>
+                            <h4 class="text-xl font-semibold mb-2">Marketplace</h4>
+                            <p class="text-gray-600">Buy and sell goods using Pi in a secure marketplace.</p>
+                        </div>
+                        <div class="card text-center">
+                            <i class="fas fa-wallet text-4xl mb-4 outlined-icon"></i>
+                            <h4 class="text-xl font-semibold mb-2">Pi Wallet</h4>
+                            <p class="text-gray-600">Link and manage your Pi funds seamlessly.</p>
+                        </div>
+                        <div class="card text-center">
+                            <i class="fas fa-users text-4xl mb-4 outlined-icon"></i>
+                            <h4 class="text-xl font-semibold mb-2">Community</h4>
+                            <p class="text-gray-600">Join a vibrant community of truth-seekers.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Why TruthWeb -->
+                <div class="mb-12">
+                    <h3 class="text-2xl font-semibold mb-6 text-center">Why Choose TruthWeb?</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+                        <div class="card text-center">
+                            <h4 class="text-lg font-semibold mb-2">Decentralized</h4>
+                            <p class="text-gray-600">Built on principles of transparency and user control.</p>
+                        </div>
+                        <div class="card text-center">
+                            <h4 class="text-lg font-semibold mb-2">Pi-Powered</h4>
+                            <p class="text-gray-600">Leverage the Pi Network for seamless transactions.</p>
+                        </div>
+                        <div class="card text-center">
+                            <h4 class="text-lg font-semibold mb-2">User-Driven</h4>
+                            <p class="text-gray-600">A platform shaped by its community.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Call to Action -->
+                <div class="text-center">
+                    <h3 class="text-2xl font-semibold mb-4">Join the Revolution</h3>
+                    <p class="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
+                        Connect your Pi wallet and start exploring TruthWeb today.
+                    </p>
+                    <a href="#" id="connect-wallet-btn-footer" class="btn accent mr-4">Connect Wallet</a>
+                    <a href="about.html" class="btn">Learn More</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Wallet Connection Modal -->
+    <div id="wallet-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">×</span>
+            <h3 class="text-2xl font-semibold mb-4">Connect Your Pi Wallet</h3>
+            <p class="text-gray-600 mb-4">Authenticate with Pi Network to get started.</p>
+            <button id="pi-auth-btn" class="btn accent w-full">Authenticate with Pi</button>
+            <p class="text-sm text-gray-500 italic mt-2">Note: This uses Pi Network SDK in sandbox mode for testing.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[var(--primary-color)] py-8">
+        <div class="container mx-auto text-center">
+            <div class="mb-4">
+                <a class="footer-link" href="https://www.facebook.com/reimaginetruthofficial/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a class="footer-link" href="https://x.com/reimagine_truth" target="_blank"><i class="fab fa-twitter"></i></a>
+                <a class="footer-link" href="https://t.me/TruthWebOfficial" target="_blank"><i class="fab fa-telegram"></i></a>
+                <a class="footer-link" href="https://www.youtube.com/@ReimagineTruth" target="_blank"><i class="fab fa-youtube"></i></a>
+                <a class="footer-link" href="https://github.com/username/TruthWeb" target="_blank"><i class="fab fa-github"></i></a>
+            </div>
+            <p class="text-[var(--text-color)] mb-4">© 2025 TruthWeb. All rights reserved.</p>
+            <div class="text-[var(--text-color)] text-sm">
+                <a href="about.html" class="mx-2 hover:text-[var(--accent-color)]">About Us</a> |
+                <a href="terms.html" class="mx-2 hover:text-[var(--accent-color)]">Terms & Conditions</a> |
+                <a href="privacy.html" class="mx-2 hover:text-[var(--accent-color)]">Privacy Policy</a> |
+                <a href="contact.html" class="mx-2 hover:text-[var(--accent-color)]">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+      // Initialize Pi SDK
+      Pi.init({ version: "2.0", sandbox: true });
+      const scopes = ['username', 'payments', 'wallet_address'];
+
+      function onIncompletePaymentFound(payment) {
+        console.log('Incomplete payment found:', payment);
+      }
+
+      // Layout Adjustments
+      function adjustLayout() {
+        const width = window.innerWidth;
+        const desktopNav = document.querySelector('.desktop-nav');
+        const searchContainer = document.querySelector('.search-container');
+        desktopNav.style.display = width <= 640 ? 'none' : 'flex';
+        searchContainer.style.maxWidth = width <= 640 ? '120px' : width <= 1024 ? '300px' : '400px';
+      }
+      window.addEventListener('load', adjustLayout);
+      window.addEventListener('resize', adjustLayout);
+
+      // Scroll Behavior
+      let lastScroll = 0;
+      window.addEventListener('scroll', () => {
+        const header = document.querySelector('.sticky-header');
+        const progressBar = document.querySelector('.progress-bar');
+        const currentScroll = window.scrollY;
+
+        header.classList.toggle('hidden', currentScroll > lastScroll && currentScroll > 64);
+        header.classList.toggle('scrolled', currentScroll > 64 && !header.classList.contains('hidden'));
+
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        progressBar.style.width = `${scrollPercent}%`;
+
+        lastScroll = currentScroll;
+      });
+
+      // Search Functionality
+      const searchInput = document.querySelector('.search-input');
+      const searchResults = document.querySelector('.search-results');
+      const searchableContent = [];
+      document.querySelectorAll('h1, h2, h3, h4, p, a').forEach(element => {
+        const text = element.textContent.trim();
+        if (text) searchableContent.push({ text: text.toLowerCase(), element, href: element.tagName === 'A' ? element.getAttribute('href') : null });
+      });
+
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        searchResults.innerHTML = '';
+        searchResults.classList.remove('active');
+
+        if (query.length > 2) {
+          const results = searchableContent.filter(item => item.text.includes(query));
+          if (results.length > 0) {
+            results.slice(0, 5).forEach(result => {
+              const div = document.createElement('div');
+              div.classList.add('search-result-item');
+              div.textContent = result.text.slice(0, 50) + (result.text.length > 50 ? '...' : '');
+              div.addEventListener('click', () => {
+                if (result.href) window.location.href = result.href;
+                else result.element.scrollIntoView({ behavior: 'smooth' });
+                searchResults.classList.remove('active');
+                searchInput.value = '';
+              });
+              searchResults.appendChild(div);
+            });
+            searchResults.classList.add('active');
+          } else {
+            const noResult = document.createElement('div');
+            noResult.classList.add('search-result-item');
+            noResult.textContent = 'No results found';
+            searchResults.appendChild(noResult);
+            searchResults.classList.add('active');
+          }
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+          searchResults.classList.remove('active');
+        }
+      });
+
+      // Wallet State
+      const walletModal = document.getElementById('wallet-modal');
+      const connectWalletBtn = document.getElementById('connect-wallet-btn');
+      const connectWalletBtnFooter = document.getElementById('connect-wallet-btn-footer');
+      const piAuthBtn = document.getElementById('pi-auth-btn');
+      const closeModals = document.querySelectorAll('.close-modal');
+
+      let isWalletLinked = false;
+      let balance = 0;
+      let walletAddress = '';
+
+      function updateWalletStatus() {
+        // Placeholder for wallet status on homepage if needed
+        if (isWalletLinked) {
+          console.log(`Wallet linked: ${walletAddress}, Balance: ${balance} Pi`);
+        }
+      }
+
+      // Modal Controls
+      function openModal(modal) { modal.classList.add('active'); }
+      function closeModal(modal) { modal.classList.remove('active'); }
+
+      connectWalletBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal(walletModal);
+      });
+      connectWalletBtnFooter.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal(walletModal);
+      });
+      closeModals.forEach(btn => btn.addEventListener('click', () => closeModal(walletModal)));
+      document.addEventListener('click', (e) => {
+        if (e.target === walletModal) closeModal(walletModal);
+      });
+
+      // Pi Authentication
+      piAuthBtn.addEventListener('click', async () => {
+        loadingSpinner(piAuthBtn, true);
+        try {
+          const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
+          console.log('Authentication successful:', auth);
+          isWalletLinked = true;
+          walletAddress = auth.wallet_address || 'Simulated Address';
+          balance = 150; // Simulated balance
+          updateWalletStatus();
+          closeModal(walletModal);
+          alert(`Welcome, ${auth.user.username}! Your wallet is now linked.`);
+        } catch (error) {
+          console.error('Pi Authentication failed:', error);
+          alert('Authentication failed. Please try again.');
+        } finally {
+          loadingSpinner(piAuthBtn, false);
+        }
+      });
+
+      // Loading Spinner
+      function loadingSpinner(btn, show) {
+        if (show) {
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+          btn.disabled = true;
+        } else {
+          btn.innerHTML = 'Authenticate with Pi';
+          btn.disabled = false;
+        }
+      }
+
+      // Initial UI Update
+      updateWalletStatus();
+    </script>
+</body>
+</html>

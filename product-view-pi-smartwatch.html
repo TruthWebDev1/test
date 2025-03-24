@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" name="viewport"/>
+    <title>Pi Smart Watch - TruthWeb</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN (v6.5.1 for consistency with index) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #FFFFFF;
+      }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        line-height: 1.6;
+        padding-bottom: 60px;
+      }
+      .sticky-header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+        height: 64px;
+        animation: slideInHeader 0.5s ease-out forwards;
+      }
+      .sticky-header.hidden { transform: translateY(-100%); }
+      .sticky-header.scrolled {
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        transform: scale(0.98);
+      }
+      @keyframes slideInHeader {
+        from { transform: translateY(-100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .sticky-header .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        transition: font-size 0.3s ease;
+      }
+      .sticky-header.scrolled .logo-text { font-size: 1.25rem; }
+      .burger-btn {
+        cursor: pointer;
+        flex-direction: column;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        margin-left: 0.5rem;
+        transition: transform 0.3s ease;
+      }
+      .burger-btn:hover { transform: scale(1.1); }
+      .burger-btn span {
+        width: 100%;
+        height: 3px;
+        background: var(--text-color);
+        margin: 2px 0;
+        transition: all 0.3s ease;
+        transform-origin: center;
+      }
+      .burger-btn.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+      .burger-btn.open span:nth-child(2) { opacity: 0; transform: scale(0); }
+      .burger-btn.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+      .mobile-menu {
+        position: fixed;
+        top: 64px;
+        left: -100%;
+        width: 80%;
+        max-width: 300px;
+        height: calc(100vh - 64px);
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: left 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+        z-index: 999;
+        padding: 1rem;
+        animation: fadeInMenu 0.4s ease-out forwards;
+      }
+      .mobile-menu.open { left: 0; }
+      @keyframes fadeInMenu {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .mobile-menu ul { list-style: none; padding: 0; }
+      .mobile-menu .nav-item a {
+        display: block;
+        padding: 0.75rem;
+        color: var(--text-color);
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+      }
+      .mobile-menu .nav-item a:hover {
+        color: var(--highlight-color);
+        transform: translateX(10px) scale(1.05);
+      }
+      .desktop-nav { display: flex; }
+      .desktop-nav .nav-item a {
+        color: var(--text-color);
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+      }
+      .desktop-nav .nav-item a:hover {
+        color: var(--highlight-color);
+        transform: scale(1.1);
+      }
+      .desktop-nav .nav-item a.active {
+        font-weight: 700;
+        border-bottom: 2px solid var(--highlight-color);
+      }
+      .search-container {
+        position: relative;
+        flex-grow: 1;
+        max-width: 400px;
+        margin: 0 1rem;
+        transition: all 0.3s ease;
+      }
+      .search-input {
+        width: 100%;
+        padding: 0.5rem 2.5rem 0.5rem 1rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      .search-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transform: scale(1.02) translateY(-2px);
+      }
+      .search-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+      }
+      .search-input:focus + .search-icon { transform: translateY(-50%) scale(1.1); }
+      .search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+        background: var(--secondary-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 60;
+        display: none;
+        animation: dropIn 0.3s ease-out forwards;
+      }
+      .search-results.active { display: block; }
+      @keyframes dropIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .search-result-item {
+        padding: 0.75rem;
+        color: var(--primary-color);
+        border-bottom: 1px solid var(--highlight-color);
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
+      .search-result-item:hover {
+        background: var(--highlight-color);
+        transform: scale(1.02);
+      }
+      .icon {
+        color: var(--text-color);
+        font-size: 1.25rem;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        margin-left: 0.75rem;
+      }
+      .icon:hover {
+        transform: scale(1.15) rotate(5deg);
+      }
+      .cart-btn::after {
+        content: attr(data-count);
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: red;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 12px;
+      }
+      main { margin-top: 64px; }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.5rem 1.5rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        z-index: 1;
+        min-width: 100px;
+        margin: 0.5rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.05) translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+      .btn:active {
+        transform: scale(0.98);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+      }
+      .color-option {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid var(--highlight-color);
+        transition: transform 0.3s ease, border-color 0.3s ease;
+      }
+      .color-option.selected { border-color: var(--primary-color); transform: scale(1.2); }
+      .color-option:hover { transform: scale(1.1); }
+      .product-details {
+        background: var(--secondary-color);
+        border: 2px solid var(--highlight-color);
+        border-radius: 10px;
+        padding: 2rem;
+        max-width: 800px;
+        margin: 2rem auto;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        animation: slideInCard 0.5s ease-out forwards;
+      }
+      @keyframes slideInCard {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .accordion {
+        margin-top: 1rem;
+        border-top: 1px solid var(--highlight-color);
+      }
+      .accordion-item {
+        border-bottom: 1px solid var(--highlight-color);
+      }
+      .accordion-header {
+        padding: 1rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        transition: background 0.3s ease;
+      }
+      .accordion-header:hover { background: var(--highlight-color); }
+      .accordion-content {
+        padding: 0 1rem 1rem 1rem;
+        display: none;
+        color: var(--primary-color);
+      }
+      .accordion-content.active { display: block; }
+      .footer-menu {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 60px;
+        background: var(--primary-color);
+        color: var(--text-color);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 1000;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+        transition: transform 0.3s ease;
+        animation: slideInFooter 0.5s ease-out forwards;
+      }
+      .footer-menu.hidden { transform: translateY(100%); }
+      @keyframes slideInFooter {
+        from { transform: translateY(100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+      .footer-menu a {
+        color: var(--text-color);
+        font-size: 1.5rem;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .footer-menu a:hover { transform: scale(1.2); }
+      footer {
+        background: var(--primary-color);
+        color: var(--text-color);
+        text-align: center;
+        padding: 2rem 1rem;
+        position: relative;
+        z-index: 10;
+      }
+      footer .social-icons a, footer .footer-links a {
+        color: var(--text-color);
+        transition: color 0.3s ease, transform 0.3s ease;
+      }
+      footer .social-icons a:hover, footer .footer-links a:hover {
+        color: var(--highlight-color);
+        transform: scale(1.1);
+      }
+      footer .social-icons { margin-bottom: 1rem; }
+      footer .social-icons a { font-size: 1.25rem; margin: 0 0.5rem; }
+      footer .footer-links a { margin: 0 0.5rem; text-decoration: none; }
+      @media (max-width: 640px) {
+        .burger-btn { display: flex; }
+        .desktop-nav { display: none; }
+        .search-container { max-width: 120px; margin: 0 0.5rem; }
+        .sticky-header { padding: 0 0.5rem; }
+        .logo-text { font-size: 1.25rem; }
+        .icon { font-size: 1.1rem; margin-left: 0.5rem; }
+        .btn { padding: 0.4rem 1rem; font-size: 0.85rem; min-width: 80px; }
+      }
+      @media (min-width: 641px) and (max-width: 1024px) {
+        .burger-btn { display: none; }
+        .desktop-nav { display: flex; }
+        .search-container { max-width: 300px; }
+        .footer-menu { display: none; }
+      }
+      @media (min-width: 1025px) {
+        .burger-btn { display: none; }
+        .desktop-nav { display: flex; }
+        .search-container { max-width: 400px; }
+        .footer-menu { display: none; }
+      }
+    </style>
+</head>
+<body>
+    <!-- Header with X-Style Hide/Show -->
+    <header class="sticky-header">
+        <div class="flex items-center">
+            <a href="index.html" class="text-inherit flex items-center">
+                <span class="logo-text ml-2">TruthWeb</span>
+            </a>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search TruthWeb Marketplace..." aria-label="Search Marketplace">
+            <i class="fas fa-search search-icon"></i>
+            <div class="search-results"></div>
+        </div>
+        <div class="flex items-center">
+            <nav class="desktop-nav hidden md:flex items-center">
+                <ul class="flex space-x-4">
+                    <li class="nav-item"><a href="index.html">Home</a></li>
+                    <li class="nav-item"><a href="marketplace.html" class="active">Marketplace</a></li>
+                    <li class="nav-item"><a href="profile.html">Profile</a></li>
+                    <li class="nav-item"><a href="wallet.html">Wallet</a></li>
+                    <li class="nav-item"><a href="payment.html">Payment</a></li>
+                    <li class="nav-item"><a href="ledger-testnet.html">Ledger Testnet</a></li>
+                    <li class="nav-item"><a href="community.html">Community</a></li>
+                    <li class="nav-item"><a href="developers.html">Developers</a></li>
+                    <li class="nav-item"><a href="about.html">About</a></li>
+                </ul>
+            </nav>
+            <a href="marketplace.html" class="icon cart-btn" data-count="0"><i class="fas fa-shopping-cart"></i></a>
+            <a href="profile.html" class="icon"><i class="fas fa-user"></i></a>
+            <a href="wallet.html" class="icon"><i class="fas fa-wallet"></i></a>
+            <div class="burger-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <nav class="mobile-menu">
+        <ul>
+            <li class="nav-item"><a href="index.html">Home</a></li>
+            <li class="nav-item"><a href="marketplace.html" class="active">Marketplace</a></li>
+            <li class="nav-item"><a href="profile.html">Profile</a></li>
+            <li class="nav-item"><a href="wallet.html">Wallet</a></li>
+            <li class="nav-item"><a href="payment.html">Payment</a></li>
+            <li class="nav-item"><a href="ledger-testnet.html">Ledger Testnet</a></li>
+            <li class="nav-item"><a href="community.html">Community</a></li>
+            <li class="nav-item"><a href="developers.html">Developers</a></li>
+            <li class="nav-item"><a href="about.html">About</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <section class="product-details">
+            <div class="flex flex-col md:flex-row items-center">
+                <img src="https://placehold.co/400x400" alt="Pi Smart Watch" class="w-full md:w-1/2 h-64 md:h-96 object-cover mb-4 md:mb-0 md:mr-6 rounded">
+                <div class="flex-1">
+                    <h1 class="text-3xl font-bold mb-4">Pi Smart Watch</h1>
+                    <p class="text-lg font-semibold mb-2">Price: 25 Pi</p>
+                    <p class="text-gray-600 mb-2">Seller: PioneerA</p>
+                    <div class="mb-4">
+                        <p class="font-semibold">Color:</p>
+                        <div class="flex space-x-2 mt-2">
+                            <div class="color-option" style="background-color: #000000;" data-color="Black" onclick="selectColor('Black')"></div>
+                            <div class="color-option" style="background-color: #FFFFFF;" data-color="White" onclick="selectColor('White')"></div>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap space-x-2">
+                        <button class="btn add-to-cart" onclick="addToCart('Pi Smart Watch', 25)">Add to Cart</button>
+                        <button class="btn" onclick="buyNow('Pi Smart Watch', 25)">Buy Now</button>
+                        <a href="marketplace.html" class="btn">Back to Marketplace</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Accordion for Additional Info -->
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>About Product</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <p>The Pi Smart Watch is a cutting-edge wearable designed for the Pi community. It blends style and functionality, offering a sleek design with advanced features tailored for tech enthusiasts.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>Product Features</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <ul class="list-disc pl-5">
+                            <li>High-resolution OLED display</li>
+                            <li>Fitness tracking (steps, heart rate, sleep)</li>
+                            <li>Smart notifications (calls, messages, apps)</li>
+                            <li>Water-resistant up to 50 meters</li>
+                            <li>Long-lasting battery (up to 7 days)</li>
+                            <li>Compatible with Pi ecosystem</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>Care Instructions</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Keep your Pi Smart Watch in top condition:</p>
+                        <ul class="list-disc pl-5">
+                            <li>Clean with a soft, damp cloth</li>
+                            <li>Avoid prolonged exposure to extreme heat or moisture</li>
+                            <li>Charge using the provided cable only</li>
+                            <li>Store in a cool, dry place when not in use</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>Shipping & Delivery</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Shipping is handled via Pi Network’s trusted partners:</p>
+                        <ul class="list-disc pl-5">
+                            <li>Standard shipping: 5-7 business days</li>
+                            <li>Expedited shipping: 2-3 business days (additional 5 Pi)</li>
+                            <li>Free shipping on orders over 50 Pi</li>
+                            <li>Tracking provided upon dispatch</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>30 Day Return Policy</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <p>We offer a hassle-free 30-day return policy:</p>
+                        <ul class="list-disc pl-5">
+                            <li>Returns accepted within 30 days of delivery</li>
+                            <li>Item must be unused and in original packaging</li>
+                            <li>Refund processed in Pi within 5 business days</li>
+                            <li>Contact support via <a href="contact.html" class="underline">TruthWeb Contact</a> to initiate</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Menu (Fixed, Mobile-Only) -->
+    <nav class="footer-menu" role="navigation" aria-label="Mobile Footer Navigation">
+        <a href="index.html"><i class="fas fa-home"></i></a>
+        <a href="marketplace.html"><i class="fas fa-shopping-cart"></i></a>
+        <a href="profile.html"><i class="fas fa-user"></i></a>
+        <a href="wallet.html"><i class="fas fa-wallet"></i></a>
+        <a href="community.html"><i class="fas fa-users"></i></a>
+    </nav>
+
+    <!-- Footer Navigation (Traditional Footer, All Devices) -->
+    <footer role="contentinfo">
+        <div class="social-icons mb-4">
+            <a href="https://www.facebook.com/reimaginetruthofficial/" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://x.com/reimagine_truth" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            <a href="https://t.me/TruthWebOfficial" target="_blank" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+            <a href="https://www.youtube.com/@ReimagineTruth" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+            <a href="https://github.com/username/TruthWeb" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        </div>
+        <p class="text-sm mb-2">© 2025 TruthWeb. All rights reserved.</p>
+        <div class="footer-links text-sm">
+            <a href="about.html">About</a> |
+            <a href="terms.html">Terms</a> |
+            <a href="privacy.html">Privacy</a> |
+            <a href="contact.html">Contact</a>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+      let cartCount = 0;
+      let selectedColor = 'Black'; // Default color
+
+      // Device Detection and Dynamic Adjustments
+      function adjustLayout() {
+        const width = window.innerWidth;
+        const isMobile = width <= 640;
+        const isTablet = width > 640 && width <= 1024;
+        const isDesktop = width > 1024;
+
+        const burgerBtn = document.querySelector('.burger-btn');
+        const desktopNav = document.querySelector('.desktop-nav');
+        const searchContainer = document.querySelector('.search-container');
+
+        if (isMobile) {
+          burgerBtn.style.display = 'flex';
+          desktopNav.style.display = 'none';
+          searchContainer.style.maxWidth = '120px';
+        } else if (isTablet) {
+          burgerBtn.style.display = 'none';
+          desktopNav.style.display = 'flex';
+          searchContainer.style.maxWidth = '300px';
+        } else if (isDesktop) {
+          burgerBtn.style.display = 'none';
+          desktopNav.style.display = 'flex';
+          searchContainer.style.maxWidth = '400px';
+        }
+      }
+
+      window.addEventListener('load', adjustLayout);
+      window.addEventListener('resize', adjustLayout);
+
+      // Header and Footer Scroll Hide/Show Effect (X-Style)
+      let lastScroll = 0;
+      window.addEventListener('scroll', () => {
+        const header = document.querySelector('.sticky-header');
+        const footerMenu = document.querySelector('.footer-menu');
+        const currentScroll = window.scrollY;
+
+        if (currentScroll > lastScroll && currentScroll > 50) {
+          header.classList.add('hidden');
+          footerMenu.classList.add('hidden');
+        } else if (currentScroll < lastScroll) {
+          header.classList.remove('hidden');
+          footerMenu.classList.remove('hidden');
+          header.classList.toggle('scrolled', currentScroll > 50);
+        }
+        lastScroll = currentScroll;
+      });
+
+      // Burger Menu Toggle
+      const burgerBtn = document.querySelector('.burger-btn');
+      const mobileMenu = document.querySelector('.mobile-menu');
+      burgerBtn.addEventListener('click', () => {
+        burgerBtn.classList.toggle('open');
+        mobileMenu.classList.toggle('open');
+      });
+
+      // Close Menu on Link Click
+      document.querySelectorAll('.mobile-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+          burgerBtn.classList.remove('open');
+          mobileMenu.classList.remove('open');
+        });
+      });
+
+      // Search Functionality
+      const searchInput = document.querySelector('.search-input');
+      const searchResults = document.querySelector('.search-results');
+      const searchableContent = [];
+      document.querySelectorAll('h1, h2, h3, p, a').forEach(element => {
+        const text = element.textContent.trim();
+        if (text) {
+          searchableContent.push({
+            text: text.toLowerCase(),
+            element,
+            href: element.tagName === 'A' ? element.getAttribute('href') : null
+          });
+        }
+      });
+
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        searchResults.innerHTML = '';
+        searchResults.classList.remove('active');
+
+        if (query.length > 0) {
+          const results = searchableContent.filter(item => item.text.includes(query));
+          if (results.length > 0) {
+            results.forEach(result => {
+              const div = document.createElement('div');
+              div.classList.add('search-result-item');
+              div.textContent = result.text.slice(0, 50) + (result.text.length > 50 ? '...' : '');
+              div.addEventListener('click', () => {
+                if (result.href) window.location.href = result.href;
+                else result.element.scrollIntoView({ behavior: 'smooth' });
+                searchResults.classList.remove('active');
+                searchInput.value = '';
+              });
+              searchResults.appendChild(div);
+            });
+            searchResults.classList.add('active');
+          } else {
+            const noResult = document.createElement('div');
+            noResult.classList.add('search-result-item');
+            noResult.textContent = 'No results found';
+            searchResults.appendChild(noResult);
+            searchResults.classList.add('active');
+          }
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+          searchResults.classList.remove('active');
+        }
+      });
+
+      // Add to Cart Function
+      function addToCart(productName, price) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const existingItem = cart.find(item => item.name === productName && item.color === selectedColor);
+        if (existingItem) {
+          existingItem.quantity = (existingItem.quantity || 1) + 1;
+        } else {
+          cart.push({ name: productName, price: price, color: selectedColor, quantity: 1 });
+        }
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount();
+        window.location.href = 'addtocart.html';
+      }
+
+      // Buy Now Function
+      function buyNow(productName, price) {
+        const encodedProductName = encodeURIComponent(`${productName} - ${selectedColor}`);
+        window.location.href = `payment.html?product=${encodedProductName}&price=${price}`;
+        const productSection = document.querySelector('.product-details');
+        productSection.classList.add('animate-pulse');
+        setTimeout(() => productSection.classList.remove('animate-pulse'), 1000);
+      }
+
+      // Update Cart Count
+      function updateCartCount() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cartCount = cart.reduce((total, item) => total + (item.quantity || 1), 0);
+        const cartBtn = document.querySelector('.cart-btn');
+        cartBtn.setAttribute('data-count', cartCount);
+      }
+
+      // Color Selection
+      function selectColor(color) {
+        selectedColor = color;
+        document.querySelectorAll('.color-option').forEach(option => {
+          option.classList.remove('selected');
+          if (option.dataset.color === color) {
+            option.classList.add('selected');
+          }
+        });
+      }
+
+      // Accordion Toggle
+      function toggleAccordion(header) {
+        const content = header.nextElementSibling;
+        content.classList.toggle('active');
+        const icon = header.querySelector('i');
+        icon.classList.toggle('fa-chevron-down');
+        icon.classList.toggle('fa-chevron-up');
+      }
+
+      // Initialize Cart Count and Default Color on Page Load
+      document.addEventListener('DOMContentLoaded', () => {
+        updateCartCount();
+        selectColor('Black'); // Set Black as default
+      });
+    </script>
+</body>
+</html>

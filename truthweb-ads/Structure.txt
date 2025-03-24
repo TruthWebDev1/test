@@ -1,0 +1,9 @@
+/truthweb-ads
+    ├── index.html          // Main HTML file (from the uploaded content)
+    ├── assets/
+    │      ├── sounds/      // Folder for sound effects (optional, if hosting locally)
+    │      │      ├── swipe.wav
+    │      │      ├── click.wav
+    │      │      ├── beep.wav
+    │      │      └── blip.wav
+    │      └── images/      // Placeholder images (optional, if hosting locally)

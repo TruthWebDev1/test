@@ -1,0 +1,15 @@
+pi_app/
+│── backend/                # Python (Flask) backend
+│   ├── app.py              # Main backend file
+│   ├── config.py           # API keys & settings
+│   ├── pi_sdk.py           # Functions for Pi API interaction
+│   ├── routes.py           # API routes for authentication & payments
+│   ├── templates/
+│   │   ├── index.html      # Frontend UI for testing
+│   ├── static/
+│   │   ├── script.js       # Pi SDK frontend logic
+│   ├── requirements.txt    # Dependencies (Flask, Requests, etc.)
+│── frontend/               # Frontend app (optional if using a separate frontend)
+│   ├── index.html          # Webpage for Pi authentication & payments
+│   ├── script.js           # JavaScript for Pi SDK integration
+│── README.md               # Documentation

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" name="viewport"/>
+    <title>TruthWeb - Business Partners</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN (v6.5.1 for latest icons) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #FFFFFF;
+        --accent-color: #FFD700;
+        --progress-bar-color: var(--accent-color);
+      }
+      html { scroll-behavior: smooth; }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        line-height: 1.6;
+        padding-bottom: 60px;
+      }
+
+      /* Progress Bar Styles */
+      .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 4px;
+        background: var(--progress-bar-color);
+        z-index: 1001;
+        transition: width 0.3s ease;
+        box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+      }
+
+      /* Go to Top Button Styles */
+      .go-to-top {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        background: var(--accent-color);
+        color: var(--primary-color);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        border: none;
+        cursor: pointer;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        z-index: 1000;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+      .go-to-top.visible {
+        opacity: 1;
+        visibility: visible;
+      }
+      .go-to-top:hover {
+        background: #FFA500;
+        transform: scale(1.1);
+      }
+
+      .sticky-header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+        height: 64px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .sticky-header.scrolled {
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+      .sticky-header .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-color);
+        transition: color 0.3s ease;
+      }
+      .sticky-header.scrolled .logo-text {
+        color: var(--primary-color);
+      }
+      .burger-btn {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+      .burger-btn span {
+        width: 100%;
+        height: 3px;
+        background: var(--text-color);
+        margin: 2px 0;
+        transition: all 0.3s ease;
+      }
+      .sticky-header.scrolled .burger-btn span {
+        background: var(--primary-color);
+      }
+      .mobile-menu {
+        position: fixed;
+        top: 64px;
+        left: -100%;
+        width: 80%;
+        max-width: 300px;
+        height: calc(100vh - 64px);
+        background: var(--primary-color);
+        color: var(--text-color);
+        transition: left 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+        z-index: 999;
+        padding: 1rem;
+      }
+      .mobile-menu.open { left: 0; }
+      .mobile-menu ul { list-style: none; padding: 0; }
+      .mobile-menu .nav-item a {
+        display: block;
+        padding: 0.75rem;
+        color: var(--text-color);
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+      }
+      .mobile-menu .nav-item a:hover {
+        color: var(--highlight-color);
+        transform: translateX(10px);
+      }
+      .search-container {
+        position: relative;
+        flex-grow: 1;
+        max-width: 400px;
+        margin: 0 1rem;
+        transition: all 0.3s ease;
+      }
+      .search-input {
+        width: 100%;
+        padding: 0.5rem 2.5rem 0.5rem 1rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.4s ease;
+      }
+      .search-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+      .search-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary-color);
+        font-size: 1.2rem;
+      }
+      .desktop-nav { display: flex; }
+      .desktop-nav .nav-item a {
+        color: var(--text-color);
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+      }
+      .sticky-header.scrolled .desktop-nav .nav-item a {
+        color: var(--primary-color);
+      }
+      .desktop-nav .nav-item a:hover {
+        color: var(--highlight-color);
+        transform: scale(1.1);
+      }
+      .icon {
+        color: var(--text-color);
+        font-size: 1.25rem;
+        margin-left: 0.75rem;
+        transition: transform 0.3s ease;
+      }
+      .sticky-header.scrolled .icon {
+        color: var(--primary-color);
+      }
+      .icon:hover {
+        transform: scale(1.15);
+      }
+      main { margin-top: 64px; }
+      section { padding: 2rem 1rem; }
+      .card {
+        background: var(--secondary-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 10px;
+        padding: 1.5rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: slideInCard 0.5s ease-out forwards;
+      }
+      .card:hover {
+        transform: translateY(-10px) rotate(2deg);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+      }
+      @keyframes slideInCard {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.5rem 1.5rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.05) translateY(-2px);
+      }
+      .btn.accent {
+        background: var(--accent-color);
+        color: var(--primary-color);
+        border: none;
+      }
+      .btn.accent:hover {
+        background: #FFA500;
+        color: var(--primary-color);
+      }
+      footer {
+        background: var(--primary-color);
+        color: var(--text-color);
+        text-align: center;
+        padding: 2rem 1rem;
+        position: relative;
+        z-index: 10;
+      }
+      footer .social-icons a, footer .footer-links a {
+        color: var(--text-color);
+        transition: color 0.3s ease, transform 0.3s ease;
+      }
+      footer .social-icons a:hover, footer .footer-links a:hover {
+        color: var(--highlight-color);
+        transform: scale(1.1);
+      }
+      footer .social-icons { margin-bottom: 1rem; }
+      footer .social-icons a {
+        font-size: 1.25rem;
+        margin: 0 0.5rem;
+      }
+      footer .footer-links a {
+        margin: 0 0.5rem;
+        text-decoration: none;
+      }
+      .download-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1rem;
+      }
+      .download-btn img {
+        height: 40px;
+        transition: transform 0.3s ease;
+      }
+      .download-btn:hover img { transform: scale(1.1); }
+      .footer-menu {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: var(--primary-color);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 60px;
+        z-index: 1000;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+      }
+      .footer-menu a {
+        color: var(--text-color);
+        font-size: 1.5rem;
+        padding: 0.5rem;
+        transition: transform 0.3s ease, color 0.3s ease;
+      }
+      .footer-menu a:hover {
+        color: var(--accent-color);
+        transform: scale(1.2);
+      }
+      @media (min-width: 641px) {
+        .footer-menu { display: none; }
+        .go-to-top { bottom: 20px; }
+        body { padding-bottom: 0; }
+      }
+      @media (max-width: 640px) {
+        .burger-btn { display: flex; }
+        .desktop-nav { display: none; }
+        .search-container { max-width: 120px; }
+        .logo-text { font-size: 1.25rem; }
+      }
+    </style>
+</head>
+<body>
+    <div class="progress-bar"></div>
+
+    <header class="sticky-header">
+        <div class="flex items-center">
+            <a href="index.html" class="text-inherit flex items-center">
+                <span class="logo-text ml-2">TruthWeb</span>
+            </a>
+        </div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search TruthWeb..." aria-label="Search TruthWeb">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        <div class="flex items-center">
+            <nav class="desktop-nav hidden md:flex items-center">
+                <ul class="flex space-x-4">
+                    <li class="nav-item"><a href="index.html">Home</a></li>
+                    <li class="nav-item"><a href="marketplace.html">Marketplace</a></li>
+                    <li class="nav-item"><a href="profile.html">Profile</a></li>
+                    <li class="nav-item"><a href="wallet.html">Wallet</a></li>
+                    <li class="nav-item"><a href="community.html">Community</a></li>
+                    <li class="nav-item"><a href="about.html">About</a></li>
+                </ul>
+            </nav>
+            <a href="addtocart.html" class="icon"><i class="fas fa-shopping-cart"></i></a>
+            <a href="profile.html" class="icon"><i class="fas fa-user"></i></a>
+            <a href="wallet.html" class="icon"><i class="fas fa-wallet"></i></a>
+            <div class="burger-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <nav class="mobile-menu">
+        <ul>
+            <li class="nav-item"><a href="index.html">Home</a></li>
+            <li class="nav-item"><a href="marketplace.html">Marketplace</a></li>
+            <li class="nav-item"><a href="profile.html">Profile</a></li>
+            <li class="nav-item"><a href="wallet.html">Wallet</a></li>
+            <li class="nav-item"><a href="community.html">Community</a></li>
+            <li class="nav-item"><a href="about.html">About</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- Business Partners Section with Working Buttons -->
+        <section id="business-partners" class="py-16 px-4 bg-[var(--primary-color)] text-[var(--text-color)] relative overflow-hidden">
+            <h2 class="text-3xl font-bold text-center mb-8">Our Business Partners</h2>
+            <p class="text-center text-lg mb-12 max-w-2xl mx-auto">We collaborate with leading organizations to drive innovation in blockchain and AI. <em>This is a sample Business Partners page, not official.</em></p>
+            
+            <!-- Carousel Container -->
+            <div class="relative max-w-6xl mx-auto">
+                <div class="carousel flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-6 pb-4" style="scrollbar-width: thin;">
+                    <div class="card bg-gradient-to-br from-[var(--secondary-color)] to-gray-100 text-[var(--primary-color)] min-w-[280px] snap-center rounded-xl p-6 flex flex-col items-center justify-between transform transition-all duration-500 hover:scale-105 hover:shadow-2xl">
+                        <img src="https://i.ibb.co/RGWhLsQr/pi-network-pi-icons-pi-logo-design-illustration-trendy-and-modern-crypto-currency-pi-symbol-for-logo.jpg" alt="Pi Network Logo" class="h-24 w-24 object-contain mb-4 transition-transform duration-300 hover:scale-110" loading="lazy" onerror="this.src='https://via.placeholder.com/96x96?text=Pi+Network';">
+                        <h3 class="text-xl font-semibold mb-2">Pi Network</h3>
+                        <p class="text-sm text-center text-gray-700">Pioneering mobile-first blockchain technology and decentralized ecosystems.</p>
+                        <a href="https://minepi.com" target="_blank" class="btn mt-4 bg-[var(--accent-color)] text-[var(--primary-color)] hover:bg-[#FFA500] border-none">Learn More</a>
+                    </div>
+                    <div class="card bg-gradient-to-br from-[var(--secondary-color)] to-gray-100 text-[var(--primary-color)] min-w-[280px] snap-center rounded-xl p-6 flex flex-col items-center justify-between transform transition-all duration-500 hover:scale-105 hover:shadow-2xl">
+                        <img src="https://i.ibb.co/152gNjb/openai-chatgpt-logo-icon-free-png.webp" alt="OpenAI Logo" class="h-24 w-24 object-contain mb-4 transition-transform duration-300 hover:scale-110" loading="lazy" onerror="this.src='https://via.placeholder.com/96x96?text=OpenAI';">
+                        <h3 class="text-xl font-semibold mb-2">OpenAI</h3>
+                        <p class="text-sm text-center text-gray-700">Advancing AI integration and ethical implementation in blockchain systems.</p>
+                        <a href="https://openai.com" target="_blank" class="btn mt-4 bg-[var(--accent-color)] text-[var(--primary-color)] hover:bg-[#FFA500] border-none">Learn More</a>
+                    </div>
+                    <div class="card bg-gradient-to-br from-[var(--secondary-color)] to-gray-100 text-[var(--primary-color)] min-w-[280px] snap-center rounded-xl p-6 flex flex-col items-center justify-between transform transition-all duration-500 hover:scale-105 hover:shadow-2xl">
+                        <img src="https://i.ibb.co/0RbTWGxz/OKX-Logo-svg.png" alt="OKX Logo" class="h-24 w-24 object-contain mb-4 transition-transform duration-300 hover:scale-110" loading="lazy" onerror="this.src='https://via.placeholder.com/96x96?text=OKX';">
+                        <h3 class="text-xl font-semibold mb-2">OKX</h3>
+                        <p class="text-sm text-center text-gray-700">Providing secure crypto trading infrastructure and liquidity solutions.</p>
+                        <a href="https://www.okx.com" target="_blank" class="btn mt-4 bg-[var(--accent-color)] text-[var(--primary-color)] hover:bg-[#FFA500] border-none">Learn More</a>
+                    </div>
+                    <div class="card bg-gradient-to-br from-[var(--secondary-color)] to-gray-100 text-[var(--primary-color)] min-w-[280px] snap-center rounded-xl p-6 flex flex-col items-center justify-between transform transition-all duration-500 hover:scale-105 hover:shadow-2xl">
+                        <img src="https://i.ibb.co/DHLPvq43/block-s-right.webp" alt="Stanford University Logo" class="h-24 w-24 object-contain mb-4 transition-transform duration-300 hover:scale-110" loading="lazy" onerror="this.src='https://via.placeholder.com/96x96?text=Stanford';">
+                        <h3 class="text-xl font-semibold mb-2">Stanford University</h3>
+                        <p class="text-sm text-center text-gray-700">Collaborating on blockchain research and AI ethics frameworks.</p>
+                        <a href="https://www.stanford.edu" target="_blank" class="btn mt-4 bg-[var(--accent-color)] text-[var(--primary-color)] hover:bg-[#FFA500] border-none">Learn More</a>
+                    </div>
+                    <div class="card bg-gradient-to-br from-[var(--secondary-color)] to-gray-100 text-[var(--primary-color)] min-w-[280px] snap-center rounded-xl p-6 flex flex-col items-center justify-between transform transition-all duration-500 hover:scale-105 hover:shadow-2xl">
+                        <img src="https://i.ibb.co/Pvv2fdWM/nvidia-logo-brandlogos-net.png" alt="NVIDIA Logo" class="h-24 w-24 object-contain mb-4 transition-transform duration-300 hover:scale-110" loading="lazy" onerror="this.src='https://via.placeholder.com/96x96?text=NVIDIA';">
+                        <h3 class="text-xl font-semibold mb-2">NVIDIA</h3>
+                        <p class="text-sm text-center text-gray-700">Powering AI computing and GPU acceleration for blockchain networks.</p>
+                        <a href="https://www.nvidia.com" target="_blank" class="btn mt-4 bg-[var(--accent-color)] text-[var(--primary-color)] hover:bg-[#FFA500] border-none">Learn More</a>
+                    </div>
+                </div>
+                <!-- Navigation Arrows -->
+                <button class="carousel-prev absolute left-0 top-1/2 transform -translate-y-1/2 bg-[var(--accent-color)] text-[var(--primary-color)] w-12 h-12 rounded-full flex items-center justify-center hover:bg-[#FFA500] transition-all duration-300" aria-label="Previous Partner">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-next absolute right-0 top-1/2 transform -translate-y-1/2 bg-[var(--accent-color)] text-[var(--primary-color)] w-12 h-12 rounded-full flex items-center justify-center hover:bg-[#FFA500] transition-all duration-300" aria-label="Next Partner">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="business-partners.html" class="btn accent px-6 py-3 text-lg">View All Partners</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-[var(--primary-color)] py-8">
+        <div class="container mx-auto text-center">
+            <div class="social-icons mb-4">
+                <a href="https://www.facebook.com/reimaginetruthofficial/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://x.com/reimagine_truth" target="_blank"><i class="fab fa-twitter"></i></a>
+                <a href="https://t.me/TruthWebOfficial" target="_blank"><i class="fab fa-telegram"></i></a>
+                <a href="https://www.youtube.com/@TruthWebYoutube" target="_blank"><i class="fab fa-youtube"></i></a>
+            </div>
+            <p class="text-[var(--text-color)] mb-4">© 2025 TruthWeb. All rights reserved.</p>
+            <div class="footer-links text-[var(--text-color)] text-sm">
+                <a href="about.html" class="mx-2">About Us</a> |
+                <a href="terms.html" class="mx-2">Terms & Conditions</a> |
+                <a href="privacy.html" class="mx-2">Privacy Policy</a> |
+                <a href="contact.html" class="mx-2">Contact</a>
+            </div>
+            <div class="download-buttons">
+                <a href="https://play.google.com/store" target="_blank" class="download-btn">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play">
+                </a>
+                <a href="https://www.apple.com/app-store/" target="_blank" class="download-btn">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Download on the App Store">
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <nav class="footer-menu" role="navigation" aria-label="Mobile Footer Navigation">
+        <a href="index.html"><i class="fas fa-home"></i></a>
+        <a href="marketplace.html"><i class="fas fa-shopping-cart"></i></a>
+        <a href="profile.html"><i class="fas fa-user"></i></a>
+        <a href="wallet.html"><i class="fas fa-wallet"></i></a>
+        <a href="community.html"><i class="fas fa-users"></i></a>
+    </nav>
+
+    <button class="go-to-top" aria-label="Go to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+      // Layout and Scroll Functions
+      let lastScroll = 0;
+      window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const header = document.querySelector('.sticky-header');
+        const goToTop = document.querySelector('.go-to-top');
+        const footerMenu = document.querySelector('.footer-menu');
+        const scrollProgress = (scrollTop / (document.body.scrollHeight - window.innerHeight)) * 100;
+
+        document.querySelector('.progress-bar').style.width = `${scrollProgress}%`;
+        header.classList.toggle('scrolled', scrollTop > 50);
+        goToTop.classList.toggle('visible', scrollTop > 300);
+        if (window.innerWidth <= 640) {
+          footerMenu.classList.toggle('hidden', scrollTop > lastScroll && scrollTop > 100);
+        }
+        lastScroll = scrollTop;
+      });
+
+      document.querySelector('.burger-btn').addEventListener('click', () => {
+        const burger = document.querySelector('.burger-btn');
+        const menu = document.querySelector('.mobile-menu');
+        burger.classList.toggle('open');
+        menu.classList.toggle('open');
+      });
+
+      document.querySelector('.go-to-top').addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      function adjustLayout() {
+        const width = window.innerWidth;
+        const isMobile = width <= 640;
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const footerMenu = document.querySelector('.footer-menu');
+        if (!isMobile && mobileMenu.classList.contains('open')) {
+          mobileMenu.classList.remove('open');
+          document.querySelector('.burger-btn').classList.remove('open');
+        }
+        footerMenu.classList.toggle('hidden', !isMobile);
+      }
+
+      window.addEventListener('load', adjustLayout);
+      window.addEventListener('resize', adjustLayout);
+
+      // Carousel Functionality
+      const carousel = document.querySelector('.carousel');
+      const prevBtn = document.querySelector('.carousel-prev');
+      const nextBtn = document.querySelector('.carousel-next');
+      const cardWidth = 280 + 24; // Card width (280px) + gap (24px)
+
+      prevBtn.addEventListener('click', () => {
+        carousel.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+      });
+
+      nextBtn.addEventListener('click', () => {
+        carousel.scrollBy({ left: cardWidth, behavior: 'smooth' });
+      });
+
+      // Ensure carousel buttons are clickable and responsive
+      [prevBtn, nextBtn].forEach(btn => {
+        btn.addEventListener('mouseenter', () => {
+          btn.style.transform = 'scale(1.1) translateY(-50%)';
+        });
+        btn.addEventListener('mouseleave', () => {
+          btn.style.transform = 'scale(1) translateY(-50%)';
+        });
+      });
+    </script>
+</body>
+</html>
