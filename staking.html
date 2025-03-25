@@ -11,7 +11,7 @@
     <title>Pi Staking | TruthWeb</title>
     <!-- TailwindCSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome CDN -->
+    <!-- Font Awesome CDN (6.5.1) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
     <!-- Google Fonts: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
@@ -250,7 +250,7 @@
         background: var(--primary-color);
         color: var(--text-color);
         text-align: center;
-        padding: 1rem;
+        padding: 2rem;
         position: relative;
         overflow: hidden;
         animation: fadeInHero 1s ease-out forwards;
@@ -268,6 +268,12 @@
       }
       @keyframes pulseGlow { 0% { opacity: 0.5; } 100% { opacity: 0.8; } }
       @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+      .hero-icon {
+        font-size: 5rem;
+        color: var(--accent-color);
+        margin-bottom: 1.5rem;
+        animation: bounce 3s infinite ease-in-out;
+      }
       .glow-text {
         font-size: 3rem;
         font-weight: 700;
@@ -276,12 +282,6 @@
       }
       @keyframes glow { 0% { text-shadow: 0 0 10px var(--highlight-color); } 100% { text-shadow: 0 0 20px var(--highlight-color); } }
       @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-      .hero-icon {
-        font-size: 5rem;
-        color: var(--text-color);
-        margin-bottom: 1.5rem;
-        animation: bounce 3s infinite ease-in-out;
-      }
       .btn {
         display: inline-flex;
         align-items: center;
@@ -299,7 +299,7 @@
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         position: relative;
         z-index: 1;
-        min-width: 100px;
+        min-width: 120px;
         margin-top: 1rem;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         animation: pulse 2s infinite;
@@ -326,7 +326,7 @@
       .card:hover { transform: translateY(-10px) rotate(2deg); box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); }
       @keyframes slideInCard { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
       .card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem; }
-      .card h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
+      .card h3, .card h4 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
       footer { background: var(--primary-color); color: var(--text-color); text-align: center; padding: 2rem 1rem; position: relative; z-index: 10; animation: fadeIn 1.5s ease-in-out; }
       @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
       @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
@@ -339,8 +339,17 @@
       .footer-menu.hidden { transform: translateY(100%); }
       .footer-menu a { color: var(--text-color); font-size: 1.5rem; padding: 0.5rem; transition: transform 0.3s ease, color 0.3s ease; }
       .footer-menu a:hover { color: var(--accent-color); transform: scale(1.2); }
-      .staking-input { padding: 0.75rem; border: 1px solid var(--highlight-color); border-radius: 8px; width: 100%; font-size: 1rem; color: var(--primary-color); background: #f9f9f9; transition: border-color 0.3s ease; }
-      .staking-input:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); }
+      .staking-input, .staking-select {
+        padding: 0.75rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 8px;
+        width: 100%;
+        font-size: 1rem;
+        color: var(--primary-color);
+        background: #f9f9f9;
+        transition: border-color 0.3s ease;
+      }
+      .staking-input:focus, .staking-select:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); }
       @media (min-width: 641px) { .footer-menu { display: none; } .go-to-top { bottom: 20px; } body { padding-bottom: 0; } }
       @media (max-width: 640px) {
         .burger-btn { display: flex; }
@@ -351,9 +360,9 @@
         .icon { font-size: 1.1rem; margin-left: 0.5rem; }
         .glow-text { font-size: 1.75rem; }
         .hero-icon { font-size: 3.5rem; }
-        .btn { padding: 0.4rem 1rem; font-size: 0.85rem; min-width: 80px; }
+        .btn { padding: 0.4rem 1rem; font-size: 0.85rem; min-width: 100px; }
         .card img { height: 150px; }
-        .card h3 { font-size: 1.1rem; }
+        .card h3, .card h4 { font-size: 1.1rem; }
         .section-title { font-size: 1.5rem; }
         .go-to-top { width: 40px; height: 40px; font-size: 1.2rem; bottom: 80px; }
       }
@@ -422,7 +431,7 @@
             <i class="fas fa-coins hero-icon"></i>
             <h1 class="glow-text">Pi Staking</h1>
             <p class="text-xl mt-4 md:text-2xl max-w-2xl">Earn Rewards by Staking Your Pi to Support the TruthWeb Ecosystem</p>
-            <a href="#stake" class="btn accent mt-4">Start Staking Now</a>
+            <a href="#stake" class="btn accent">Start Staking Now</a>
         </section>
         <section id="stake" class="py-16 px-4">
             <h2 class="section-title text-3xl font-bold text-center mb-8">Stake Your Pi</h2>
@@ -432,41 +441,49 @@
             <!-- Staking Tiers -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto mb-12">
                 <div class="card">
-                    <img src="https://placehold.co/200x200" alt="Bronze Tier" class="card-img">
+                    <img src="https://placehold.co/200x200?text=Bronze" alt="Bronze Tier" class="card-img">
                     <h3 class="text-xl font-semibold mb-2">Bronze Tier</h3>
                     <p class="text-gray-600 mb-2">Stake: 100 - 499 Pi</p>
                     <p class="text-gray-600 mb-4">Reward: 2% APY</p>
-                    <a href="#" class="btn w-full">Stake Now</a>
+                    <button class="btn stake-tier-btn w-full" data-tier="bronze">Stake Now</button>
                 </div>
                 <div class="card">
-                    <img src="https://placehold.co/200x200" alt="Silver Tier" class="card-img">
+                    <img src="https://placehold.co/200x200?text=Silver" alt="Silver Tier" class="card-img">
                     <h3 class="text-xl font-semibold mb-2">Silver Tier</h3>
                     <p class="text-gray-600 mb-2">Stake: 500 - 999 Pi</p>
                     <p class="text-gray-600 mb-4">Reward: 3.5% APY</p>
-                    <a href="#" class="btn w-full">Stake Now</a>
+                    <button class="btn stake-tier-btn w-full" data-tier="silver">Stake Now</button>
                 </div>
                 <div class="card">
-                    <img src="https://placehold.co/200x200" alt="Gold Tier" class="card-img">
+                    <img src="https://placehold.co/200x200?text=Gold" alt="Gold Tier" class="card-img">
                     <h3 class="text-xl font-semibold mb-2">Gold Tier</h3>
                     <p class="text-gray-600 mb-2">Stake: 1,000+ Pi</p>
                     <p class="text-gray-600 mb-4">Reward: 5% APY</p>
-                    <a href="#" class="btn w-full">Stake Now</a>
+                    <button class="btn stake-tier-btn w-full" data-tier="gold">Stake Now</button>
                 </div>
             </div>
-            <!-- Staking Dashboard with Demo Calculator -->
+            <!-- Staking Dashboard with Enhanced Calculator -->
             <div class="max-w-4xl mx-auto text-center">
-                <h3 class="text-2xl font-semibold mb-4">Your Staking Dashboard</h3>
+                <h3 class="text-2xl font-semibold mb-6">Your Staking Dashboard</h3>
                 <div class="card p-6 mx-auto max-w-md">
                     <div class="mb-4">
                         <label class="block text-left text-gray-700 mb-2" for="stake-amount">Amount to Stake (Pi):</label>
                         <input type="number" id="stake-amount" placeholder="Enter Pi amount" class="staking-input" min="0" step="1">
                     </div>
+                    <div class="mb-4">
+                        <label class="block text-left text-gray-700 mb-2" for="stake-duration">Staking Duration:</label>
+                        <select id="stake-duration" class="staking-select">
+                            <option value="30">30 Days</option>
+                            <option value="90">90 Days</option>
+                            <option value="180">180 Days</option>
+                        </select>
+                    </div>
                     <div class="mb-4 text-left text-gray-600">
                         <p>Current Balance: <span id="current-balance">1,250 Pi</span></p>
-                        <p>Staked Amount: <span id="staked-amount">500 Pi</span></p>
+                        <p>Total Staked: <span id="staked-amount">500 Pi</span></p>
                         <p>Estimated Rewards: <span id="estimated-rewards">17.5 Pi/year (3.5% APY)</span></p>
                     </div>
-                    <button id="stake-btn" class="btn w-full">Stake Pi</button>
+                    <button id="stake-btn" class="btn accent w-full">Stake Pi</button>
                 </div>
             </div>
             <!-- Benefits -->
@@ -524,7 +541,9 @@
       const searchInput = document.querySelector('.search-input');
       const searchResults = document.querySelector('.search-results');
       const stakeAmountInput = document.getElementById('stake-amount');
+      const stakeDurationSelect = document.getElementById('stake-duration');
       const stakeBtn = document.getElementById('stake-btn');
+      const stakeTierBtns = document.querySelectorAll('.stake-tier-btn');
       const currentBalanceSpan = document.getElementById('current-balance');
       const stakedAmountSpan = document.getElementById('staked-amount');
       const estimatedRewardsSpan = document.getElementById('estimated-rewards');
@@ -585,49 +604,52 @@
         }
       });
 
+      // Pi Network Authentication and Payment Handling
       function onIncompletePaymentFound(payment) { 
-        console.log('incomplete payment found');
+        console.log('Incomplete payment found:', payment);
         const paymentId = payment.identifier;
         const txid = payment.transaction.txid;
         $.post('/payment/complete', {
           paymentId: paymentId,
           txid: txid,
           debug: 'cancel'
-        });
+        }).done(() => console.log('Payment completion submitted')).fail(err => console.error('Payment completion failed:', err));
       }
 
-      function authenticateUser() {
+      function authenticateUser(callback) {
         const scopes = ['payments', 'username'];
         Pi.authenticate(scopes, onIncompletePaymentFound).then(function(auth) {
-          console.log(`Hi there, ${auth.user.username}! You're ready to make payments!`);
-          const accessToken = auth.accessToken;
-          alert(`Welcome, ${auth.user.username}! Access Token: ${accessToken}`);
+          console.log(`Authenticated: ${auth.user.username}`);
+          callback(auth);
         }).catch(function(error) {
           console.error('Authentication failed:', error);
           alert('Authentication failed. Please try again.');
         });
       }
 
-      // Demo Staking Calculator
+      // Demo Staking Logic
       let currentBalance = 1250; // Demo balance in Pi
       let stakedAmount = 500; // Initial staked amount
 
-      function calculateRewards(amount) {
+      function calculateRewards(amount, durationDays) {
         let apy;
         if (amount >= 1000) apy = 5;
         else if (amount >= 500) apy = 3.5;
         else if (amount >= 100) apy = 2;
         else apy = 0;
         const yearlyReward = (amount * apy) / 100;
-        return { apy, yearlyReward };
+        const periodReward = (yearlyReward * durationDays) / 365;
+        return { apy, yearlyReward, periodReward };
       }
 
       function updateDashboard() {
         const amount = parseFloat(stakeAmountInput.value) || 0;
-        const { apy, yearlyReward } = calculateRewards(stakedAmount + amount);
-        currentBalanceSpan.textContent = `${currentBalance} Pi`;
-        stakedAmountSpan.textContent = `${stakedAmount} Pi`;
-        estimatedRewardsSpan.textContent = `${yearlyReward.toFixed(2)} Pi/year (${apy}% APY)`;
+        const duration = parseInt(stakeDurationSelect.value) || 30;
+        const totalStaked = stakedAmount + amount;
+        const { apy, yearlyReward, periodReward } = calculate regulations(totalStaked, duration);
+        currentBalanceSpan.textContent = `${currentBalance.toFixed(2)} Pi`;
+        stakedAmountSpan.textContent = `${stakedAmount.toFixed(2)} Pi`;
+        estimatedRewardsSpan.textContent = `${periodReward.toFixed(2)} Pi (${apy}% APY over ${duration} days)`;
       }
 
       stakeAmountInput.addEventListener('input', () => {
@@ -638,19 +660,61 @@
         updateDashboard();
       });
 
+      stakeDurationSelect.addEventListener('change', updateDashboard);
+
+      stakeTierBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tier = btn.dataset.tier;
+          let suggestedAmount;
+          if (tier === 'bronze') suggestedAmount = 100;
+          else if (tier === 'silver') suggestedAmount = 500;
+          else if (tier === 'gold') suggestedAmount = 1000;
+          stakeAmountInput.value = Math.min(suggestedAmount, currentBalance);
+          updateDashboard();
+        });
+      });
+
       stakeBtn.addEventListener('click', () => {
         const amount = parseFloat(stakeAmountInput.value) || 0;
+        const duration = parseInt(stakeDurationSelect.value) || 30;
         if (amount <= 0 || amount > currentBalance) {
           alert('Please enter a valid amount within your balance.');
           return;
         }
-        authenticateUser(); // Trigger Pi authentication
-        // Simulate staking (demo purposes)
-        currentBalance -= amount;
-        stakedAmount += amount;
-        stakeAmountInput.value = '';
-        updateDashboard();
-        alert(`Successfully staked ${amount} Pi!`);
+
+        authenticateUser((auth) => {
+          const paymentData = {
+            amount: amount,
+            memo: `Staking ${amount} Pi for ${duration} days on TruthWeb`,
+            metadata: { user: auth.user.username, duration: duration, tier: amount >= 1000 ? 'Gold' : amount >= 500 ? 'Silver' : 'Bronze' }
+          };
+
+          Pi.createPayment(paymentData, {
+            onReadyForServerApproval: (paymentId) => {
+              console.log('Payment ready for approval:', paymentId);
+              $.post('/payment/approve', { paymentId: paymentId, debug: 'staking' })
+                .done(() => console.log('Payment approved'))
+                .fail(err => console.error('Approval failed:', err));
+            },
+            onReadyForServerCompletion: (paymentId, txid) => {
+              console.log('Payment ready for completion:', paymentId, txid);
+              $.post('/payment/complete', { paymentId: paymentId, txid: txid, debug: 'staking' })
+                .done(() => {
+                  currentBalance -= amount;
+                  stakedAmount += amount;
+                  stakeAmountInput.value = '';
+                  updateDashboard();
+                  alert(`Successfully staked ${amount} Pi for ${duration} days!`);
+                })
+                .fail(err => console.error('Completion failed:', err));
+            },
+            onCancel: () => alert('Payment cancelled.'),
+            onError: (error) => {
+              console.error('Payment error:', error);
+              alert('Payment failed. Please try again.');
+            }
+          });
+        });
       });
 
       // Initial dashboard update
