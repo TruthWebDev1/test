@@ -1,0 +1,90 @@
+truthweb-frontend/
+├── public/                   # Static assets
+│   ├── index.html           # Base HTML template
+│   ├── favicon.ico          # Favicon
+│   └── assets/              # Static images, fonts, etc.
+│       ├── logos/           # Logos (e.g., Pi Network, TruthWeb)
+│       ├── icons/           # Icons (e.g., Font Awesome SVGs)
+│       └── media/           # Sample images/videos
+├── src/                     # Source code
+│   ├── api/                 # API integration
+│   │   ├── authApi.ts       # Authentication API calls (Pi SDK, JWT)
+│   │   ├── marketApi.ts     # Marketplace API calls
+│   │   ├── feedApi.ts       # Feed API calls
+│   │   ├── videoApi.ts      # Video API calls
+│   │   ├── socket.ts        # WebSocket connection setup
+│   │   └── axiosInstance.ts # Axios configuration
+│   ├── components/          # Reusable UI components
+│   │   ├── common/          # Generic components
+│   │   │   ├── Button.tsx   # Custom button component
+│   │   │   ├── Card.tsx     # Card component (used in features, feed, etc.)
+│   │   │   ├── Icon.tsx     # Icon wrapper (Font Awesome)
+│   │   │   └── ProgressBar.tsx # Scroll progress bar
+│   │   ├── layout/          # Layout components
+│   │   │   ├── Header.tsx   # Sticky header with search and nav
+│   │   │   ├── Footer.tsx   # Footer with social links
+│   │   │   ├── MobileMenu.tsx # Mobile burger menu
+│   │   │   └── GoToTop.tsx  # Go-to-top button
+│   │   ├── hero/            # Hero section components
+│   │   │   ├── Hero.tsx     # Main hero section
+│   │   │   └── DownloadButtons.tsx # App store buttons
+│   │   ├── feed/            # Feed-related components
+│   │   │   ├── FeedItem.tsx # Single feed post
+│   │   │   ├── FeedBanner.tsx # Sponsored ad banner
+│   │   │   └── FeedActions.tsx # Like/comment/share buttons
+│   │   ├── video/           # Video player components
+│   │   │   ├── VideoPlayer.tsx # Main video iframe
+│   │   │   ├── VideoControls.tsx # Play/pause/next controls
+│   │   │   └── CommentSection.tsx # Comments UI
+│   │   ├── marketplace/     # Marketplace components
+│   │   │   ├── ListingCard.tsx # Marketplace item card
+│   │   │   └── EscrowStatus.tsx # Escrow status display
+│   │   └── carousel/        # Carousel for partners
+│   │       └── Carousel.tsx # Horizontal scroll carousel
+│   ├── pages/               # Page components (React Router routes)
+│   │   ├── Home.tsx         # Home page (index.html content)
+│   │   ├── Marketplace.tsx  # Marketplace page
+│   │   ├── Profile.tsx      # User profile page
+│   │   ├── Wallet.tsx       # Wallet management page
+│   │   ├── LedgerTestnet.tsx # Ledger testnet page
+│   │   ├── Community.tsx    # Community page
+│   │   ├── Developers.tsx   # Developers page
+│   │   ├── About.tsx        # About page
+│   │   └── NotFound.tsx     # 404 page
+│   ├── context/             # Context API (alternative to Redux)
+│   │   └── AuthContext.tsx  # User authentication context
+│   ├── hooks/               # Custom React hooks
+│   │   ├── useScroll.ts     # Scroll-related logic (progress bar, header)
+│   │   ├── useAuth.ts       # Authentication state management
+│   │   ├── useSocket.ts     # WebSocket connection hook
+│   │   └── useMediaQuery.ts # Responsive design hook
+│   ├── redux/               # Redux Toolkit (if used)
+│   │   ├── store.ts         # Redux store configuration
+│   │   ├── authSlice.ts     # Authentication slice
+│   │   ├── feedSlice.ts     # Feed data slice
+│   │   └── walletSlice.ts   # Wallet data slice
+│   ├── styles/              # CSS and Tailwind configuration
+│   │   ├── index.css        # Global styles (your CSS)
+│   │   ├── tailwind.css     # Tailwind imports
+│   │   └── animations.css   # Custom animations
+│   ├── utils/               # Utility functions
+│   │   ├── formatDate.ts    # Date formatting
+│   │   ├── debounce.ts      # Debounce for search input
+│   │   └── constants.ts     # App-wide constants (e.g., colors)
+│   ├── App.tsx              # Root component with routing
+│   ├── main.tsx             # Entry point (renders App)
+│   └── types/               # TypeScript type definitions
+│       ├── user.ts          # User-related types
+│       ├── feed.ts          # Feed post types
+│       └── video.ts         # Video-related types
+├── tests/                   # Unit and integration tests
+│   ├── components/          # Component tests
+│   │   └── Button.test.tsx
+│   ├── pages/               # Page tests
+│   │   └── Home.test.tsx
+│   └── utils/               # Utility tests
+├── vite.config.ts           # Vite configuration
+├── tsconfig.json            # TypeScript configuration
+├── tailwind.config.js       # Tailwind CSS configuration
+├── package.json             # Dependencies and scripts
+└── .env                     # Environment variables
