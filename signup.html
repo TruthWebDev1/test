@@ -1,1 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" name="viewport"/>
+    <title>Sign Up - TruthWeb</title>
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN (v6.5.1) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+    <!-- jQuery for Pi SDK compatibility -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <!-- Pi Network SDK -->
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <style>
+      :root {
+        --primary-color: #000000;
+        --secondary-color: #FFFFFF;
+        --highlight-color: #CCCCCC;
+        --text-color: #FFFFFF;
+        --button-bg-color: #000000;
+        --button-text-color: #FFFFFF;
+        --button-hover-bg-color: #FFFFFF;
+        --button-hover-text-color: #000000;
+        --background-color: #FFFFFF;
+        --accent-color: #FFD700;
+        --progress-bar-color: var(--accent-color);
+      }
+      html { 
+        scroll-behavior: smooth; 
+        -webkit-overflow-scrolling: touch; 
+      }
+      body {
+        background: var(--background-color);
+        color: var(--primary-color);
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+      .signup-container {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, var(--primary-color), #1a1a1a);
+        padding: 2rem 1rem;
+        position: relative;
+        overflow: hidden;
+      }
+      .signup-container::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.05), transparent);
+        animation: pulseGlow 3s infinite alternate;
+        pointer-events: none;
+      }
+      @keyframes pulseGlow {
+        0% { opacity: 0.3; }
+        100% { opacity: 0.6; }
+      }
+      .signup-card {
+        background: var(--secondary-color);
+        border: 1px solid var(--highlight-color);
+        border-radius: 12px;
+        padding: 2rem;
+        max-width: 400px;
+        width: 100%;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        animation: slideInCard 0.5s ease-out forwards;
+      }
+      @keyframes slideInCard {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .signup-card h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: var(--primary-color);
+        text-shadow: 0 0 5px var(--highlight-color);
+      }
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+      .form-group label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+      }
+      .form-group input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 8px;
+        font-size: 1rem;
+        background: #f5f5f5;
+        color: var(--primary-color);
+        outline: none;
+        transition: all 0.3s ease;
+      }
+      .form-group input:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+        transform: scale(1.02);
+      }
+      .form-group input.invalid {
+        border-color: #ff4444;
+        box-shadow: 0 0 8px rgba(255, 68, 68, 0.3);
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.75rem 1.5rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        transition: all 0.3s ease;
+        width: 100%;
+        cursor: pointer;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        touch-action: manipulation;
+      }
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+      .btn:active {
+        transform: scale(0.98);
+      }
+      .btn.accent {
+        background: var(--accent-color);
+        color: var(--primary-color);
+        border: none;
+      }
+      .btn.accent:hover {
+        background: #FFA500;
+      }
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .or-divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 1.5rem 0;
+        color: var(--highlight-color);
+      }
+      .or-divider::before,
+      .or-divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid var(--highlight-color);
+      }
+      .or-divider span {
+        padding: 0 1rem;
+        font-size: 0.9rem;
+      }
+      .error-message {
+        color: #ff4444;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        display: none;
+      }
+      .login-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+      }
+      .login-link a {
+        color: var(--accent-color);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+      .login-link a:hover {
+        color: #FFA500;
+      }
+      footer {
+        background: var(--primary-color);
+        color: var(--text-color);
+        text-align: center;
+        padding: 1rem;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        z-index: 10;
+      }
+      footer p {
+        margin: 0;
+        font-size: 0.85rem;
+      }
+      @media (max-width: 640px) {
+        .signup-card {
+          padding: 1.5rem;
+          max-width: 100%;
+        }
+        .signup-card h1 {
+          font-size: 1.75rem;
+        }
+        .btn {
+          padding: 0.6rem 1.2rem;
+          font-size: 0.85rem;
+        }
+      }
+    </style>
+</head>
+<body>
+    <section class="signup-container">
+        <div class="signup-card">
+            <h1>Join TruthWeb</h1>
+            <form id="signup-form" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                    <div class="error-message" id="username-error">Username must be at least 3 characters.</div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    <div class="error-message" id="email-error">Please enter a valid email address.</div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    <div class="error-message" id="password-error">Password must be at least 8 characters.</div>
+                </div>
+                <button type="submit" class="btn">Sign Up</button>
+            </form>
+            <div class="or-divider"><span>OR</span></div>
+            <button id="pi-auth-btn" class="btn accent">Sign Up with Pi</button>
+            <div class="login-link">
+                Already have an account? <a href="404.html">Log In</a>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <p>© 2025 TruthWeb. All rights reserved.</p>
+    </footer>
+
+    <script>
+      // Initialize Pi SDK
+      Pi.init({ version: "2.0", sandbox: true });
+      const scopes = ['username', 'payments'];
+
+      // Handle incomplete payments (placeholder for server-side integration)
+      function onIncompletePaymentFound(payment) {
+        console.log('Incomplete payment found:', payment);
+        const paymentId = payment.identifier;
+        const txid = payment.transaction.txid;
+        $.post('/payment/complete', {
+          paymentId: paymentId,
+          txid: txid,
+          debug: 'cancel'
+        }, (response) => {
+          console.log('Payment completion response:', response);
+        }).fail((error) => {
+          console.error('Payment completion failed:', error);
+        });
+      }
+
+      // Pi Authentication
+      document.getElementById('pi-auth-btn').addEventListener('click', () => {
+        Pi.authenticate(scopes, onIncompletePaymentFound).then((auth) => {
+          console.log(`Authenticated: ${auth.user.username}`, auth);
+          alert(`Welcome, ${auth.user.username}! You're now signed up with Pi.`);
+          // Redirect or update UI after successful signup
+          window.location.href = 'index.html';
+        }).catch((error) => {
+          console.error('Pi Authentication failed:', error);
+          alert('Signup with Pi failed. Please try again.');
+        });
+      });
+
+      // Form Validation and Submission
+      function handleSignup(event) {
+        event.preventDefault();
+        const form = document.getElementById('signup-form');
+        const username = document.getElementById('username');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        let isValid = true;
+
+        // Reset error states
+        [username, email, password].forEach(input => {
+          input.classList.remove('invalid');
+          document.getElementById(`${input.id}-error`).style.display = 'none';
+        });
+
+        // Username validation
+        if (username.value.length < 3) {
+          username.classList.add('invalid');
+          document.getElementById('username-error').style.display = 'block';
+          isValid = false;
+        }
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.value)) {
+          email.classList.add('invalid');
+          document.getElementById('email-error').style.display = 'block';
+          isValid = false;
+        }
+
+        // Password validation
+        if (password.value.length < 8) {
+          password.classList.add('invalid');
+          document.getElementById('password-error').style.display = 'block';
+          isValid = false;
+        }
+
+        if (isValid) {
+          // Simulate signup API call (replace with actual backend integration)
+          console.log('Signup successful:', {
+            username: username.value,
+            email: email.value,
+            password: password.value
+          });
+          alert('Signup successful! Redirecting to homepage...');
+          window.location.href = 'index.html';
+        }
+      }
+    </script>
+</body>
+</html>
 
