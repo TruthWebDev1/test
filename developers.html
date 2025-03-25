@@ -1,14 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Pi Network SDK and Authentication Logic -->
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script>
+      Pi.init({ version: "2.0", sandbox: true });
+      const scopes = ['payments', 'username'];
+
+      function onIncompletePaymentFound(payment) { 
+        console.log('Incomplete payment found:', payment);
+        const paymentId = payment.identifier;
+        const txid = payment.transaction.txid;
+        return fetch('http://your-backend-url.com/payment/complete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ paymentId, txid, debug: 'cancel' })
+        });
+      }
+
+      async function authenticateUser() {
+        try {
+          const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
+          console.log(`Authenticated: ${auth.user.username}`);
+          const accessToken = auth.accessToken;
+          const username = auth.user.username;
+
+          // Send authentication data to backend
+          const response = await fetch('http://your-backend-url.com/auth/pi', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ accessToken, username })
+          });
+          const data = await response.json();
+
+          if (data.success) {
+            localStorage.setItem('authToken', data.sessionToken);
+            localStorage.setItem('username', username);
+            updateUIAfterAuth(username);
+            alert(`Welcome, ${username}! You're authenticated across all pages.`);
+          } else {
+            throw new Error(data.error || 'Authentication failed');
+          }
+        } catch (error) {
+          console.error('Authentication failed:', error);
+          alert('Authentication failed. Please try again.');
+        }
+      }
+
+      function checkAuthStatus() {
+        const username = localStorage.getItem('username');
+        if (username) {
+          updateUIAfterAuth(username);
+        }
+      }
+
+      function updateUIAfterAuth(username) {
+        const authBtn = document.getElementById('pi-auth-btn');
+        const profileIcon = document.querySelector('.icon[href="profile.html"] i');
+        authBtn.textContent = `Hi, ${username}`;
+        authBtn.disabled = true;
+        authBtn.classList.remove('accent');
+        authBtn.classList.add('authenticated');
+        if (profileIcon) profileIcon.classList.replace('fa-user', 'fa-user-check');
+      }
+    </script>
+    <!-- jQuery for compatibility -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" name="viewport"/>
     <title>Developers | TruthWeb</title>
-    <!-- TailwindCSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome CDN (v6.5.1 for latest icons) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
-    <!-- Google Fonts: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
     <style>
       :root {
@@ -21,7 +83,10 @@
         --button-hover-bg-color: #FFFFFF;
         --button-hover-text-color: #000000;
         --background-color: #FFFFFF;
+        --accent-color: #FFD700;
+        --progress-bar-color: var(--accent-color);
       }
+      html { scroll-behavior: smooth; }
       body {
         background: var(--background-color);
         color: var(--primary-color);
@@ -30,9 +95,43 @@
         padding: 0;
         overflow-x: hidden;
         line-height: 1.6;
-        padding-bottom: 60px; /* Space for footer menu on mobile */
+        padding-bottom: 60px;
       }
-      /* Header (X-Style with Hide/Show) */
+      .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 4px;
+        background: var(--progress-bar-color);
+        z-index: 1001;
+        transition: width 0.3s ease;
+        box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+      }
+      .go-to-top {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        background: var(--accent-color);
+        color: var(--primary-color);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        border: none;
+        cursor: pointer;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        z-index: 1000;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+      .go-to-top.visible { opacity: 1; visibility: visible; }
+      .go-to-top:hover { background: #FFA500; transform: scale(1.1); }
+      .go-to-top:active { transform: scale(0.95); }
       .sticky-header {
         position: fixed;
         top: 0;
@@ -40,34 +139,29 @@
         z-index: 1000;
         background: var(--primary-color);
         color: var(--text-color);
-        transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        transition: all 0.3s ease;
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 0 1rem;
         height: 64px;
-        animation: slideInHeader 0.5s ease-out forwards;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       }
-      .sticky-header.hidden {
-        transform: translateY(-100%);
-      }
+      .sticky-header.hidden { transform: translateY(-100%); }
       .sticky-header.scrolled {
         background: var(--secondary-color);
         color: var(--primary-color);
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-        transform: scale(0.98);
-      }
-      @keyframes slideInHeader {
-        from { transform: translateY(-100%); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
       }
       .sticky-header .logo-text {
         font-size: 1.5rem;
         font-weight: 700;
-        transition: font-size 0.3s ease;
+        color: var(--text-color);
+        transition: color 0.3s ease;
       }
-      .sticky-header.scrolled .logo-text { font-size: 1.25rem; }
+      .sticky-header.scrolled .logo-text { color: var(--primary-color); }
       .burger-btn {
+        display: flex;
         cursor: pointer;
         flex-direction: column;
         justify-content: center;
@@ -83,8 +177,8 @@
         background: var(--text-color);
         margin: 2px 0;
         transition: all 0.3s ease;
-        transform-origin: center;
       }
+      .sticky-header.scrolled .burger-btn span { background: var(--primary-color); }
       .burger-btn.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
       .burger-btn.open span:nth-child(2) { opacity: 0; transform: scale(0); }
       .burger-btn.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
@@ -100,13 +194,8 @@
         transition: left 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
         z-index: 999;
         padding: 1rem;
-        animation: fadeInMenu 0.4s ease-out forwards;
       }
       .mobile-menu.open { left: 0; }
-      @keyframes fadeInMenu {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
       .mobile-menu ul { list-style: none; padding: 0; }
       .mobile-menu .nav-item a {
         display: block;
@@ -115,26 +204,20 @@
         font-size: 1.1rem;
         transition: all 0.3s ease;
       }
-      .mobile-menu .nav-item a:hover {
-        color: var(--highlight-color);
-        transform: translateX(10px) scale(1.05);
-      }
-      .desktop-nav { display: flex; }
+      .mobile-menu .nav-item a:hover { color: var(--highlight-color); transform: translateX(10px); }
       .desktop-nav .nav-item a {
         color: var(--text-color);
         padding: 0.5rem 1rem;
         transition: all 0.3s ease;
       }
-      .desktop-nav .nav-item a:hover {
-        color: var(--highlight-color);
-        transform: scale(1.1);
-      }
+      .sticky-header.scrolled .desktop-nav .nav-item a { color: var(--primary-color); }
+      .desktop-nav .nav-item a:hover { color: var(--highlight-color); transform: scale(1.1); }
+      .desktop-nav .nav-item a.active { color: var(--accent-color); }
       .search-container {
         position: relative;
         flex-grow: 1;
         max-width: 400px;
         margin: 0 1rem;
-        transition: all 0.3s ease;
       }
       .search-input {
         width: 100%;
@@ -146,13 +229,8 @@
         font-size: 1rem;
         outline: none;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
-      .search-input:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        transform: scale(1.02) translateY(-2px);
-      }
+      .search-input:focus { border-color: var(--primary-color); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); }
       .search-icon {
         position: absolute;
         right: 10px;
@@ -160,9 +238,8 @@
         transform: translateY(-50%);
         color: var(--primary-color);
         font-size: 1.2rem;
-        transition: transform 0.3s ease;
       }
-      .search-input:focus + .search-icon { transform: translateY(-50%) scale(1.1); }
+      .sticky-header.scrolled .search-icon { color: var(--primary-color); }
       .search-results {
         position: absolute;
         top: 100%;
@@ -176,36 +253,28 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         z-index: 60;
         display: none;
-        animation: dropIn 0.3s ease-out forwards;
       }
       .search-results.active { display: block; }
-      @keyframes dropIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
       .search-result-item {
         padding: 0.75rem;
         color: var(--primary-color);
         border-bottom: 1px solid var(--highlight-color);
         cursor: pointer;
-        transition: background 0.3s ease, transform 0.2s ease;
+        transition: background 0.3s ease;
       }
-      .search-result-item:hover {
-        background: var(--highlight-color);
-        transform: scale(1.02);
-      }
+      .search-result-item:hover { background: var(--highlight-color); }
       .icon {
         color: var(--text-color);
         font-size: 1.25rem;
-        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         margin-left: 0.75rem;
+        transition: transform 0.3s ease;
       }
-      .icon:hover {
-        transform: scale(1.15) rotate(5deg);
-      }
+      .sticky-header.scrolled .icon { color: var(--primary-color); }
+      .icon:hover { transform: scale(1.15) rotate(5deg); }
+      .floating-effect:hover { transform: translateY(-5px) rotate(5deg); }
       main { margin-top: 64px; }
       .hero {
-        min-height: 60vh; /* Adjusted from original developers.html */
+        min-height: 60vh;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -216,11 +285,6 @@
         padding: 1rem;
         position: relative;
         overflow: hidden;
-        animation: fadeInHero 1s ease-out forwards;
-      }
-      @keyframes fadeInHero {
-        from { opacity: 0; transform: scale(0.95); }
-        to { opacity: 1; transform: scale(1); }
       }
       .hero::after {
         content: '';
@@ -232,24 +296,15 @@
         background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent);
         animation: pulseGlow 3s infinite alternate;
       }
-      @keyframes pulseGlow {
-        0% { opacity: 0.5; }
-        100% { opacity: 0.8; }
-      }
+      @keyframes pulseGlow { 0% { opacity: 0.5; } 100% { opacity: 0.8; } }
       .glow-text {
         font-size: 3rem;
         font-weight: 700;
         text-shadow: 0 0 10px var(--highlight-color);
         animation: glow 2s infinite alternate;
       }
-      @keyframes glow {
-        0% { text-shadow: 0 0 10px var(--highlight-color); }
-        100% { text-shadow: 0 0 20px var(--highlight-color); }
-      }
+      @keyframes glow { 0% { text-shadow: 0 0 10px var(--highlight-color); } 100% { text-shadow: 0 0 20px var(--highlight-color); } }
       .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
         background: var(--button-bg-color);
         color: var(--button-text-color);
         padding: 0.5rem 1.5rem;
@@ -259,13 +314,8 @@
         font-weight: 600;
         text-decoration: none;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        position: relative;
-        z-index: 1;
-        min-width: 100px;
-        margin-top: 1rem;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
       }
       .btn:hover {
         background: var(--button-hover-bg-color);
@@ -273,10 +323,10 @@
         transform: scale(1.05) translateY(-2px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       }
-      .btn:active {
-        transform: scale(0.98);
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-      }
+      .btn.accent { background: var(--accent-color); color: var(--primary-color); border: none; }
+      .btn.accent:hover { background: #FFA500; }
+      .btn.authenticated { background: var(--highlight-color); color: var(--primary-color); cursor: default; }
+      .btn.authenticated:hover { transform: none; box-shadow: none; }
       section { padding: 2rem 1rem; }
       .card {
         background: var(--secondary-color);
@@ -285,144 +335,24 @@
         padding: 1.5rem;
         text-align: center;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-        animation: slideInCard 0.5s ease-out forwards;
+        min-height: 250px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
       }
       .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transform: translateY(-10px) rotate(2deg);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
       }
-      @keyframes slideInCard {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .card i {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-        color: var(--primary-color);
-        transition: transform 0.3s ease;
-      }
-      .card:hover i { transform: scale(1.1); }
-      .feed-container {
-        max-width: 600px;
-        margin: 0 auto;
-      }
-      .feed-item {
-        padding: 1rem;
-        border-bottom: 1px solid var(--highlight-color);
-        transition: background 0.2s ease, transform 0.3s ease;
-      }
-      .feed-item:hover {
-        background: rgba(204, 204, 204, 0.1);
-        transform: scale(1.01);
-      }
-      .feed-item:last-child { border-bottom: none; }
-      .feed-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 0.5rem;
-      }
-      .feed-avatar {
-        font-size: 2rem;
-        margin-right: 0.75rem;
-        color: var(--primary-color);
-        transition: transform 0.3s ease;
-      }
-      .feed-item:hover .feed-avatar { transform: scale(1.1); }
-      .feed-user {
-        font-weight: 600;
-        font-size: 1rem;
-      }
-      .feed-time {
-        font-size: 0.85rem;
-        color: var(--highlight-color);
-        margin-left: 0.5rem;
-      }
-      .feed-content {
-        font-size: 1rem;
-        margin-bottom: 0.75rem;
-        line-height: 1.4;
-      }
-      .feed-actions {
-        display: flex;
-        justify-content: space-between;
-        max-width: 300px;
-      }
-      .feed-actions button {
-        background: none;
-        border: none;
-        color: var(--primary-color);
-        font-size: 0.85rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-        padding: 0.2rem 0.5rem;
-        border-radius: 9999px;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      }
-      .feed-actions button i {
-        font-size: 1rem;
-      }
-      .feed-actions button:hover {
-        background: var(--highlight-color);
-        color: var(--primary-color);
-        transform: scale(1.1);
-      }
-      .feed-banner {
-        background: var(--secondary-color);
-        border: 1px solid var(--highlight-color);
-        border-radius: 10px;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        text-align: center;
-        animation: slideInCard 0.5s ease-out forwards;
-      }
-      .feed-banner img {
-        width: 100%;
-        height: auto;
-        border-radius: 8px;
-        margin-bottom: 0.5rem;
-      }
-      /* Footer Menu (Fixed, Mobile-Only) */
-      .footer-menu {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 60px;
-        background: var(--primary-color);
-        color: var(--text-color);
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        z-index: 1000;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
-        transition: transform 0.3s ease;
-        animation: slideInFooter 0.5s ease-out forwards;
-      }
-      .footer-menu.hidden {
-        transform: translateY(100%);
-      }
-      @keyframes slideInFooter {
-        from { transform: translateY(100%); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-      }
-      .footer-menu a {
-        color: var(--text-color);
-        font-size: 1.5rem;
-        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      }
-      .footer-menu a:hover {
-        transform: scale(1.2);
-      }
-      /* Footer Navigation (Traditional Footer, All Devices) */
+      .card i { font-size: 2.5rem; margin-bottom: 1rem; color: var(--primary-color); }
+      .card h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.75rem; }
       footer {
         background: var(--primary-color);
         color: var(--text-color);
         text-align: center;
         padding: 2rem 1rem;
         position: relative;
-        z-index: 10; /* Ensure it sits above content but below footer-menu */
+        z-index: 10;
       }
       footer .social-icons a, footer .footer-links a {
         color: var(--text-color);
@@ -432,71 +362,46 @@
         color: var(--highlight-color);
         transform: scale(1.1);
       }
-      footer .social-icons {
-        margin-bottom: 1rem;
+      footer .social-icons { margin-bottom: 1rem; }
+      footer .social-icons a { font-size: 1.25rem; margin: 0 0.5rem; }
+      footer .footer-links a { margin: 0 0.5rem; text-decoration: none; }
+      .footer-menu {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: var(--primary-color);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 60px;
+        z-index: 1000;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
       }
-      footer .social-icons a {
-        font-size: 1.25rem;
-        margin: 0 0.5rem;
+      .footer-menu.hidden { transform: translateY(100%); }
+      .footer-menu a {
+        color: var(--text-color);
+        font-size: 1.5rem;
+        padding: 0.5rem;
+        transition: transform 0.3s ease, color 0.3s ease;
       }
-      footer .footer-links a {
-        margin: 0 0.5rem;
-        text-decoration: none;
-      }
-      /* Responsive Design */
-      @media (max-width: 640px) { /* Mobile */
+      .footer-menu a:hover { color: var(--accent-color); transform: scale(1.2); }
+      @media (min-width: 641px) { .footer-menu { display: none; } .go-to-top { bottom: 20px; } body { padding-bottom: 0; } }
+      @media (max-width: 640px) {
         .burger-btn { display: flex; }
         .desktop-nav { display: none; }
-        .search-container { max-width: 120px; margin: 0 0.5rem; }
-        .sticky-header { padding: 0 0.5rem; }
-        .logo-text { font-size: 1.25rem; }
-        .icon { font-size: 1.1rem; margin-left: 0.5rem; }
+        .search-container { max-width: 120px; }
         .glow-text { font-size: 1.75rem; }
-        .btn { padding: 0.4rem 1rem; font-size: 0.85rem; min-width: 80px; }
-        .card i { font-size: 2rem; }
-        .card h3 { font-size: 1.25rem; }
-        .section-title { font-size: 1.5rem; }
-        .feed-container { max-width: 100%; padding: 0 0.5rem; }
-        .feed-item img { max-width: 100%; }
-        .feed-actions { max-width: 100%; }
-        footer {
-          padding-bottom: 80px; /* Extra padding to account for footer-menu */
-        }
-        footer .social-icons a, footer .footer-links a {
-          font-size: 0.9rem; /* Slightly smaller text on mobile */
-        }
-      }
-      @media (min-width: 641px) and (max-width: 1024px) { /* Tablet */
-        .burger-btn { display: none; }
-        .desktop-nav { display: flex; }
-        .search-container { max-width: 300px; }
-        .glow-text { font-size: 2.5rem; }
-        .btn { padding: 0.5rem 1.2rem; }
-        .card i { font-size: 2.25rem; }
-        .footer-menu { display: none; }
-        footer .social-icons a, footer .footer-links a {
-          font-size: 1rem;
-        }
-      }
-      @media (min-width: 1025px) { /* Desktop */
-        .burger-btn { display: none; }
-        .desktop-nav { display: flex; }
-        .search-container { max-width: 400px; }
-        .glow-text { font-size: 3rem; }
-        .footer-menu { display: none; }
-        footer .social-icons a, footer .footer-links a {
-          font-size: 1rem;
-        }
+        .card { min-height: 200px; }
       }
     </style>
 </head>
-<body>
-    <!-- Header with X-Style Hide/Show -->
+<body onload="checkAuthStatus()">
+    <div class="progress-bar"></div>
     <header class="sticky-header">
         <div class="flex items-center">
-            <a href="index.html" class="text-inherit flex items-center">
-                <span class="logo-text ml-2">TruthWeb</span>
-            </a>
+            <a href="index.html" class="text-inherit flex items-center"><span class="logo-text ml-2">TruthWeb</span></a>
         </div>
         <div class="search-container">
             <input type="text" class="search-input" placeholder="Search TruthWeb..." aria-label="Search TruthWeb">
@@ -512,22 +417,17 @@
                     <li class="nav-item"><a href="wallet.html">Wallet</a></li>
                     <li class="nav-item"><a href="ledger-testnet.html">Ledger Testnet</a></li>
                     <li class="nav-item"><a href="community.html">Community</a></li>
-                    <li class="nav-item"><a href="developers.html">Developers</a></li>
+                    <li class="nav-item"><a href="developers.html" class="active">Developers</a></li>
                     <li class="nav-item"><a href="about.html">About</a></li>
+                    <li class="nav-item"><a href="https://mrwains-organization.gitbook.io/truthweb" target="_blank" rel="noopener noreferrer">Docs</a></li>
                 </ul>
             </nav>
-            <a href="marketplace.html" class="icon"><i class="fas fa-shopping-cart"></i></a>
-            <a href="profile.html" class="icon"><i class="fas fa-user"></i></a>
-            <a href="wallet.html" class="icon"><i class="fas fa-wallet"></i></a>
-            <div class="burger-btn">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+            <a href="addtocart.html" class="icon floating-effect"><i class="fas fa-shopping-cart"></i></a>
+            <a href="profile.html" class="icon floating-effect"><i class="fas fa-user"></i></a>
+            <a href="wallet.html" class="icon floating-effect"><i class="fas fa-wallet"></i></a>
+            <div class="burger-btn"><span></span><span></span><span></span></div>
         </div>
     </header>
-
-    <!-- Mobile Menu -->
     <nav class="mobile-menu">
         <ul>
             <li class="nav-item"><a href="index.html">Home</a></li>
@@ -536,21 +436,17 @@
             <li class="nav-item"><a href="wallet.html">Wallet</a></li>
             <li class="nav-item"><a href="ledger-testnet.html">Ledger Testnet</a></li>
             <li class="nav-item"><a href="community.html">Community</a></li>
-            <li class="nav-item"><a href="developers.html">Developers</a></li>
+            <li class="nav-item"><a href="developers.html" class="active">Developers</a></li>
             <li class="nav-item"><a href="about.html">About</a></li>
+            <li class="nav-item"><a href="https://mrwains-organization.gitbook.io/truthweb" target="_blank" rel="noopener noreferrer">Docs</a></li>
         </ul>
     </nav>
-
-    <!-- Main Content -->
     <main>
-        <!-- Hero Section -->
         <section class="hero">
             <h1 class="glow-text">Developers</h1>
             <p class="text-xl mt-4 md:text-2xl">Build with TruthWeb</p>
-            <a href="#developer-resources" class="btn">Get Started</a>
+            <button id="pi-auth-btn" class="btn accent mt-4">Get Started</button>
         </section>
-
-        <!-- Developer Resources Section -->
         <section id="developer-resources" class="py-16 px-4">
             <h2 class="section-title text-3xl font-bold text-center mb-8">Developer Tools & Resources</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -558,113 +454,143 @@
                     <i class="fas fa-code"></i>
                     <h3 class="text-xl font-semibold mb-2">Open-Source API</h3>
                     <p>Integrate Pi into your apps with our API.</p>
-                    <a href="api-docs.html" class="btn">Get API Docs</a>
+                    <a href="https://mrwains-organization.gitbook.io/truthweb/api" class="btn">Get API Docs</a>
                 </div>
                 <div class="card">
                     <i class="fas fa-book"></i>
                     <h3 class="text-xl font-semibold mb-2">Documentation</h3>
                     <p>Detailed guides for TruthWeb development.</p>
-                    <a href="documentation.html" class="btn">Read Docs</a>
+                    <a href="https://mrwains-organization.gitbook.io/truthweb" class="btn">Read Docs</a>
                 </div>
                 <div class="card">
                     <i class="fas fa-github"></i>
                     <h3 class="text-xl font-semibold mb-2">Contribute</h3>
                     <p>Join our open-source community on GitHub.</p>
-                    <a href="contribute.html" target="_blank" class="btn">Contribute Now</a>
+                    <a href="https://github.com/username/TruthWeb" target="_blank" class="btn">Contribute Now</a>
                 </div>
             </div>
         </section>
-
-        <!-- About the Founder Section -->
         <section id="about-founder" class="py-16 px-4">
             <h2 class="section-title text-3xl font-bold text-center mb-8">About the Founder</h2>
             <div class="max-w-4xl mx-auto">
                 <div class="card">
                     <h3 class="text-xl font-semibold mb-4">MRWAIN - Visionary Leader</h3>
                     <p class="mb-4">Meet MRWAIN, the founder and CEO of TruthWeb, a decentralized hub for the Pi Network community. With a passion for blockchain and innovation, MRWAIN has driven TruthWeb to empower developers and users alike in the Pi ecosystem.</p>
-                    <p class="mb-4">Follow MRWAIN on Twitter at <a href="https://twitter.com/mrwainofficial" target="_blank" class="text-blue-500 hover:underline">@mrwainofficial</a> for insights and updates on TruthWeb’s mission.</p>
-                    <a href="aboutfounder.html" class="btn">Learn More About MRWAIN</a>
+                    <p class="mb-4">Follow MRWAIN on X at <a href="https://x.com/mrwainofficial" target="_blank" class="text-[var(--accent-color)] hover:underline">@mrwainofficial</a> for insights and updates on TruthWeb’s mission.</p>
+                    <a href="about.html" class="btn">Learn More About MRWAIN</a>
                 </div>
             </div>
         </section>
-
-        <!-- Call to Action Section -->
         <section class="py-16 px-4 bg-[var(--primary-color)] text-[var(--text-color)]">
             <div class="max-w-4xl mx-auto text-center">
                 <h2 class="section-title text-3xl font-bold mb-4">Start Building with TruthWeb</h2>
                 <p class="text-xl mb-6">Create innovative solutions for the Pi ecosystem!</p>
-                <a href="#developer-resources" class="btn">Get Started</a>
+                <a href="https://mrwains-organization.gitbook.io/truthweb" class="btn">Get Started</a>
             </div>
         </section>
     </main>
-
-    <!-- Footer Menu (Fixed, Mobile-Only) -->
-    <nav class="footer-menu" role="navigation" aria-label="Mobile Footer Navigation">
-        <a href="index.html"><i class="fas fa-home"></i></a>
-        <a href="marketplace.html"><i class="fas fa-shopping-cart"></i></a>
-        <a href="profile.html"><i class="fas fa-user"></i></a>
-        <a href="wallet.html"><i class="fas fa-wallet"></i></a>
-        <a href="community.html"><i class="fas fa-users"></i></a>
-    </nav>
-
-    <!-- Footer Navigation (Traditional Footer, All Devices) -->
-    <footer role="contentinfo">
-        <div class="social-icons mb-4">
+    <footer>
+        <div class="social-icons">
             <a href="https://www.facebook.com/reimaginetruthofficial/" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
             <a href="https://x.com/reimagine_truth" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-            <a href="https://t.me/TruthWebOfficial" target="_blank" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+            <a href="https://t.me/TruthWebOfficial" target="_blank" aria-label="Telegram"><i class="fab fa-telegram-plane"></i></a>
             <a href="https://www.youtube.com/@ReimagineTruth" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
             <a href="https://github.com/username/TruthWeb" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
         </div>
-        <p class="text-sm mb-2">© 2025 TruthWeb. All rights reserved.</p>
-        <div class="footer-links text-sm">
-            <a href="about.html">About</a> |
-            <a href="terms.html">Terms</a> |
-            <a href="privacy.html">Privacy</a> |
+        <div class="footer-links">
+            <a href="about.html">About</a>
+            <a href="terms.html">Terms</a>
+            <a href="privacy.html">Privacy</a>
             <a href="contact.html">Contact</a>
+            <a href="https://mrwains-organization.gitbook.io/truthweb" target="_blank" rel="noopener noreferrer">Docs</a>
         </div>
+        <p class="mt-4">© 2025 TruthWeb (Testnet Mode). All rights reserved.</p>
     </footer>
-
-    <!-- Scripts -->
+    <nav class="footer-menu">
+        <a href="index.html" aria-label="Home"><i class="fas fa-home"></i></a>
+        <a href="marketplace.html" aria-label="Marketplace"><i class="fas fa-shopping-cart"></i></a>
+        <a href="profile.html" aria-label="Profile"><i class="fas fa-user"></i></a>
+        <a href="wallet.html" aria-label="Wallet"><i class="fas fa-wallet"></i></a>
+        <a href="community.html" aria-label="Community"><i class="fas fa-users"></i></a>
+    </nav>
+    <button class="go-to-top" aria-label="Go to Top"><i class="fas fa-arrow-up"></i></button>
     <script>
-      // Device Detection and Dynamic Adjustments
-      function adjustLayout() {
-        const width = window.innerWidth;
-        const isMobile = width <= 640;
-        const isTablet = width > 640 && width <= 1024;
-        const isDesktop = width > 1024;
+      const burgerBtn = document.querySelector('.burger-btn');
+      const mobileMenu = document.querySelector('.mobile-menu');
+      const header = document.querySelector('.sticky-header');
+      const goToTopBtn = document.querySelector('.go-to-top');
+      const progressBar = document.querySelector('.progress-bar');
+      const footerMenu = document.querySelector('.footer-menu');
+      const searchInput = document.querySelector('.search-input');
+      const searchResults = document.querySelector('.search-results');
+      const piAuthBtn = document.getElementById('pi-auth-btn');
 
-        const burgerBtn = document.querySelector('.burger-btn');
-        const desktopNav = document.querySelector('.desktop-nav');
-        const searchContainer = document.querySelector('.search-container');
-        const cards = document.querySelectorAll('.card');
+      burgerBtn.addEventListener('click', () => {
+        burgerBtn.classList.toggle('open');
+        mobileMenu.classList.toggle('open');
+      });
 
-        if (isMobile) {
-          burgerBtn.style.display = 'flex';
-          desktopNav.style.display = 'none';
-          searchContainer.style.maxWidth = '120px';
-          cards.forEach(card => card.style.marginBottom = '1rem');
-        } else if (isTablet) {
-          burgerBtn.style.display = 'none';
-          desktopNav.style.display = 'flex';
-          searchContainer.style.maxWidth = '300px';
-        } else if (isDesktop) {
-          burgerBtn.style.display = 'none';
-          desktopNav.style.display = 'flex';
-          searchContainer.style.maxWidth = '400px';
-        }
-      }
-
-      window.addEventListener('load', adjustLayout);
-      window.addEventListener('resize', adjustLayout);
-
-      // Header and Footer Scroll Hide/Show Effect (X-Style)
       let lastScroll = 0;
       window.addEventListener('scroll', () => {
-        const header = document.querySelector('.sticky-header');
-        const footerMenu = document.querySelector('.footer-menu');
         const currentScroll = window.scrollY;
+        header.classList.toggle('scrolled', currentScroll > 50);
+        header.classList.toggle('hidden', currentScroll > lastScroll && currentScroll > 100);
+        goToTopBtn.classList.toggle('visible', currentScroll > 300);
+        footerMenu.classList.toggle('hidden', currentScroll > lastScroll && currentScroll > 100);
+        lastScroll = currentScroll;
+        const totalHeight = document.body.scrollHeight - window.innerHeight;
+        const progress = (currentScroll / totalHeight) * 100;
+        progressBar.style.width = `${progress}%`;
+      });
 
-        if (currentScroll > lastScroll && currentScroll > 50) {
-          header.classList.add('hidden');
-          footer
+      goToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      const pages = [
+        { title: 'Home', url: 'index.html' },
+        { title: 'Marketplace', url: 'marketplace.html' },
+        { title: 'Profile', url: 'profile.html' },
+        { title: 'Wallet', url: 'wallet.html' },
+        { title: 'Ledger Testnet', url: 'ledger-testnet.html' },
+        { title: 'Community', url: 'community.html' },
+        { title: 'Developers', url: 'developers.html' },
+        { title: 'About', url: 'about.html' },
+        { title: 'Docs', url: 'https://mrwains-organization.gitbook.io/truthweb' }
+      ];
+
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.toLowerCase();
+        searchResults.innerHTML = '';
+        if (query) {
+          const results = pages.filter(page => page.title.toLowerCase().includes(query));
+          results.forEach(result => {
+            const div = document.createElement('div');
+            div.className = 'search-result-item';
+            div.innerHTML = `<a href="${result.url}">${result.title}</a>`;
+            searchResults.appendChild(div);
+          });
+          searchResults.classList.toggle('active', results.length > 0);
+        } else {
+          searchResults.classList.remove('active');
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+          searchResults.classList.remove('active');
+        }
+      });
+
+      piAuthBtn.addEventListener('click', authenticateUser);
+
+      // Close Menu on Link Click
+      document.querySelectorAll('.mobile-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+          burgerBtn.classList.remove('open');
+          mobileMenu.classList.remove('open');
+        });
+      });
+    </script>
+</body>
+</html>
