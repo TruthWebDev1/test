@@ -339,11 +339,42 @@
         padding: 1.5rem;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         animation: slideInCard 0.5s ease-out forwards;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        text-align: center;
+        min-height: 250px;
       }
-      .card:hover { transform: translateY(-10px) rotate(2deg); box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3); }
+      .card:hover {
+        transform: translateY(-10px) rotate(2deg);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+      }
+      .card i {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+        transition: transform 0.3s ease;
+      }
+      .card:hover i {
+        transform: scale(1.1);
+      }
+      .card h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+      }
+      .card p {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        flex-grow: 1;
+      }
+      .card .btn {
+        margin-top: auto;
+        width: auto;
+        padding: 0.5rem 1.5rem;
+      }
       @keyframes slideInCard { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-      .card i { font-size: 2.5rem; margin-bottom: 1rem; color: var(--primary-color); transition: transform 0.3s ease; }
-      .card:hover i { transform: scale(1.1); }
       .feed-container { max-width: 600px; margin: 0 auto; }
       .feed-item { padding: 1rem; border-bottom: 1px solid var(--highlight-color); transition: background 0.2s ease, transform 0.3s ease; }
       .feed-item:hover { background: rgba(204, 204, 204, 0.1); transform: scale(1.01); }
@@ -762,7 +793,7 @@
                 <div class="card"><i class="fas fa-users"></i><h3 class="text-xl font-semibold mb-2">Community Update</h3><p>New forum features.</p><a href="community.html#update" class="btn">Read</a></div>
             </div>
         </section>
- <section id="pitrack" class="py-16 px-4 bg-[var(--primary-color)] text-[var(--text-color)]">
+        <section id="pitrack" class="py-16 px-4 bg-[var(--primary-color)] text-[var(--text-color)]">
             <h2 class="section-title text-3xl font-bold text-center mb-8">Pi Track</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
                 <div class="card bg-[var(--secondary-color)] text-[var(--primary-color)]"><i class="fas fa-chart-bar"></i><h3 class="text-xl font-semibold mb-2">Track Your Pi</h3><p>Monitor wallet activity.</p><a href="pitrack.html#wallet" class="btn">View</a></div>
@@ -770,7 +801,6 @@
                 <div class="card bg-[var(--secondary-color)] text-[var(--primary-color)]"><i class="fas fa-tachometer-alt"></i><h3 class="text-xl font-semibold mb-2">Ecosystem Metrics</h3><p>Pi usage trends.</p><a href="pitrack.html#metrics" class="btn">Stats</a></div>
             </div>
         </section>
-
         <section id="pitrade" class="py-16 px-4">
             <h2 class="section-title text-3xl font-bold text-center mb-8">Pi Trade</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -779,7 +809,6 @@
                 <div class="card"><i class="fas fa-exchange-alt"></i><h3 class="text-xl font-semibold mb-2">Trade Dashboard</h3><p>Manage trades.</p><a href="pitrade.html#dashboard" class="btn">Open</a></div>
             </div>
         </section>
-
         <section id="referral-program" class="py-16 px-4">
             <h2 class="section-title text-3xl font-bold text-center mb-8">Referral Program</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -788,7 +817,6 @@
                 <div class="card"><i class="fas fa-share-alt"></i><h3 class="text-xl font-semibold mb-2">Share Easily</h3><p>Use your unique link to invite.</p><a href="referral-program.html#share" class="btn">Get Link</a></div>
             </div>
         </section>
-
         <section id="content" class="py-16 px-4 bg-[var(--primary-color)] text-[var(--text-color)]">
             <h2 class="section-title text-3xl font-bold text-center mb-8">Content</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-6xl mx-auto">
@@ -796,32 +824,14 @@
                 <div class="card bg-[var(--secondary-color)] text-[var(--primary-color)]"><i class="fas fa-newspaper"></i><h3 class="text-xl font-semibold mb-2">Latest News</h3><p>Fresh Pi updates.</p><a href="truthweb-news.html" class="btn">Read</a></div>
             </div>
         </section>
-
-         <!-- New TruthWeb Stream Section -->
         <section id="truthweb-stream" class="py-16 px-4">
             <h2 class="section-title text-3xl font-bold text-center mb-8">TruthWeb Stream</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                <div class="card">
-                    <i class="fas fa-video"></i>
-                    <h3 class="text-xl font-semibold mb-2">Live Streaming</h3>
-                    <p>Go live and share your content with Pioneers worldwide.</p>
-                    <a href="stream.html" class="btn">Start Streaming</a>
-                </div>
-                <div class="card">
-                    <i class="fas fa-gift"></i>
-                    <h3 class="text-xl font-semibold mb-2">Sticker Support</h3>
-                    <p>Earn Pi from followers buying and sending stickers.</p>
-                    <a href="streamstickers.html" class="btn">Learn More</a>
-                </div>
-                <div class="card">
-                    <i class="fas fa-coins"></i>
-                    <h3 class="text-xl font-semibold mb-2">Monetize</h3>
-                    <p>Convert sticker purchases into Pi tokens instantly.</p>
-                    <a href="streammonetize.html" class="btn">Get Started</a>
-                </div>
+                <div class="card"><i class="fas fa-video"></i><h3 class="text-xl font-semibold mb-2">Live Streaming</h3><p>Go live and share your content with Pioneers worldwide.</p><a href="stream.html" class="btn">Start Streaming</a></div>
+                <div class="card"><i class="fas fa-gift"></i><h3 class="text-xl font-semibold mb-2">Sticker Support</h3><p>Earn Pi from followers buying and sending stickers.</p><a href="streamstickers.html" class="btn">Learn More</a></div>
+                <div class="card"><i class="fas fa-coins"></i><h3 class="text-xl font-semibold mb-2">Monetize</h3><p>Convert sticker purchases into Pi tokens instantly.</p><a href="streammonetize.html" class="btn">Get Started</a></div>
             </div>
         </section>
-
         <section id="coming-soon" class="py-16 px-4">
             <h2 class="section-title text-3xl font-bold text-center mb-8">Coming Soon</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
@@ -830,10 +840,8 @@
                 <div class="card"><i class="fas fa-gavel"></i><h3 class="text-xl font-semibold mb-2">Dispute Resolution</h3><p>Community-driven.</p><a href="future.html#disputes" class="btn">Update</a></div>
                 <div class="card"><i class="fas fa-coins"></i><h3 class="text-xl font-semibold mb-2">Pi Staking</h3><p>Earn rewards.</p><a href="future.html#staking" class="btn">Update</a></div>
             </div>
-             </section>
-   
-        
-        <section class="py-16 px-4 bg-[var(--primary-color)] text-[var(--text-color)]">
+        </section>
+   <section class="py-16 px-4 bg-[var(--primary-color)] text-[var(--text-color)]">
             <h2 class="section-title text-3xl font-bold text-center mb-8">Join the TruthWeb Movement</h2>
             <div class="max-w-4xl mx-auto text-center">
                 <p class="text-lg mb-6 md:text-xl">Be part of a global revolution in decentralized finance and community-driven innovation. Sign up today and start exploring TruthWeb!</p>
