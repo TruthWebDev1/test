@@ -1,14 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Pi Network SDK and Authentication Logic -->
+    <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+    <script>
+      Pi.init({ version: "2.0", sandbox: true });
+      const scopes = ['payments', 'username'];
+
+      function onIncompletePaymentFound(payment) { 
+        console.log('Incomplete payment found:', payment);
+        const paymentId = payment.identifier;
+        const txid = payment.transaction.txid;
+        return fetch('http://your-backend-url.com/payment/complete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ paymentId, txid, debug: 'cancel' })
+        });
+      }
+
+      async function authenticateUser() {
+        try {
+          const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
+          console.log(`Authenticated: ${auth.user.username}`);
+          const accessToken = auth.accessToken;
+          const username = auth.user.username;
+
+          // Send authentication data to backend
+          const response = await fetch('http://your-backend-url.com/auth/pi', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ accessToken, username })
+          });
+          const data = await response.json();
+
+          if (data.success) {
+            localStorage.setItem('authToken', data.sessionToken);
+            localStorage.setItem('username', username);
+            updateUIAfterAuth(username);
+            alert(`Welcome, ${username}! You're authenticated across all pages.`);
+          } else {
+            throw new Error(data.error || 'Authentication failed');
+          }
+        } catch (error) {
+          console.error('Authentication failed:', error);
+          alert('Authentication failed. Please try again.');
+        }
+      }
+
+      function checkAuthStatus() {
+        const username = localStorage.getItem('username');
+        if (username) {
+          updateUIAfterAuth(username);
+        }
+      }
+
+      function updateUIAfterAuth(username) {
+        const authBtn = document.getElementById('pi-auth-btn');
+        const profileIcon = document.querySelector('.icon[href="profile.html"] i');
+        authBtn.textContent = `Hi, ${username}`;
+        authBtn.disabled = true;
+        authBtn.classList.remove('accent');
+        authBtn.classList.add('authenticated');
+        if (profileIcon) profileIcon.classList.replace('fa-user', 'fa-user-check');
+      }
+    </script>
+    <!-- jQuery for compatibility -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" name="viewport"/>
     <title>TruthWeb Ledger Testnet | Transparent Profit Tracking</title>
-    <!-- TailwindCSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome CDN (v6.5.1 for consistency with index) -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
-    <!-- Google Fonts: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
     <style>
       :root {
@@ -21,8 +83,10 @@
         --button-hover-bg-color: #FFFFFF;
         --button-hover-text-color: #000000;
         --background-color: #FFFFFF;
-        --pi-gold: #FFD700;
+        --accent-color: #FFD700;
+        --progress-bar-color: var(--accent-color);
       }
+      html { scroll-behavior: smooth; }
       body {
         background: var(--background-color);
         color: var(--primary-color);
@@ -31,9 +95,43 @@
         padding: 0;
         overflow-x: hidden;
         line-height: 1.6;
-        padding-bottom: 60px; /* Space for footer menu */
+        padding-bottom: 60px;
       }
-      /* Header (X-Style with Hide/Show) */
+      .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 4px;
+        background: var(--progress-bar-color);
+        z-index: 1001;
+        transition: width 0.3s ease;
+        box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+      }
+      .go-to-top {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        background: var(--accent-color);
+        color: var(--primary-color);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        border: none;
+        cursor: pointer;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        z-index: 1000;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      }
+      .go-to-top.visible { opacity: 1; visibility: visible; }
+      .go-to-top:hover { background: #FFA500; transform: scale(1.1); }
+      .go-to-top:active { transform: scale(0.95); }
       .sticky-header {
         position: fixed;
         top: 0;
@@ -41,34 +139,29 @@
         z-index: 1000;
         background: var(--primary-color);
         color: var(--text-color);
-        transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        transition: all 0.3s ease;
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 0 1rem;
         height: 64px;
-        animation: slideInHeader 0.5s ease-out forwards;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       }
-      .sticky-header.hidden {
-        transform: translateY(-100%);
-      }
+      .sticky-header.hidden { transform: translateY(-100%); }
       .sticky-header.scrolled {
         background: var(--secondary-color);
         color: var(--primary-color);
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-        transform: scale(0.98);
-      }
-      @keyframes slideInHeader {
-        from { transform: translateY(-100%); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
       }
       .sticky-header .logo-text {
         font-size: 1.5rem;
         font-weight: 700;
-        transition: font-size 0.3s ease;
+        color: var(--text-color);
+        transition: color 0.3s ease;
       }
-      .sticky-header.scrolled .logo-text { font-size: 1.25rem; }
+      .sticky-header.scrolled .logo-text { color: var(--primary-color); }
       .burger-btn {
+        display: flex;
         cursor: pointer;
         flex-direction: column;
         justify-content: center;
@@ -84,8 +177,8 @@
         background: var(--text-color);
         margin: 2px 0;
         transition: all 0.3s ease;
-        transform-origin: center;
       }
+      .sticky-header.scrolled .burger-btn span { background: var(--primary-color); }
       .burger-btn.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
       .burger-btn.open span:nth-child(2) { opacity: 0; transform: scale(0); }
       .burger-btn.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
@@ -101,13 +194,8 @@
         transition: left 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
         z-index: 999;
         padding: 1rem;
-        animation: fadeInMenu 0.4s ease-out forwards;
       }
       .mobile-menu.open { left: 0; }
-      @keyframes fadeInMenu {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
       .mobile-menu ul { list-style: none; padding: 0; }
       .mobile-menu .nav-item a {
         display: block;
@@ -116,30 +204,20 @@
         font-size: 1.1rem;
         transition: all 0.3s ease;
       }
-      .mobile-menu .nav-item a:hover {
-        color: var(--highlight-color);
-        transform: translateX(10px) scale(1.05);
-      }
-      .desktop-nav { display: flex; }
+      .mobile-menu .nav-item a:hover { color: var(--highlight-color); transform: translateX(10px); }
       .desktop-nav .nav-item a {
         color: var(--text-color);
         padding: 0.5rem 1rem;
         transition: all 0.3s ease;
       }
-      .desktop-nav .nav-item a:hover {
-        color: var(--highlight-color);
-        transform: scale(1.1);
-      }
-      .desktop-nav .nav-item a.active {
-        font-weight: 700;
-        border-bottom: 2px solid var(--highlight-color);
-      }
+      .sticky-header.scrolled .desktop-nav .nav-item a { color: var(--primary-color); }
+      .desktop-nav .nav-item a:hover { color: var(--highlight-color); transform: scale(1.1); }
+      .desktop-nav .nav-item a.active { color: var(--accent-color); }
       .search-container {
         position: relative;
         flex-grow: 1;
         max-width: 400px;
         margin: 0 1rem;
-        transition: all 0.3s ease;
       }
       .search-input {
         width: 100%;
@@ -151,13 +229,8 @@
         font-size: 1rem;
         outline: none;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
-      .search-input:focus {
-        border-color: var(--primary-color);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        transform: scale(1.02) translateY(-2px);
-      }
+      .search-input:focus { border-color: var(--primary-color); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); }
       .search-icon {
         position: absolute;
         right: 10px;
@@ -165,9 +238,8 @@
         transform: translateY(-50%);
         color: var(--primary-color);
         font-size: 1.2rem;
-        transition: transform 0.3s ease;
       }
-      .search-input:focus + .search-icon { transform: translateY(-50%) scale(1.1); }
+      .sticky-header.scrolled .search-icon { color: var(--primary-color); }
       .search-results {
         position: absolute;
         top: 100%;
@@ -181,33 +253,25 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         z-index: 60;
         display: none;
-        animation: dropIn 0.3s ease-out forwards;
       }
       .search-results.active { display: block; }
-      @keyframes dropIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
       .search-result-item {
         padding: 0.75rem;
         color: var(--primary-color);
         border-bottom: 1px solid var(--highlight-color);
         cursor: pointer;
-        transition: background 0.3s ease, transform 0.2s ease;
+        transition: background 0.3s ease;
       }
-      .search-result-item:hover {
-        background: var(--highlight-color);
-        transform: scale(1.02);
-      }
+      .search-result-item:hover { background: var(--highlight-color); }
       .icon {
         color: var(--text-color);
         font-size: 1.25rem;
-        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         margin-left: 0.75rem;
+        transition: transform 0.3s ease;
       }
-      .icon:hover {
-        transform: scale(1.15) rotate(5deg);
-      }
+      .sticky-header.scrolled .icon { color: var(--primary-color); }
+      .icon:hover { transform: scale(1.15) rotate(5deg); }
+      .floating-effect:hover { transform: translateY(-5px) rotate(5deg); }
       main { margin-top: 64px; }
       .ledger-section {
         background: var(--primary-color);
@@ -244,14 +308,10 @@
         text-align: center;
         text-shadow: 0 0 10px var(--highlight-color);
         animation: glow 2s infinite alternate;
-        margin-bottom: 1.5rem;
       }
-      @keyframes glow {
-        0% { text-shadow: 0 0 10px var(--highlight-color); }
-        100% { text-shadow: 0 0 20px var(--highlight-color); }
-      }
+      @keyframes glow { 0% { text-shadow: 0 0 10px var(--highlight-color); } 100% { text-shadow: 0 0 20px var(--highlight-color); } }
       .testnet-notice {
-        color: var(--pi-gold);
+        color: var(--accent-color);
         font-size: 1.2rem;
         text-align: center;
         margin: 1rem 0;
@@ -268,7 +328,6 @@
         margin: 1rem 0;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-        animation: slideInCard 0.5s ease-out forwards;
         width: 100%;
         max-width: 800px;
       }
@@ -276,12 +335,8 @@
         transform: translateY(-5px);
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
       }
-      @keyframes slideInCard {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
       .ledger-title {
-        color: var(--pi-gold);
+        color: var(--accent-color);
         font-size: 1.5rem;
         font-weight: 600;
         margin-bottom: 1rem;
@@ -307,17 +362,12 @@
         border-bottom: 1px solid var(--highlight-color);
         color: var(--text-color);
         font-size: 1rem;
-        animation: slideIn 0.5s ease-in-out;
-      }
-      @keyframes slideIn {
-        from { opacity: 0; transform: translateX(-20px); }
-        to { opacity: 1; transform: translateX(0); }
       }
       .bot-ledger {
         position: relative;
         width: 100px;
         height: 120px;
-        margin: 2rem 0; /* Increased margin for more space */
+        margin: 2rem 0;
         transition: transform 0.5s ease;
         z-index: 5;
         cursor: pointer;
@@ -367,16 +417,15 @@
       }
       .activity-text {
         position: absolute;
-        top: -45px; /* Adjusted for more space */
+        top: -45px;
         left: 50%;
         transform: translateX(-50%);
         background: rgba(0, 0, 0, 0.9);
-        color: var(--pi-gold);
-        padding: 8px 16px; /* Increased padding for better readability */
+        color: var(--accent-color);
+        padding: 8px 16px;
         border-radius: 6px;
         font-size: 14px;
         white-space: nowrap;
-        line-height: 1.2; /* Ensures text isn’t squished */
       }
       .chart-container {
         width: 100%;
@@ -393,7 +442,7 @@
       }
       .chart-bar {
         width: 20%;
-        background: var(--pi-gold);
+        background: var(--accent-color);
         border-radius: 5px;
         transition: height 1s ease;
         position: relative;
@@ -406,13 +455,12 @@
         color: var(--text-color);
         font-size: 0.9rem;
       }
-      /* Responsive Video Embed */
       .video-container {
         position: relative;
         width: 100%;
         max-width: 800px;
         margin: 2rem auto;
-        padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+        padding-bottom: 56.25%;
         height: 0;
         overflow: hidden;
       }
@@ -424,39 +472,29 @@
         height: 100%;
         border: 0;
       }
-      /* Footer Menu (Fixed, Mobile-Only) */
-      .footer-menu {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 60px;
-        background: var(--primary-color);
-        color: var(--text-color);
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        z-index: 1000;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
-        transition: transform 0.3s ease;
-        animation: slideInFooter 0.5s ease-out forwards;
+      .btn {
+        background: var(--button-bg-color);
+        color: var(--button-text-color);
+        padding: 0.5rem 1.5rem;
+        border: 1px solid var(--highlight-color);
+        border-radius: 9999px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        text-transform: uppercase;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
       }
-      .footer-menu.hidden {
-        transform: translateY(100%);
+      .btn:hover {
+        background: var(--button-hover-bg-color);
+        color: var(--button-hover-text-color);
+        transform: scale(1.05) translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       }
-      @keyframes slideInFooter {
-        from { transform: translateY(100%); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-      }
-      .footer-menu a {
-        color: var(--text-color);
-        font-size: 1.5rem;
-        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      }
-      .footer-menu a:hover {
-        transform: scale(1.2);
-      }
-      /* Footer Navigation (Traditional Footer, All Devices) */
+      .btn.accent { background: var(--accent-color); color: var(--primary-color); border: none; }
+      .btn.accent:hover { background: #FFA500; }
+      .btn.authenticated { background: var(--highlight-color); color: var(--primary-color); cursor: default; }
+      .btn.authenticated:hover { transform: none; box-shadow: none; }
       footer {
         background: var(--primary-color);
         color: var(--text-color);
@@ -474,65 +512,51 @@
         color: var(--highlight-color);
         transform: scale(1.1);
       }
-      footer .social-icons {
-        margin-bottom: 1rem;
+      footer .social-icons { margin-bottom: 1rem; }
+      footer .social-icons a { font-size: 1.25rem; margin: 0 0.5rem; }
+      footer .footer-links a { margin: 0 0.5rem; text-decoration: none; }
+      .footer-menu {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: var(--primary-color);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 60px;
+        z-index: 1000;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
       }
-      footer .social-icons a {
-        font-size: 1.25rem;
-        margin: 0 0.5rem;
+      .footer-menu.hidden { transform: translateY(100%); }
+      .footer-menu a {
+        color: var(--text-color);
+        font-size: 1.5rem;
+        padding: 0.5rem;
+        transition: transform 0.3s ease, color 0.3s ease;
       }
-      footer .footer-links a {
-        margin: 0 0.5rem;
-        text-decoration: none;
-      }
-      /* Responsive Design */
+      .footer-menu a:hover { color: var(--accent-color); transform: scale(1.2); }
+      @media (min-width: 641px) { .footer-menu { display: none; } .go-to-top { bottom: 20px; } body { padding-bottom: 0; } }
       @media (max-width: 640px) {
         .burger-btn { display: flex; }
         .desktop-nav { display: none; }
-        .search-container { max-width: 120px; margin: 0 0.5rem; }
-        .sticky-header { padding: 0 0.5rem; }
-        .logo-text { font-size: 1.25rem; }
-        .icon { font-size: 1.1rem; margin-left: 0.5rem; }
-        h1 { font-size: 1.75rem; margin-bottom: 1rem; }
+        .search-container { max-width: 120px; }
+        h1 { font-size: 1.75rem; }
         .ledger-title { font-size: 1.25rem; }
         .ledger-value { font-size: 1.5rem; }
         .chart-container { height: 150px; }
         .transaction-list { max-height: 300px; }
         .bot-ledger { transform: scale(0.8); margin: 1.5rem 0; }
         .activity-text { font-size: 12px; padding: 6px 12px; top: -40px; }
-        footer { padding-bottom: 80px; }
-        footer .social-icons a, footer .footer-links a { font-size: 0.9rem; }
-      }
-      @media (min-width: 641px) and (max-width: 1024px) {
-        .burger-btn { display: none; }
-        .desktop-nav { display: flex; }
-        .search-container { max-width: 300px; }
-        h1 { font-size: 2.5rem; }
-        .ledger-title { font-size: 1.5rem; }
-        .ledger-value { font-size: 1.75rem; }
-        .chart-container { height: 180px; }
-        .footer-menu { display: none; }
-        footer .social-icons a, footer .footer-links a { font-size: 1rem; }
-      }
-      @media (min-width: 1025px) {
-        .burger-btn { display: none; }
-        .desktop-nav { display: flex; }
-        .search-container { max-width: 400px; }
-        h1 { font-size: 3rem; }
-        .ledger-title { font-size: 1.5rem; }
-        .ledger-value { font-size: 2rem; }
-        .footer-menu { display: none; }
-        footer .social-icons a, footer .footer-links a { font-size: 1rem; }
       }
     </style>
 </head>
-<body>
-    <!-- Header with X-Style Hide/Show -->
+<body onload="checkAuthStatus()">
+    <div class="progress-bar"></div>
     <header class="sticky-header">
         <div class="flex items-center">
-            <a href="index.html" class="text-inherit flex items-center">
-                <span class="logo-text ml-2">TruthWeb</span>
-            </a>
+            <a href="index.html" class="text-inherit flex items-center"><span class="logo-text ml-2">TruthWeb</span></a>
         </div>
         <div class="search-container">
             <input type="text" class="search-input" placeholder="Search TruthWeb..." aria-label="Search TruthWeb">
@@ -545,45 +569,38 @@
                     <li class="nav-item"><a href="index.html">Home</a></li>
                     <li class="nav-item"><a href="marketplace.html">Marketplace</a></li>
                     <li class="nav-item"><a href="profile.html">Profile</a></li>
-                    <li class="nav-item"><a href="walletdashboard.html">Wallet</a></li>
+                    <li class="nav-item"><a href="wallet.html">Wallet</a></li>
                     <li class="nav-item"><a href="ledger-testnet.html" class="active">Ledger Testnet</a></li>
                     <li class="nav-item"><a href="community.html">Community</a></li>
                     <li class="nav-item"><a href="developers.html">Developers</a></li>
                     <li class="nav-item"><a href="about.html">About</a></li>
+                    <li class="nav-item"><a href="https://mrwains-organization.gitbook.io/truthweb" target="_blank" rel="noopener noreferrer">Docs</a></li>
                 </ul>
             </nav>
-            <a href="marketplace.html" class="icon"><i class="fas fa-shopping-cart"></i></a>
-            <a href="profile.html" class="icon"><i class="fas fa-user"></i></a>
-            <a href="walletdashboard.html" class="icon"><i class="fas fa-wallet"></i></a>
-            <div class="burger-btn">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+            <a href="addtocart.html" class="icon floating-effect"><i class="fas fa-shopping-cart"></i></a>
+            <a href="profile.html" class="icon floating-effect"><i class="fas fa-user"></i></a>
+            <a href="wallet.html" class="icon floating-effect"><i class="fas fa-wallet"></i></a>
+            <div class="burger-btn"><span></span><span></span><span></span></div>
         </div>
     </header>
-
-    <!-- Mobile Menu -->
     <nav class="mobile-menu">
         <ul>
             <li class="nav-item"><a href="index.html">Home</a></li>
             <li class="nav-item"><a href="marketplace.html">Marketplace</a></li>
             <li class="nav-item"><a href="profile.html">Profile</a></li>
-            <li class="nav-item"><a href="walletdashboard.html">Wallet</a></li>
+            <li class="nav-item"><a href="wallet.html">Wallet</a></li>
             <li class="nav-item"><a href="ledger-testnet.html" class="active">Ledger Testnet</a></li>
             <li class="nav-item"><a href="community.html">Community</a></li>
             <li class="nav-item"><a href="developers.html">Developers</a></li>
             <li class="nav-item"><a href="about.html">About</a></li>
+            <li class="nav-item"><a href="https://mrwains-organization.gitbook.io/truthweb" target="_blank" rel="noopener noreferrer">Docs</a></li>
         </ul>
     </nav>
-
-    <!-- Main Content -->
     <main>
-        <!-- Ledger Section -->
         <section class="ledger-section">
             <div class="ledger-content">
                 <h1>TruthWeb Ledger Testnet - Pi Flow Bonanza!</h1>
-                <!-- TruthWeb Bot Positioned Top Center -->
+                <button id="pi-auth-btn" class="btn accent mt-4">Authenticate with Pi</button>
                 <div id="ledger-bot" class="bot-ledger">
                     <div class="activity-text" id="bot-activity">Analyzing hash transactions...</div>
                     <div class="bot-body">
@@ -601,31 +618,21 @@
                 </div>
                 <p class="testnet-notice">TESTNET MODE: This is a simulation, not an official wallet or balance!</p>
                 <p class="text-center text-[var(--highlight-color)] text-xl mt-4">All funds & profits tracked on the Pi Network Blockchain (Testnet)</p>
-
-                <!-- Platform Earnings -->
                 <div class="ledger-card">
                     <h2 class="ledger-title">Platform Earnings (Real-Time Testnet)</h2>
                     <div class="ledger-value" id="platform-earnings">0.00 PI</div>
                     <p class="text-[var(--highlight-color)]">Escrow Fees: <span id="escrow-fees">0.00 PI</span></p>
                     <p class="text-[var(--highlight-color)]">Buy/Sell Fees: <span id="buy-sell-fees">0.00 PI</span></p>
                 </div>
-
-                <!-- Your Wallet Balance -->
                 <div class="ledger-card">
                     <h2 class="ledger-title">Your Wallet Balance (Testnet)</h2>
                     <div class="ledger-value" id="wallet-balance">0.00 PI</div>
                     <p class="text-[var(--highlight-color)]">Pi Network Testnet Hash: <span id="wallet-hash">Loading...</span></p>
                 </div>
-
-                <!-- Transaction History -->
                 <div class="ledger-card">
                     <h2 class="ledger-title">Transaction History (Testnet)</h2>
-                    <div class="transaction-list" id="transaction-list">
-                        <!-- Transactions will be dynamically added here -->
-                    </div>
+                    <div class="transaction-list" id="transaction-list"></div>
                 </div>
-
-                <!-- Profit Breakdown -->
                 <div class="ledger-card">
                     <h2 class="ledger-title">Profit Breakdown</h2>
                     <div class="chart-container">
@@ -634,168 +641,47 @@
                         <div class="chart-bar" id="other-bar"><span>Other: 0 PI</span></div>
                     </div>
                 </div>
-
-                <!-- Embedded YouTube Video -->
                 <div class="video-container">
                     <iframe src="https://www.youtube.com/embed/hX0qouTlZdM?si=IESIPRJibB71q7hu" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
             </div>
-        </section>
+  </section>
     </main>
-
-    <!-- Footer Menu (Fixed, Mobile-Only) -->
-    <nav class="footer-menu" role="navigation" aria-label="Mobile Footer Navigation">
-        <a href="index.html"><i class="fas fa-home"></i></a>
-        <a href="marketplace.html"><i class="fas fa-shopping-cart"></i></a>
-        <a href="profile.html"><i class="fas fa-user"></i></a>
-        <a href="walletdashboard.html"><i class="fas fa-wallet"></i></a>
-        <a href="community.html"><i class="fas fa-users"></i></a>
-    </nav>
-
-    <!-- Footer Navigation (Traditional Footer, All Devices) -->
-    <footer role="contentinfo">
-        <div class="social-icons mb-4">
+    <footer>
+        <div class="social-icons">
             <a href="https://www.facebook.com/reimaginetruthofficial/" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
             <a href="https://x.com/reimagine_truth" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-            <a href="https://t.me/TruthWebOfficial" target="_blank" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+            <a href="https://t.me/TruthWebOfficial" target="_blank" aria-label="Telegram"><i class="fab fa-telegram-plane"></i></a>
             <a href="https://www.youtube.com/@ReimagineTruth" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
             <a href="https://github.com/username/TruthWeb" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
         </div>
-        <p class="text-sm mb-2">© 2025 TruthWeb. All rights reserved.</p>
-        <div class="footer-links text-sm">
-            <a href="about.html">About</a> |
-            <a href="terms.html">Terms</a> |
-            <a href="privacy.html">Privacy</a> |
+        <div class="footer-links">
+            <a href="about.html">About</a>
+            <a href="terms.html">Terms</a>
+            <a href="privacy.html">Privacy</a>
             <a href="contact.html">Contact</a>
+            <a href="https://mrwains-organization.gitbook.io/truthweb" target="_blank" rel="noopener noreferrer">Docs</a>
         </div>
+        <p class="mt-4">© 2025 TruthWeb (Testnet Mode). All rights reserved. Built with <i class="fas fa-heart text-red-500"></i> for the Pi Network Community.</p>
     </footer>
-
-    <!-- Scripts -->
+    <nav class="footer-menu">
+        <a href="index.html" aria-label="Home"><i class="fas fa-home"></i></a>
+        <a href="marketplace.html" aria-label="Marketplace"><i class="fas fa-shopping-cart"></i></a>
+        <a href="profile.html" aria-label="Profile"><i class="fas fa-user"></i></a>
+        <a href="wallet.html" aria-label="Wallet"><i class="fas fa-wallet"></i></a>
+        <a href="community.html" aria-label="Community"><i class="fas fa-users"></i></a>
+    </nav>
+    <button class="go-to-top" aria-label="Go to Top"><i class="fas fa-arrow-up"></i></button>
     <script>
-      // Device Detection and Dynamic Adjustments
-      function adjustLayout() {
-        const width = window.innerWidth;
-        const isMobile = width <= 640;
-        const isTablet = width > 640 && width <= 1024;
-        const isDesktop = width > 1024;
-
-        const burgerBtn = document.querySelector('.burger-btn');
-        const desktopNav = document.querySelector('.desktop-nav');
-        const searchContainer = document.querySelector('.search-container');
-
-        if (isMobile) {
-          burgerBtn.style.display = 'flex';
-          desktopNav.style.display = 'none';
-          searchContainer.style.maxWidth = '120px';
-        } else if (isTablet) {
-          burgerBtn.style.display = 'none';
-          desktopNav.style.display = 'flex';
-          searchContainer.style.maxWidth = '300px';
-        } else if (isDesktop) {
-          burgerBtn.style.display = 'none';
-          desktopNav.style.display = 'flex';
-          searchContainer.style.maxWidth = '400px';
-        }
-      }
-
-      window.addEventListener('load', adjustLayout);
-      window.addEventListener('resize', adjustLayout);
-
-      // Header and Footer Scroll Hide/Show Effect (X-Style)
-      let lastScroll = 0;
-      window.addEventListener('scroll', () => {
-        const header = document.querySelector('.sticky-header');
-        const footerMenu = document.querySelector('.footer-menu');
-        const currentScroll = window.scrollY;
-
-        if (currentScroll > lastScroll && currentScroll > 50) {
-          header.classList.add('hidden');
-          footerMenu.classList.add('hidden');
-        } else if (currentScroll < lastScroll) {
-          header.classList.remove('hidden');
-          footerMenu.classList.remove('hidden');
-          header.classList.toggle('scrolled', currentScroll > 50);
-        }
-        lastScroll = currentScroll;
-      });
-
-      // Burger Menu Toggle
       const burgerBtn = document.querySelector('.burger-btn');
       const mobileMenu = document.querySelector('.mobile-menu');
-      burgerBtn.addEventListener('click', () => {
-        burgerBtn.classList.toggle('open');
-        mobileMenu.classList.toggle('open');
-      });
-
-      // Close Menu on Link Click
-      document.querySelectorAll('.mobile-menu a').forEach(link => {
-        link.addEventListener('click', () => {
-          burgerBtn.classList.remove('open');
-          mobileMenu.classList.remove('open');
-        });
-      });
-
-      // Search Functionality
+      const header = document.querySelector('.sticky-header');
+      const goToTopBtn = document.querySelector('.go-to-top');
+      const progressBar = document.querySelector('.progress-bar');
+      const footerMenu = document.querySelector('.footer-menu');
       const searchInput = document.querySelector('.search-input');
       const searchResults = document.querySelector('.search-results');
-      const searchableContent = [];
-      document.querySelectorAll('h1, h2, p, span').forEach(element => {
-        const text = element.textContent.trim();
-        if (text) {
-          searchableContent.push({
-            text: text.toLowerCase(),
-            element,
-            href: element.tagName === 'A' ? element.getAttribute('href') : null
-          });
-        }
-      });
-
-      searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
-        searchResults.innerHTML = '';
-        searchResults.classList.remove('active');
-
-        if (query.length > 0) {
-          const results = searchableContent.filter(item => item.text.includes(query));
-          if (results.length > 0) {
-            results.forEach(result => {
-              const div = document.createElement('div');
-              div.classList.add('search-result-item');
-              div.textContent = result.text.slice(0, 50) + (result.text.length > 50 ? '...' : '');
-              div.addEventListener('click', () => {
-                if (result.href) window.location.href = result.href;
-                else result.element.scrollIntoView({ behavior: 'smooth' });
-                searchResults.classList.remove('active');
-                searchInput.value = '';
-              });
-              searchResults.appendChild(div);
-            });
-            searchResults.classList.add('active');
-          } else {
-            const noResult = document.createElement('div');
-            noResult.classList.add('search-result-item');
-            noResult.textContent = 'No results found';
-            searchResults.appendChild(noResult);
-            searchResults.classList.add('active');
-          }
-        }
-      });
-
-      document.addEventListener('click', (e) => {
-        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-          searchResults.classList.remove('active');
-        }
-      });
-
-      // Simulated Testnet Data
-      let platformEarnings = 0;
-      let escrowFees = 0;
-      let buySellFees = 0;
-      let otherFees = 0;
-      let walletBalance = 0;
-      const transactions = [];
-
-      // DOM Elements
+      const piAuthBtn = document.getElementById('pi-auth-btn');
       const platformEarningsEl = document.getElementById('platform-earnings');
       const escrowFeesEl = document.getElementById('escrow-fees');
       const buySellFeesEl = document.getElementById('buy-sell-fees');
@@ -808,7 +694,72 @@
       const bot = document.getElementById('ledger-bot');
       const botActivity = document.getElementById('bot-activity');
 
-      // Simulate Real-Time Testnet Updates
+      burgerBtn.addEventListener('click', () => {
+        burgerBtn.classList.toggle('open');
+        mobileMenu.classList.toggle('open');
+      });
+
+      let lastScroll = 0;
+      window.addEventListener('scroll', () => {
+        const currentScroll = window.scrollY;
+        header.classList.toggle('scrolled', currentScroll > 50);
+        header.classList.toggle('hidden', currentScroll > lastScroll && currentScroll > 100);
+        goToTopBtn.classList.toggle('visible', currentScroll > 300);
+        footerMenu.classList.toggle('hidden', currentScroll > lastScroll && currentScroll > 100);
+        lastScroll = currentScroll;
+        const totalHeight = document.body.scrollHeight - window.innerHeight;
+        const progress = (currentScroll / totalHeight) * 100;
+        progressBar.style.width = `${progress}%`;
+      });
+
+      goToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      const pages = [
+        { title: 'Home', url: 'index.html' },
+        { title: 'Marketplace', url: 'marketplace.html' },
+        { title: 'Profile', url: 'profile.html' },
+        { title: 'Wallet', url: 'wallet.html' },
+        { title: 'Ledger Testnet', url: 'ledger-testnet.html' },
+        { title: 'Community', url: 'community.html' },
+        { title: 'Developers', url: 'developers.html' },
+        { title: 'About', url: 'about.html' },
+        { title: 'Docs', url: 'https://mrwains-organization.gitbook.io/truthweb' }
+      ];
+
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.toLowerCase();
+        searchResults.innerHTML = '';
+        if (query) {
+          const results = pages.filter(page => page.title.toLowerCase().includes(query));
+          results.forEach(result => {
+            const div = document.createElement('div');
+            div.className = 'search-result-item';
+            div.innerHTML = `<a href="${result.url}">${result.title}</a>`;
+            searchResults.appendChild(div);
+          });
+          searchResults.classList.toggle('active', results.length > 0);
+        } else {
+          searchResults.classList.remove('active');
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+          searchResults.classList.remove('active');
+        }
+      });
+
+      piAuthBtn.addEventListener('click', authenticateUser);
+
+      let platformEarnings = 0;
+      let escrowFees = 0;
+      let buySellFees = 0;
+      let otherFees = 0;
+      let walletBalance = 0;
+      const transactions = [];
+
       function updateLedger() {
         platformEarnings += Math.random() * 0.5;
         escrowFees += Math.random() * 0.2;
@@ -822,7 +773,7 @@
         walletBalanceEl.textContent = walletBalance.toFixed(2) + ' PI';
         walletHashEl.textContent = '0x' + Math.random().toString(16).substr(2, 8);
 
-        const total = escrowFees + buySellFees + otherFees || 1; // Avoid division by zero
+        const total = escrowFees + buySellFees + otherFees || 1;
         escrowBar.style.height = `${(escrowFees / total) * 180 || 10}px`;
         buySellBar.style.height = `${(buySellFees / total) * 180 || 10}px`;
         otherBar.style.height = `${(otherFees / total) * 180 || 10}px`;
@@ -845,7 +796,6 @@
         `).join('');
       }
 
-      // Bot Movement and Activity
       const activities = [
         'Analyzing hash transactions...', 'Verifying test hashes...', 'Processing test PI...', 'Scanning blockchain testnet...'
       ];
@@ -857,16 +807,21 @@
         botActivity.textContent = activities[Math.floor(Math.random() * activities.length)];
       }
 
-      // Initial Update and Intervals
       updateLedger();
       moveBot();
       setInterval(updateLedger, 3000);
       setInterval(moveBot, 2000);
 
-      // Bot Click Interaction
       bot.addEventListener('click', () => {
         botActivity.textContent = 'Woof! Hash analyzed!';
         setTimeout(moveBot, 1000);
+      });
+
+      document.querySelectorAll('.mobile-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+          burgerBtn.classList.remove('open');
+          mobileMenu.classList.remove('open');
+        });
       });
     </script>
 </body>
