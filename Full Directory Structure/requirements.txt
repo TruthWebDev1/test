@@ -1,0 +1,172 @@
+truthweb/
+├── truthweb-frontend/                # Frontend application
+│   ├── public/                       # Static assets
+│   │   ├── index.html                # Base HTML template
+│   │   ├── favicon.ico               # Favicon
+│   │   └── assets/                   # Static images, fonts, etc.
+│   │       ├── logos/                # Logos (e.g., TruthWeb, Pi Network)
+│   │       ├── icons/                # Icons (e.g., Font Awesome SVGs)
+│   │       └── media/                # Sample images/videos
+│   ├── src/                          # Source code
+│   │   ├── api/                      # API integration
+│   │   │   ├── authApi.ts            # Authentication API calls
+│   │   │   ├── marketApi.ts          # Marketplace API calls
+│   │   │   ├── feedApi.ts            # Feed API calls
+│   │   │   ├── videoApi.ts           # Video API calls
+│   │   │   ├── socket.ts             # WebSocket connection setup
+│   │   │   └── axiosInstance.ts      # Axios configuration
+│   │   ├── components/               # Reusable UI components
+│   │   │   ├── common/               # Generic components
+│   │   │   │   ├── Button.tsx        # Custom button
+│   │   │   │   ├── Card.tsx          # Card component
+│   │   │   │   ├── Icon.tsx          # Icon wrapper
+│   │   │   │   └── ProgressBar.tsx   # Scroll progress bar
+│   │   │   ├── layout/               # Layout components
+│   │   │   │   ├── Header.tsx        # Sticky header
+│   │   │   │   ├── Footer.tsx        # Footer with social links
+│   │   │   │   ├── MobileMenu.tsx    # Mobile burger menu
+│   │   │   │   └── GoToTop.tsx       # Go-to-top button
+│   │   │   ├── hero/                 # Hero section
+│   │   │   │   ├── Hero.tsx          # Main hero
+│   │   │   │   └── DownloadButtons.tsx # App store buttons
+│   │   │   ├── feed/                 # Feed components
+│   │   │   │   ├── FeedItem.tsx      # Single feed post
+│   │   │   │   ├── FeedBanner.tsx    # Sponsored ad banner
+│   │   │   │   └── FeedActions.tsx   # Like/comment/share buttons
+│   │   │   ├── video/                # Video player components
+│   │   │   │   ├── VideoPlayer.tsx   # Main video iframe
+│   │   │   │   ├── VideoControls.tsx # Play/pause/next controls
+│   │   │   │   └── CommentSection.tsx # Comments UI
+│   │   │   ├── marketplace/          # Marketplace components
+│   │   │   │   ├── ListingCard.tsx   # Marketplace item card
+│   │   │   │   └── EscrowStatus.tsx  # Escrow status display
+│   │   │   └── carousel/             # Carousel for partners
+│   │   │       └── Carousel.tsx      # Horizontal scroll carousel
+│   │   ├── pages/                    # Page components (routes)
+│   │   │   ├── Home.tsx              # Home page
+│   │   │   ├── Marketplace.tsx       # Marketplace page
+│   │   │   ├── Profile.tsx           # User profile page
+│   │   │   ├── Wallet.tsx            # Wallet management page
+│   │   │   ├── LedgerTestnet.tsx     # Ledger testnet page
+│   │   │   ├── Community.tsx         # Community page
+│   │   │   ├── Developers.tsx        # Developers page
+│   │   │   ├── About.tsx             # About page
+│   │   │   └── NotFound.tsx          # 404 page
+│   │   ├── context/                  # Context API
+│   │   │   └── AuthContext.tsx       # User auth context
+│   │   ├── hooks/                    # Custom React hooks
+│   │   │   ├── useScroll.ts          # Scroll logic
+│   │   │   ├── useAuth.ts            # Auth state management
+│   │   │   ├── useSocket.ts          # WebSocket connection
+│   │   │   └── useMediaQuery.ts      # Responsive design
+│   │   ├── redux/                    # Redux Toolkit (optional)
+│   │   │   ├── store.ts              # Redux store
+│   │   │   ├── authSlice.ts          # Auth slice
+│   │   │   ├── feedSlice.ts          # Feed data slice
+│   │   │   └── walletSlice.ts        # Wallet data slice
+│   │   ├── styles/                   # CSS and Tailwind
+│   │   │   ├── index.css             # Global styles
+│   │   │   ├── tailwind.css          # Tailwind imports
+│   │   │   └── animations.css        # Custom animations
+│   │   ├── utils/                    # Utility functions
+│   │   │   ├── formatDate.ts         # Date formatting
+│   │   │   ├── debounce.ts           # Debounce for search
+│   │   │   └── constants.ts          # App constants
+│   │   ├── types/                    # TypeScript types
+│   │   │   ├── user.ts               # User types
+│   │   │   ├── feed.ts               # Feed post types
+│   │   │   └── video.ts              # Video types
+│   │   ├── App.tsx                   # Root component with routing
+│   │   └── main.tsx                  # Entry point
+│   ├── tests/                        # Unit and integration tests
+│   │   ├── components/               # Component tests
+│   │   │   └── Button.test.tsx
+│   │   ├── pages/                    # Page tests
+│   │   │   └── Home.test.tsx
+│   │   └── utils/                    # Utility tests
+│   ├── vite.config.ts                # Vite configuration
+│   ├── tsconfig.json                 # TypeScript configuration
+│   ├── tailwind.config.js            # Tailwind CSS configuration
+│   ├── package.json                  # Dependencies and scripts
+│   └── .env                          # Environment variables
+├── truthweb-backend/                 # Backend application
+│   ├── config/                       # Configuration files
+│   │   ├── database.js               # MongoDB/Redis setup
+│   │   ├── env.js                   # Environment variables
+│   │   └── pi-sdk.js                # Pi Network SDK config
+│   ├── controllers/                  # Request handlers
+│   │   ├── authController.js         # Auth logic
+│   │   ├── userController.js         # User profile/wallet
+│   │   ├── marketController.js       # Marketplace operations
+│   │   ├── feedController.js         # Feed and ads
+│   │   ├── videoController.js        # Video interactions
+│   │   ├── transactionController.js  # Transactions/escrow
+│   │   ├── aiController.js           # AI features
+│   │   └── referralController.js     # Referral program
+│   ├── models/                       # Mongoose schemas
+│   │   ├── User.js                   # User schema
+│   │   ├── Transaction.js            # Transaction schema
+│   │   ├── Post.js                   # Feed post schema
+│   │   ├── Video.js                  # Video metadata schema
+│   │   ├── Comment.js                # Comment schema
+│   │   ├── Ad.js                     # Sponsored ad schema
+│   │   └── Referral.js               # Referral schema
+│   ├── routes/                       # API routes
+│   │   ├── authRoutes.js             # /auth endpoints
+│   │   ├── userRoutes.js             # /users endpoints
+│   │   ├── marketRoutes.js           # /marketplace endpoints
+│   │   ├── feedRoutes.js             # /feed endpoints
+│   │   ├── videoRoutes.js            # /videos endpoints
+│   │   ├── transactionRoutes.js      # /transactions endpoints
+│   │   ├── aiRoutes.js               # /ai endpoints
+│   │   └── referralRoutes.js         # /referrals endpoints
+│   ├── middleware/                   # Custom middleware
+│   │   ├── auth.js                   # JWT/Pi auth verification
+│   │   ├── errorHandler.js           # Error handling
+│   │   ├── rateLimiter.js            # Rate limiting
+│   │   └── validate.js               # Input validation
+│   ├── services/                     # Business logic
+│   │   ├── piService.js              # Pi SDK integration
+│   │   ├── walletService.js          # Wallet operations
+│   │   ├── escrowService.js          # Escrow logic
+│   │   ├── aiService.js              # AI model integration
+│   │   ├── mediaService.js           # Media upload (S3)
+│   │   └── notificationService.js    # Push notifications
+│   ├── sockets/                      # WebSocket logic
+│   │   ├── chat.js                   # Real-time messaging
+│   │   ├── feed.js                   # Feed updates
+│   │   └── stream.js                 # Live streaming
+│   ├── utils/                        # Utility functions
+│   │   ├── logger.js                 # Logging (Winston)
+│   │   ├── redisClient.js            # Redis client setup
+│   │   └── helpers.js                # General helpers
+│   ├── tests/                        # Backend tests
+│   │   ├── auth.test.js              # Auth tests
+│   │   ├── market.test.js            # Marketplace tests
+│   │   └── feed.test.js              # Feed tests
+│   ├── Dockerfile                    # Docker configuration
+│   ├── package.json                  # Dependencies and scripts
+│   └── server.js                     # Entry point
+├── infrastructure/                   # Infrastructure files
+│   ├── docker-compose.yml            # Local dev orchestration
+│   ├── Dockerfile.frontend           # Frontend Docker config
+│   ├── Dockerfile.backend            # Backend Docker config
+│   ├── nginx/                        # Nginx configuration
+│   │   └── nginx.conf                # Reverse proxy/load balancer
+│   ├── .github/                      # CI/CD configuration
+│   │   └── workflows/                # GitHub Actions
+│   │       └── deploy.yml            # Deployment workflow
+│   ├── monitoring/                   # Monitoring setup
+│   │   ├── prometheus.yml            # Prometheus config
+│   │   └── grafana/                  # Grafana dashboards
+│   └── scripts/                      # Utility scripts
+│       ├── seed-db.js                # Database seeding
+│       └── deploy.sh                 # Deployment script
+├── docs/                             # Documentation
+│   ├── README.md                     # Project overview
+│   ├── architecture.md               # System architecture
+│   ├── api.md                        # API documentation
+│   └── setup.md                      # Setup instructions
+├── .env                              # Root-level environment variables
+├── .gitignore                        # Git ignore file
+└── LICENSE                           # Project license
