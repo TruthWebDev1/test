@@ -1,0 +1,60 @@
+truthweb-backend/
+├── config/                  # Configuration files
+│   ├── database.js          # MongoDB and Redis connection setup
+│   ├── env.js              # Environment variables (e.g., .env parsing)
+│   └── pi-sdk.js           # Pi Network SDK configuration
+├── controllers/            # Request handlers
+│   ├── authController.js   # Authentication (Pi SDK, JWT)
+│   ├── userController.js   # User profile and wallet management
+│   ├── marketController.js # Marketplace operations
+│   ├── feedController.js   # Social feed and ads
+│   ├── videoController.js  # Video streaming and interactions
+│   ├── transactionController.js # Transaction and escrow handling
+│   ├── aiController.js     # AI-powered features
+│   └── referralController.js # Referral program logic
+├── models/                 # Mongoose schemas
+│   ├── User.js             # User schema (profile, wallet, KYC)
+│   ├── Transaction.js      # Transaction schema (P2P, escrow)
+│   ├── Post.js             # Feed post schema
+│   ├── Video.js            # Video metadata schema
+│   ├── Comment.js          # Comment schema
+│   ├── Ad.js               # Sponsored ad schema
+│   └── Referral.js         # Referral tracking schema
+├── routes/                 # API routes
+│   ├── authRoutes.js       # /auth endpoints
+│   ├── userRoutes.js       # /users endpoints
+│   ├── marketRoutes.js     # /marketplace endpoints
+│   ├── feedRoutes.js       # /feed endpoints
+│   ├── videoRoutes.js      # /videos endpoints
+│   ├── transactionRoutes.js # /transactions endpoints
+│   ├── aiRoutes.js         # /ai endpoints
+│   └── referralRoutes.js   # /referrals endpoints
+├── middleware/             # Custom middleware
+│   ├── auth.js             # JWT and Pi auth verification
+│   ├── errorHandler.js     # Global error handling
+│   ├── rateLimiter.js      # Rate limiting for API
+│   └── validate.js         # Input validation (e.g., Joi)
+├── services/               # Business logic and external integrations
+│   ├── piService.js        # Pi Network SDK integration
+│   ├── walletService.js    # Wallet operations
+│   ├── escrowService.js    # Escrow system logic
+│   ├── aiService.js        # AI model integration (e.g., price prediction)
+│   ├── mediaService.js     # Media upload/download (S3)
+│   └── notificationService.js # Push notifications
+├── sockets/                # WebSocket logic
+│   ├── chat.js             # Real-time messaging
+│   ├── feed.js             # Real-time feed updates
+│   └── stream.js           # Live streaming events
+├── utils/                  # Utility functions
+│   ├── logger.js           # Logging (e.g., Winston)
+│   ├── redisClient.js      # Redis client setup
+│   └── helpers.js          # General helpers (e.g., format dates)
+├── tests/                  # Unit and integration tests
+│   ├── auth.test.js
+│   ├── market.test.js
+│   └── feed.test.js
+├── Dockerfile              # Docker configuration
+├── docker-compose.yml      # Docker Compose for local dev
+├── .env                    # Environment variables
+├── package.json            # Dependencies and scripts
+└── server.js               # Entry point
