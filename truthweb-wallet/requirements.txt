@@ -1,0 +1,33 @@
+truthweb-wallet/
+│
+├── backend/                     # Backend API server (Node.js / Python)
+│   ├── app.js                   # Main backend server file
+│   ├── controllers/             # Logic for handling wallet and transaction API calls
+│   │   └── walletController.js  # Handle wallet creation, encryption, transactions
+│   ├── routes/                  # API routes
+│   │   └── walletRoutes.js      # Define wallet routes (e.g., /create, /send)
+│   ├── models/                  # Database models
+│   │   └── User.js              # User schema (wallet address, encrypted key, etc.)
+│   ├── config/                  # Configuration files
+│   │   └── dbConfig.js          # Database connection setup
+│   ├── utils/                   # Utility functions
+│       └── encryption.js        # Functions for key encryption/decryption
+│
+├── frontend/                    # Frontend (React.js or Next.js)
+│   ├── src/
+│   │   ├── components/          # Reusable UI components (Navbar, Footer, etc.)
+│   │   ├── pages/               # React or Next.js pages (Dashboard, Wallet)
+│   │   ├── hooks/               # Custom hooks (e.g., useWalletBalance)
+│   │   ├── utils/               # Utility functions (API calls)
+│   │   ├── App.js               # Main App Component
+│   │   └── index.js             # Entry point
+│
+├── database/                    # Database-related files and migrations
+│   ├── migrations/              # Database migrations for schema changes
+│   └── seeders/                 # Seed initial data if needed
+│
+├── tests/                       # Unit and integration tests
+│
+├── .env                         # Environment variables (API keys, DB credentials)
+├── package.json                 # Dependencies for Node.js project
+└── README.md                    # Documentation
