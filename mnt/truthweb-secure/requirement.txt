@@ -1,0 +1,18 @@
+/mnt/truthweb-secure/       # Encrypted mount point or folder
+│
+├── backend/                # Backend API server (encrypted)
+│   ├── controllers/
+│   ├── routes/
+│   ├── models/
+│   ├── utils/
+│   └── app.js
+│
+├── frontend/               # Frontend React files (encrypted)
+│   ├── src/
+│   ├── components/
+│   └── App.js
+│
+├── database/               # Encrypted database files
+│   └── mongo-data/
+│
+└── secret.key              # Encryption key (Store safely outside the encrypted volume)
