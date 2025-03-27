@@ -11,7 +11,7 @@
         console.log('Incomplete payment found:', payment);
         const paymentId = payment.identifier;
         const txid = payment.transaction.txid;
-        return $.post('/payment/complete', { paymentId, txid, debug: 'cancel' });
+        return $.post('http://localhost:3000/payment/complete', { paymentId, txid, debug: 'cancel' });
       }
 
       function checkAuthStatus() {
@@ -36,7 +36,21 @@
         Pi.authenticate(scopes, onIncompletePaymentFound).then(auth => {
           console.log(`Authenticated as ${auth.user.username}`);
           localStorage.setItem('username', auth.user.username);
-          updateUIAfterAuth(auth.user.username);
+
+          // Send authentication data to backend
+          $.post('http://localhost:3000/auth/pi', {
+            accessToken: auth.accessToken,
+            user: {
+              uid: auth.user.uid,
+              username: auth.user.username
+            }
+          }).done(response => {
+            console.log('Backend response:', response);
+            updateUIAfterAuth(auth.user.username);
+          }).fail(error => {
+            console.error('Backend error:', error);
+            document.getElementById('auth-status').textContent = 'Authentication failed. Server error.';
+          });
         }).catch(error => {
           console.error('Authentication failed:', error);
           document.getElementById('auth-status').textContent = 'Authentication failed. Please try again.';
@@ -501,6 +515,24 @@
                 </div>
             </div>
         </section>
+    
+
+        <section id="download" class="py-16 px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-bold mb-8">Get the Enhanced App</h2>
+                <p class="text-lg mb-6 md:text-xl">Download the latest version of the TruthWeb app and experience Pi Network like never before.</p>
+                <div class="download-buttons flex justify-center gap-4">
+                    <a href="https://play.google.com/store" target="_blank" class="download-btn">
+                        <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" class="h-12 transition-transform duration-300 hover:scale-110">
+                    </a>
+                    <a href="https://www.apple.com/app-store/" target="_blank" class="download-btn">
+                        <img loading="lazy" src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Download on the App Store" class="h-12 transition-transform duration-300 hover:scale-110">
+                    </a>
+                </div>
+                <p class="text-sm mt-4">Over 10M+ downloads worldwide!</p>
+            </div>
+        </section>
+    </main>
     </main>
     <footer>
         <div class="social-icons">
