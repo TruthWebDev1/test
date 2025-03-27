@@ -326,6 +326,41 @@
       .auth-container p { font-size: 1.25rem; margin-bottom: 1.5rem; }
       #auth-status { font-size: 1.1rem; margin-top: 1rem; color: var(--primary-color); }
       #logout-btn { display: none; }
+      .guide-container {
+        background: var(--primary-color);
+        padding: 2rem 1rem;
+      }
+      .guide-container h2 {
+        color: var(--text-color);
+        font-size: 2rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 2rem;
+        text-shadow: 0 0 10px var(--highlight-color);
+      }
+      .guide-item {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--highlight-color);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .guide-item:hover { background: rgba(255, 255, 255, 0.2); }
+      .guide-item h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+      }
+      .guide-item p {
+        display: none;
+        font-size: 1rem;
+        color: var(--text-color);
+        margin: 0;
+      }
+      .guide-item.active p { display: block; }
       footer {
         background: var(--primary-color);
         color: var(--text-color);
@@ -374,6 +409,7 @@
         .search-container { max-width: 120px; }
         .glow-text { font-size: 1.75rem; }
         .btn { padding: 0.4rem 1rem; font-size: 0.85rem; }
+        .guide-container h2 { font-size: 1.75rem; }
       }
     </style>
 </head>
@@ -434,6 +470,35 @@
                 <button id="auth-btn" class="btn accent px-6 py-3 text-lg" onclick="authenticateUser()">Authenticate with Pi</button>
                 <button id="logout-btn" class="btn px-6 py-3 text-lg" onclick="logoutUser()">Logout</button>
                 <p id="auth-status" class="mt-4">Not authenticated</p>
+            </div>
+        </section>
+        <section id="guide" class="guide-container">
+            <h2>How to Authenticate with Pi</h2>
+            <div class="max-w-4xl mx-auto">
+                <div class="guide-item">
+                    <h3>Step 1: Install Pi Browser</h3>
+                    <p>Download and install the Pi Browser app from the App Store (iOS) or Google Play Store (Android) if you haven’t already. This is required to use Pi Network authentication.</p>
+                </div>
+                <div class="guide-item">
+                    <h3>Step 2: Open TruthWeb in Pi Browser</h3>
+                    <p>Launch the Pi Browser and navigate to TruthWeb (e.g., by entering this page’s URL). The Pi SDK works seamlessly within the Pi Browser environment.</p>
+                </div>
+                <div class="guide-item">
+                    <h3>Step 3: Click "Authenticate with Pi"</h3>
+                    <p>Press the "Authenticate with Pi" button above. This will trigger a prompt from the Pi Network to log in with your Pi credentials.</p>
+                </div>
+                <div class="guide-item">
+                    <h3>Step 4: Log In with Your Pi Account</h3>
+                    <p>Enter your Pi Network username and passphrase (or use biometric login if enabled) in the prompt provided by the Pi Browser. Your credentials are managed securely by the Pi Network; TruthWeb does not copy, store, or have access to your passphrase. This ensures your account remains safe and private. Confirm the authentication request when prompted.</p>
+                </div>
+                <div class="guide-item">
+                    <h3>Step 5: Verify Authentication</h3>
+                    <p>Once authenticated, the status below the button will update to "Authenticated as [your username]", and the profile icon will change. You’re now logged in!</p>
+                </div>
+                <div class="guide-item">
+                    <h3>Step 6: Logout (Optional)</h3>
+                    <p>To log out, click the "Logout" button that appears after authentication. This clears your session, and you’ll need to authenticate again to log back in.</p>
+                </div>
             </div>
         </section>
     </main>
@@ -533,6 +598,14 @@
         link.addEventListener('click', () => {
           burgerBtn.classList.remove('open');
           mobileMenu.classList.remove('open');
+        });
+      });
+
+      // Guide Toggle Functionality
+      const guideItems = document.querySelectorAll('.guide-item');
+      guideItems.forEach(item => {
+        item.addEventListener('click', () => {
+          item.classList.toggle('active');
         });
       });
     </script>
