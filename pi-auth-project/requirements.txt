@@ -1,0 +1,19 @@
+pi-auth-project/
+├── backend/
+│   ├── src/
+│   │   ├── routes/
+│   │   │   ├── auth.js          # Authentication route handler
+│   │   │   └── payment.js      # Payment completion route handler
+│   │   ├── config/
+│   │   │   └── db.js           # Database configuration (placeholder)
+│   │   └── index.js            # Main server file
+│   ├── .env                    # Environment variables
+│   ├── package.json            # Node.js dependencies and scripts
+│   └── package-lock.json       # Dependency lock file
+├── frontend/
+│   ├── public/
+│   │   ├── auth.html           # Pi Authentication HTML page
+│   │   └── favicon.ico         # Optional favicon
+│   ├── package.json            # Optional for serving frontend (e.g., with live-server)
+│   └── README.md               # Frontend documentation
+└── README.md                   # Project-wide documentation
